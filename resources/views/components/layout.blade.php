@@ -123,8 +123,8 @@
 							<figure class="profile-picture">
 								{{-- <img src="../img/staff/Jack.jpg" alt="Joseph Doe" class="rounded-circle" data-lock-picture="../img/staff/Jack.jpg" /> --}}
 							</figure>
-							<div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@okler.com">
-								<span class="name">{{auth()->user()->name}} {{auth()->user()->last_name}}</span>
+							<div class="profile-info" data-lock-name="{{auth()->user()->name}} {{auth()->user()->last_name}}" data-lock-email="{{auth()->user()->email}}">
+								<span class="name">{{ucfirst(auth()->user()->name)}} {{ucfirst(auth()->user()->last_name)}}</span>
 								<span class="role">{{strtoupper(auth()->user()->role)}}</span>
 							</div>
 							<i class="fa custom-caret"></i>

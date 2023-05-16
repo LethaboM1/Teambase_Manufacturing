@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManagersController;
+use App\Http\Controllers\Manufacturer\ProductsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +30,10 @@ Route::middleware('auth')->group(function () {
         Route::get('users', [ManagersController::class, 'users']);
         Route::post('users/add', [ManagersController::class, 'add_user']);
         Route::post('users/save', [ManagersController::class, 'save_user']);
+        Route::post('users/delete', [ManagersController::class, 'delete_user']);
         Route::post('users/outofoffice', [ManagersController::class, 'outofoffice_user']);
+
+        Route::get('products', [ProductsController::class, 'products']);
     });
 
     Route::middleware('is_workshop')->group(function () {

@@ -82,4 +82,14 @@ class ManagersController extends Controller
         $user = User::where('user_id', $form_fields['user_id'])->first();
         return back()->with('alertMessage', "User {$user->name} {$user->last_name} has been set.");
     }
+
+    function delete_user(Request $request)
+    {
+        $form_fields = $request->validate([
+            'user_id' => 'required|exists:users_tbl,user_id'
+        ]);
+
+        User::where('user_id', $form_fields['user_id'])->update(['active' => 0]);
+        return back()->with('alertMessage', 'User has been deleted!');
+    }
 }

@@ -20,7 +20,7 @@
         <span>Products</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="dashboard.php?page=add-product">Add / Edit Product & Recipes</a></li>
+        <li><a class="nav-link" href="{{env('APP_URL')}}products">Add / Edit Product & Recipes</a></li>
         </ul>
       </li>
       <li class="nav-parent">

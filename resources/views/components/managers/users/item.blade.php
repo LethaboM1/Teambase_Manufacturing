@@ -20,11 +20,36 @@
             
             
 
+            <div id='delete_user{{$item['user_id']}}' class='modal-block modal-block-lg mfp-hide'>
+                <form action="users/delete" method='post' enctype='multipart/form-data'>
+                    @csrf
+                    <section class='card'>
+                        <header id='delete_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'>Delete User?</h2></header>
+                            <div class='card-body'>
+                                <div class='modal-wrapper'>
+                                    <div class='modal-text'>
+                                        <x-form.hidden wire=0 name="user_id" :value="$item->user_id" />
+                                        <p>Are you sure you want to delete user "{{$item->name}} {{$item->last_name}}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <footer class='card-footer'>
+                                <div class='row'>
+                                    <div class='col-md-12 text-right'>
+                                        <button type='submit' name='save' value='save' class='btn btn-danger'>Confirm</button>
+                                        <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                    </div>
+                                </div>
+                            </footer>
+                    </section>
+                </form>
+            </div>
+
             <div id='edit_user{{$item['user_id']}}' class='modal-block modal-block-lg mfp-hide'>
                 <form action="users/save" method='post' enctype='multipart/form-data'>
                     @csrf
                     <section class='card'>
-                        <header id='edit_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'></h2></header>
+                        <header id='edit_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'>Edit User</h2></header>
                             <div class='card-body'>
                                 <div class='modal-wrapper'>
                                     <div class='modal-text'>
@@ -48,7 +73,7 @@
                 <form action="users/outofoffice" method='post' enctype='multipart/form-data'>
                     @csrf
                     <section class='card'>
-                        <header id='view_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'></h2></header>
+                        <header id='view_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'>Out of office</h2></header>
                             <div class='card-body'>
                                 <div class='modal-wrapper'>
                                     <div class='modal-text'>
