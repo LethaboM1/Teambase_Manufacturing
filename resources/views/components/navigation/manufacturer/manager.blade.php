@@ -11,7 +11,7 @@
         <span>User Managment</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="{{env('APP_URL')}}users">Add/Manage Users</a></li>
+        <li><a class="nav-link" href="{{url('users')}}">Add/Manage Users</a></li>
         </ul>
       </li>
       <li class="nav-parent">
@@ -20,7 +20,7 @@
         <span>Products</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="{{env('APP_URL')}}products">Add / Edit Product & Recipes</a></li>
+        <li><a class="nav-link" href="{{url('products')}}">Add / Edit Product & Recipes</a></li>
         </ul>
       </li>
       <li class="nav-parent">
