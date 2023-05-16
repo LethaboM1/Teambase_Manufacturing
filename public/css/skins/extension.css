@@ -1,0 +1,166 @@
+/*
+Name: 			TeamBase
+Theme Version: 	4.0.0
+Base Colours: Yellow: #f3b426
+		   Dark Grey: #2b2a29
+*/
+html.dark .checkbox-primary label:before,
+.checkbox-primary label:before {
+	background: #f3b426;
+	border-color: #0077b3;
+}
+
+html.dark .checkbox-text-primary input[type="checkbox"]:checked + label:after,
+.checkbox-text-primary input[type="checkbox"]:checked + label:after {
+	color: #f3b426;
+}
+
+html.dark .radio-primary input[type="radio"]:checked + label:after,
+.radio-primary input[type="radio"]:checked + label:after {
+	background: #f3b426;
+	box-shadow: 0px 0px 1px #f3b426;
+}
+
+.switch.switch-primary .ios-switch .on-background {
+	background: #f3b426;
+}
+
+.progress-bar {
+	background-color: #f3b426;
+}
+
+.progress .progress-bar-primary {
+	background-color: #f3b426;
+}
+
+.slider-primary .ui-slider-range,
+.slider-primary .ui-slider-handle {
+	background: #f3b426;
+}
+
+.slider-gradient.slider-primary .ui-slider-range,
+.slider-gradient.slider-primary .ui-slider-handle {
+	background-image: linear-gradient(to left, #00aaff 0, #f3b426 50%, #006699 100%);
+}
+
+.slider-gradient.ui-slider-vertical.slider-primary .ui-slider-range,
+.slider-gradient.ui-slider-vertical.slider-primary .ui-slider-handle {
+	background-image: linear-gradient(to right, #00aaff 0, #f3b426 50%, #006699 100%);
+}
+
+.datepicker thead tr:first-child th:hover,
+.datepicker tfoot tr th:hover,
+.datepicker table tr td span:hover {
+	background: #f3b426;
+}
+
+.datepicker .datepicker-switch:hover,
+.datepicker .prev:hover,
+.datepicker .next:hover {
+	background: #f3b426;
+}
+
+.datepicker table thead tr:last-child th:hover {
+	color: #f3b426;
+}
+
+.datepicker table tbody tr td.day:hover {
+	background: #f3b426;
+}
+
+.datepicker table tbody tr td.day.active {
+	background: #006699;
+}
+
+html:not(.sidebar-light) .datepicker.datepicker-dark {
+	background: transparent;
+}
+
+html:not(.sidebar-light) .datepicker.datepicker-dark table tbody tr td.day:hover {
+	background: #f3b426;
+}
+
+html:not(.sidebar-light) .datepicker.datepicker-dark table tbody tr td.day.active {
+	background: #006699;
+}
+
+.datepicker.datepicker-primary table thead tr:first-child {
+	background-color: #f3b426;
+}
+
+.datepicker.datepicker-primary table thead tr:first-child th:hover {
+	background-color: #006699;
+}
+
+.datepicker.datepicker-primary table thead tr:last-child {
+	background-color: #0099e6;
+}
+
+.datepicker.datepicker-primary table thead tr:last-child th:hover {
+	background-color: #f3b426;
+	color: #FFF;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+	background: #f3b426;
+}
+
+.wizard-steps > li.active .badge {
+	background-color: #f3b426;
+}
+
+.wizard-steps > li.active a,
+.wizard-steps > li.active a:hover,
+.wizard-steps > li.active a:focus {
+	border-top-color: #f3b426;
+}
+
+.wizard-tabs ul > li.active .badge {
+	background-color: #f3b426;
+}
+
+html .wizard-progress .steps-progress .progress-indicator,
+html.dark .wizard-progress .steps-progress .progress-indicator {
+	background: #f3b426;
+}
+
+html .wizard-progress .wizard-steps li.completed a span,
+html.dark .wizard-progress .wizard-steps li.completed a span {
+	border-color: #f3b426;
+	background: #f3b426;
+}
+
+html .wizard-progress .wizard-steps li.active a span,
+html.dark .wizard-progress .wizard-steps li.active a span {
+	color: #f3b426;
+	border-color: #f3b426;
+}
+
+.table > thead > tr > td.primary,
+.table > tbody > tr > td.primary,
+.table > tfoot > tr > td.primary,
+.table > thead > tr > th.primary,
+.table > tbody > tr > th.primary,
+.table > tfoot > tr > th.primary,
+.table > thead > tr.primary > td,
+.table > tbody > tr.primary > td,
+.table > tfoot > tr.primary > td,
+.table > thead > tr.primary > th,
+.table > tbody > tr.primary > th,
+.table > tfoot > tr.primary > th {
+	background-color: #f3b426 !important;
+}
+
+.dataTables_processing {
+	background-color: #f3b426;
+}
+
+.liquid-meter-wrapper .liquid-meter-selector a.active {
+	color: #f3b426;
+}
+
+.multiselect-container > .active > a,
+.multiselect-container > .active > a:hover,
+.multiselect-container > .active > a:focus {
+	background-color: #f3b426;
+}
