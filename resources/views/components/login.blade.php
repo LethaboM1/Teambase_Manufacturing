@@ -78,7 +78,7 @@
 					</div>
 			  </div>
 
-				<p class="text-center text-muted mt-3 mb-3">TeamBase &copy; Copyright 2022. All Rights Reserved. Alpha {{env('APP_VER')}}</p>
+				<p class="text-center text-muted mt-3 mb-3">TeamBase &copy; Copyright 2022. All Rights Reserved. {{env('APP_VER')}}</p>
 		  </div>
 		</section>
 		<!-- end: page -->
