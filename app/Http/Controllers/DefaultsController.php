@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 
 class DefaultsController
 {
+    const unit_measure = [
+        ['value' => 'kg', 'name' => 'Kg'],
+        ['value' => 'ton', 'name' => 'Tons'],
+        ['value' => 'bag', 'name' => 'Bag'],
+        ['value' => 'liter', 'name' => 'Liters'],
+    ];
+
     const roles = [
         'workshop' => [
             ['value' => "manager", 'name' => 'Manager'],

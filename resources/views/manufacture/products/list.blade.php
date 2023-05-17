@@ -1,3 +1,3 @@
 <x-layout pageTitle="Products">
-    <h2>Products</h2>
+    <livewire:manufacture.products.list-livewire />
 </x-layout>
