@@ -26,7 +26,7 @@
                                     <input id="checkbox1" name="has_recipe" type="checkbox" value="1">
                                     <label for="checkbox1">Requires recipe</label>
                                 </div> --}}
-                                <x-form.checkbox wire=0 name="has_recipe" label="Unit Measure" :toggle="old('has_recipe')" :value="1" />
+                                <x-form.checkbox wire=0 name="has_recipe" label="Has a recipe?" :toggle="old('has_recipe')" :value="1" />
                             </div>
                         </div>
                     </div>
