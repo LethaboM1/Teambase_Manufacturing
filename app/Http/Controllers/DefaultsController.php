@@ -16,7 +16,7 @@ class DefaultsController
             ['value' => "ws_inspector", 'name' => 'Inspector'],
             ['value' => "user", 'name' => 'Driver'],
         ],
-        'manufacturer' => [
+        'manufacture' => [
             ['value' => "manager", 'name' => 'Manager'],
             ['value' => "supervisor", 'name' => 'Supervisor'],
             ['value' => "clerk", 'name' => 'Clerk'],

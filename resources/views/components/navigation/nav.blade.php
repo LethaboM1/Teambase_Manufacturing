@@ -1,9 +1,9 @@
 <div class="nano">
 	<div class="nano-content">
 	    <nav id="menu" class="nav-main" role="navigation">
-			@if(auth()->user()->depart=='manufacturer')
+			@if(auth()->user()->depart=='manufacture')
 				@if(auth()->user()->role=='manager')
-					<x-navigation.manufacturer.manager />
+					<x-navigation.manufacture.manager />
 				@endif
 				
 			@endif

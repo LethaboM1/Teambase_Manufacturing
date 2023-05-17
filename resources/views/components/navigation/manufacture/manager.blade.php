@@ -29,8 +29,8 @@
         <span>Job Cards</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="dashboard.php?page=create-job-card">Create New Job Card</a></li>
-        <li><a class="nav-link" href="dashboard.php?page=open-job-cards">Open Job Cards</a></li>
+        <li><a class="nav-link" href="{{url('jobs/create')}}">Create New Job Card</a></li>
+        <li><a class="nav-link" href="{{url('jobs')}}">Open Job Cards</a></li>
         </ul>
       </li>
       <li class="nav-parent">
@@ -39,8 +39,8 @@
         <span>Production</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="dashboard.php?page=create-batch">Create New Batch</a></li>
-        <li><a class="nav-link" href="dashboard.php?page=open-batch">Open Batchs</a></li>
+        <li><a class="nav-link" href="{{url('productions/create')}}">Create New Batch</a></li>
+        <li><a class="nav-link" href="{{url('productions')}}">Open Batchs</a></li>
         </ul>
       </li>
       <li class="nav-parent">
@@ -49,7 +49,7 @@
         <span>Labs</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="dashboard.php?page=create-lab">Create Lab for Batch</a></li>
+        <li><a class="nav-link" href="{{url('labs/create')}}">Create Lab for Batch</a></li>
         </ul>
       </li>
       <li class="nav-parent">
@@ -58,8 +58,8 @@
         <span>Dispatch</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="">Orders Ready for Dispatch</a></li>
-        <li><a class="nav-link" href="">Dispatched Orders</a></li>
+        <li><a class="nav-link" href="{{url('dispatch/ready')}}">Orders Ready for Dispatch</a></li>
+        <li><a class="nav-link" href="{{url('dispatch/orders')}}">Dispatched Orders</a></li>
         </ul>
       </li>
       <li class="nav-parent">
@@ -68,10 +68,10 @@
         <span>Reports</span>
         </a>
         <ul class="nav nav-children">
-          <li><a class="nav-link" href="">Stock Report</a></li>
-          <li><a class="nav-link" href="">Order Reports</a></li>
-          <li><a class="nav-link" href="">Lab Reports</a></li>
-          <li><a class="nav-link" href="">Dispatch Reports</a></li>
+          <li><a class="nav-link" href="{{url('report/stock-reports')}}">Stock Report</a></li>
+          <li><a class="nav-link" href="{{url('report/order-reports')}}">Order Reports</a></li>
+          <li><a class="nav-link" href="{{url('report/lab-reports')}}">Lab Reports</a></li>
+          <li><a class="nav-link" href="{{url('report/dispatch-reports')}}">Dispatch Reports</a></li>
         </ul>
       </li>
 </ul>

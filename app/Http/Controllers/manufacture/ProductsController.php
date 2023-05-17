@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Manufacturer;
+namespace App\Http\Controllers\Manufacture;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,6 +9,6 @@ class ProductsController extends Controller
 {
     function products()
     {
-        return view('manufacturer.products.list');
+        return view('manufacture.products.list');
     }
 }
