@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ManufactureProductTransactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,4 +13,14 @@ class ManufactureProducts extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
+
+    function transactions()
+    {
+        return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');
+    }
+
+    function getQtyAttribute()
+    {
+        return $this->transactions->sum('qty');
+    }
 }

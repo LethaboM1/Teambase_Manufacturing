@@ -23,8 +23,10 @@ create table manufacture_product_transactions (
     id bigint primary key auto_increment,
     product_id bigint,
     type varchar(20),
+    type_id bigint,
     qty decimal(10,2),
     comment text,
+    user_id bigint,
     updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
     created_at datetime default CURRENT_TIMESTAMP()
 );

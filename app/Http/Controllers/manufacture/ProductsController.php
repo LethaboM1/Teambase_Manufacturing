@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manufacture;
 
 use App\Http\Controllers\Controller;
 use App\Models\ManufactureProducts;
-use App\Models\ManufactureProductsTransactions;
+use App\Models\ManufactureProductTransactions;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -33,11 +33,12 @@ class ProductsController extends Controller
         $product_id = ManufactureProducts::insertGetId($form_fields);
 
         if ($opening_balance) {
-            ManufactureProductsTransactions::insert([
+            ManufactureProductTransactions::insert([
                 'product_id' => $product_id,
                 'type' => 'OB',
                 'qty' => $opening_balance,
-                'comment' => 'Opening balance'
+                'comment' => 'Opening balance',
+                'user_id' => auth()->user()->user_id
             ]);
         }
 
@@ -61,5 +62,29 @@ class ProductsController extends Controller
         ManufactureProducts::where('id', $form_fields['id'])->update($form_fields);
 
         return back()->with('alertMessage', 'Product has been saved');
+    }
+
+    function adjust_product(Request $request)
+    {
+        $form_fields = $request->validate([
+            'id' => 'required|exists:manufacture_products',
+            'new_value' => 'required|numeric',
+            'comment' => 'required'
+        ]);
+
+        $qty = ManufactureProducts::where('id', $form_fields['id'])->first();
+
+        $diff = $form_fields['new_value'] - $qty->qty;
+
+        ManufactureProductTransactions::insert([
+            'product_id' => $form_fields['id'],
+            'type' => 'ADJ',
+            'qty' => $diff,
+            'comment' => $form_fields['comment'],
+            'user_id' => auth()->user()->user_id
+
+        ]);
+
+        return back()->with('alertMessage', 'Product qty has been adjusted.');
     }
 }
