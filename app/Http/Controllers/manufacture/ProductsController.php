@@ -9,12 +9,35 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    function products()
+    public function adjust_product(Request $request)
+    {
+        $form_fields = $request->validate([
+            'id' => 'required|exists:manufacture_products',
+            'new_value' => 'required|numeric',
+            'comment' => 'required'
+        ]);
+
+        $qty = ManufactureProducts::where('id', $form_fields['id'])->first();
+
+        $diff = $form_fields['new_value'] - $qty->qty;
+
+        ManufactureProductTransactions::insert([
+            'product_id' => $form_fields['id'],
+            'type' => 'ADJ',
+            'qty' => $diff,
+            'comment' => $form_fields['comment'],
+            'user_id' => auth()->user()->user_id
+
+        ]);
+
+        return back()->with('alertMessage', 'Product qty has been adjusted.');
+    }
+    public function products()
     {
         return view('manufacture.products.list');
     }
 
-    function add_product(Request $request)
+    public function add_product(Request $request)
     {
         $form_fields = $request->validate([
             'code' => 'required|unique:manufacture_products',
@@ -46,7 +69,7 @@ class ProductsController extends Controller
     }
 
 
-    function save_product(Request $request)
+    public function save_product(Request $request)
     {
         $form_fields = $request->validate([
             'id' => 'exists:manufacture_products',
@@ -62,30 +85,5 @@ class ProductsController extends Controller
         ManufactureProducts::where('id', $form_fields['id'])->update($form_fields);
 
         return back()->with('alertMessage', 'Product has been saved');
-    }
-
-
-    function adjust_product(Request $request)
-    {
-        $form_fields = $request->validate([
-            'id' => 'required|exists:manufacture_products',
-            'new_value' => 'required|numeric',
-            'comment' => 'required'
-        ]);
-
-        $qty = ManufactureProducts::where('id', $form_fields['id'])->first();
-
-        $diff = $form_fields['new_value'] - $qty->qty;
-
-        ManufactureProductTransactions::insert([
-            'product_id' => $form_fields['id'],
-            'type' => 'ADJ',
-            'qty' => $diff,
-            'comment' => $form_fields['comment'],
-            'user_id' => auth()->user()->user_id
-
-        ]);
-
-        return back()->with('alertMessage', 'Product qty has been adjusted.');
     }
 }
