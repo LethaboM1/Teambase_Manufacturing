@@ -112,6 +112,7 @@
         </div>
         <!-- Modal adjust Product End -->
         <!-- Modal adjust stock End -->
+        @if($item->has_recipe)
         <!-- Modal Edit Recipe -->
         <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladdrecipe" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Add Recipe"><i class="fas fa-list-alt"></i></a>
          <!-- Modal Recipe -->
@@ -124,18 +125,22 @@
                     <div class="modal-wrapper">
                         <div class="modal-text">
                             <div class="row">
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">Product Code</label>
-                                    <livewire:manufacture.products.search-select />
+                                    <b><h3>{{$item->code}}</h3></b>
+                                    {{-- <input type="text" name="code" class="form-control"> --}}
                                 </div>
                                 <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">Product Description</label>
-                                    <input type="text" name="disc" placeholder="pen grade bitumen - GENREF"
-                                        class="form-control">
+                                    <b><h3>{{$item->description}}</h3></b>
                                 </div>
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Opening Value</label>
-                                    <input type="text" name="openvalue" placeholder="1000 Tone" class="form-control">
+                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                    <label class="col-form-label" for="formGroupExampleInput">Qty</label>
+                                    <b><h3>{{$item->qty}}</h3></b>
+                                </div>
+                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                <label class="col-form-label" for="formGroupExampleInput">Unit</label>
+                                <b><h3>{{ucfirst($item->unit_measure)}}</h3></b>
                                 </div>
                             </div>
                             <hr>
@@ -222,9 +227,41 @@
             </section>
         </div>
         <!-- Modal recipe End -->
+            
+        @endif
         <!-- Modal Edit recipe End -->
         <!-- Modal Delete -->
-        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeaderColorDanger" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i class="fas fa-trash-alt"></i></a>
+        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeader_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i class="fas fa-trash-alt"></i></a>
+        <!-- Modal Delete -->
+        <div id="modalHeader_{{$item->id}}" class="modal-block modal-header-color modal-block-danger mfp-hide">
+            <section class="card">
+                <header class="card-header">
+                    <h2 class="card-title">Are you sure?</h2>
+                </header>
+                <div class="card-body">
+                    <div class="modal-wrapper">
+                        <div class="modal-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="modal-text">
+                            <h4>Danger</h4>
+                            <x-form.hidden wire=0 name="id" :value="$item->id" />
+                            <p>Are you sure that you want to delete this Product?</p>
+                        </div>
+                    </div>
+                </div>
+                <footer class="card-footer">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-danger modal-dismiss"
+                                data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div>
+        <!-- Modal Delete End -->
         <!-- Modal Delete End -->
     </td>
 </tr>
