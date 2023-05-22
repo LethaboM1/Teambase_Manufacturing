@@ -64,6 +64,7 @@ class ProductsController extends Controller
         return back()->with('alertMessage', 'Product has been saved');
     }
 
+
     function adjust_product(Request $request)
     {
         $form_fields = $request->validate([
