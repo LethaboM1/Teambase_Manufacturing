@@ -146,12 +146,7 @@
                             <hr>
                             <div class="form-group row">
                                 <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Select Product</label>
-                                    <Select class="form-control mb-3">
-                                        <option>Product 1</option>
-                                        <option>Product 2</option>
-                                        <option>Product 3</option>
-                                    </select>
+                                   <x-form.select name="product" label="Select product" :list="$product_list" />
                                 </div>
                                 <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">Quantity</label>
