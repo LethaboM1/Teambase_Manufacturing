@@ -8,8 +8,14 @@
         @endif
         "         
         name="{{$name}}"
+
+
         @if($wire) 
             wire:model.lazy="{{$name}}"
+        @endif
+        
+        @if($disabled)
+            disabled="disabled"
         @endif
         >
         @foreach($list as $select_item)            

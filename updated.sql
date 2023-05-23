@@ -36,5 +36,6 @@ create table manufacture_product_recipe (
     product_id bigint,
     product_add_id bigint,
     qty decimal(10,2),
-    
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
 ); 

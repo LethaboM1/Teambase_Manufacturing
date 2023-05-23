@@ -116,3 +116,7 @@
 #button-1 .layer {
   transition: 0.3s ease all;
 }
+
+.pointer {
+  cursor: pointer;
+}

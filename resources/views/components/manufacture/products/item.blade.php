@@ -115,7 +115,7 @@
         @if($item->has_recipe)
         <!-- Modal Edit Recipe -->
         <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladdrecipe" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Add Recipe"><i class="fas fa-list-alt"></i></a>
-         <!-- Modal Recipe -->
+         <!-- Modal Recipe -->'
          <div id="modaladdrecipe" class="modal-block modal-block-lg mfp-hide">
             <section class="card">
                 <header class="card-header">
@@ -124,101 +124,17 @@
                 <div class="card-body">
                     <div class="modal-wrapper">
                         <div class="modal-text">
-                            <div class="row">
-                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Product Code</label>
-                                    <b><h3>{{$item->code}}</h3></b>
-                                    {{-- <input type="text" name="code" class="form-control"> --}}
-                                </div>
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Product Description</label>
-                                    <b><h3>{{$item->description}}</h3></b>
-                                </div>
-                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Qty</label>
-                                    <b><h3>{{$item->qty}}</h3></b>
-                                </div>
-                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
-                                <label class="col-form-label" for="formGroupExampleInput">Unit</label>
-                                <b><h3>{{ucfirst($item->unit_measure)}}</h3></b>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="form-group row">
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                   <x-form.select name="product" label="Select product" :list="$product_list" />
-                                </div>
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Quantity</label>
-                                    <input type="text" name="openvalue" placeholder="1000" class="form-control">
-                                </div>
-                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
-                                <label class="col-form-label" for="formGroupExampleInput">Unit</label>
-                                <select class="form-control mb-3">
-                                    <option>Kg</option>
-                                    <option>Tons</option>
-                                    <option>Bag</option>
-                                    <option>Liters</option>
-                                </select>	
-                            </div>
-                            </div>
-                            <div>
-                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                    <div>
-                                        <button class="btn btn-primary">Add Product</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="card-body">
-                                    <h2 class="card-title">Raw Products</h2>
-                                </div>
-                                <div class="card-body">
-                                    <div class="header-right">
-                                    </div>
-                                    <table width="100%" class="table table-responsive-md mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th width="15%">Date</th>
-                                                <th width="15%">Product Code</th>
-                                                <th width="40%">Description</th>
-                                                <th width="15%">Opening Value</th>
-                                                <th width="15%">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="actions">
-                                                    <!-- Modal Edit recipe -->
-                                                    <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalviewProduct" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Edit Product"><i
-                                                        class="fas fa-pencil-alt"></i></a>
-                                                    <!-- Modal Edit recipe End -->
-                                                    <!-- Modal Delete -->
-                                                    <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeaderColorDanger" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i
-                                                        class="far fa-trash-alt"></i></a>
-                                                    <!-- Modal Delete End -->
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    <livewire:manufacture.products.recipe-add-livewire :item="$item">
                     </div>
                 </div>
                 <footer class="card-footer">
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <button class="btn btn-primary">Add Recipe</button>
-                            <button class="btn btn-default modal-dismiss">Cancel</button>
+                            <button class="btn btn-default modal-dismiss">Close</button>
                         </div>
                     </div>
                 </footer>
+                </div>
             </section>
         </div>
         <!-- Modal recipe End -->

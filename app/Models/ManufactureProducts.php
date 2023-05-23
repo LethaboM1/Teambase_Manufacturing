@@ -19,6 +19,12 @@ class ManufactureProducts extends Model
         return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');
     }
 
+
+    function recipes()
+    {
+        return $this->hasMany(ManufactureProductRecipe::class, 'product_id', 'id');
+    }
+
     function getQtyAttribute()
     {
         return $this->transactions->sum('qty');

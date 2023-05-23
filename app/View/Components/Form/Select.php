@@ -11,14 +11,15 @@ class Select extends Component
         $list,
         $value,
         $wire,
-        $class;
+        $class,
+        $disabled;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($name, $list, $label = '',  $wire = true, $value = '', $class = '')
+    public function __construct($name, $list, $label = '',  $wire = true, $value = '', $class = '', $disabled = 0)
     {
         $this->name = $name;
         $this->list = $list;
@@ -26,6 +27,7 @@ class Select extends Component
         $this->wire = $wire;
         $this->value = $value;
         $this->class = $class;
+        $this->disabled = $disabled;
     }
 
     /**
