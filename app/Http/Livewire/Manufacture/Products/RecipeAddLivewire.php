@@ -39,6 +39,7 @@ class RecipeAddLivewire extends Component
         if (strlen($this->product) > 0) {
             $product = ManufactureProducts::select('unit_measure')->where('id', $value)->first();
             $this->unit_measure = $product->unit_measure;
+            // dd($this->unit_measure);
         }
     }
 

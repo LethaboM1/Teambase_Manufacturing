@@ -35,7 +35,7 @@
                                 @enderror
                             </div>
                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">                                
-                                <x-form.select name="measurement" label="Unit" wire=0 :value="$unit_measure" :list="$unit_measure_list" disabled="1" />
+                                <x-form.select name="unit_measure" label="Unit" :value="$unit_measure" :list="$unit_measure_list" disabled="1" />
                             </div>
                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                 <div>
