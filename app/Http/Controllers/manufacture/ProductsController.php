@@ -97,7 +97,7 @@ class ProductsController extends Controller
         ]);
 
         ManufactureProductRecipe::select('id')->where('product_add_id', $form_fields['id'])->delete();
-        ManufactureProductTransactions::select('id')->where('product_add_id', $form_fields['id'])->delete();
+        ManufactureProductTransactions::select('id')->where('product_id', $form_fields['id'])->delete();
         ManufactureProducts::select('id')->where('product_add_id', $form_fields['id'])->delete();
 
 
