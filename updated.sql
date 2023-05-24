@@ -8,6 +8,7 @@ create table manufacture_products (
     description varchar(100),
     unit_measure varchar(100),
     has_recipe boolean default 0,
+    active boolean default 1,
     updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
     created_at datetime default CURRENT_TIMESTAMP()
 );
@@ -39,3 +40,5 @@ create table manufacture_product_recipe (
     updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
     created_at datetime default CURRENT_TIMESTAMP()
 ); 
+
+alter table manufacture_products add column active boolean default 1 after has_recipe;
