@@ -34,6 +34,9 @@
                                     <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
                                         <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="$item->unit_measure" :list="$unit_measure_list" />
                                     </div>
+                                    <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                        <x-form.checkbox wire=0 name="has_recipe" label="Has recipe?" value=1 :toggle="$item->has_recipe" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +105,7 @@
                     <footer class="card-footer">
                         <div class="row">
                             <div class="col-md-12 text-right">
-                                <button class="btn btn-primary">Save Product</button>
+                                <button class="btn btn-primary">Adjust Product</button>
                                 <button class="btn btn-default modal-dismiss">Cancel</button>
                             </div>
                         </div>
