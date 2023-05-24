@@ -21,6 +21,7 @@ class ProductsController extends Controller
 
         $diff = $form_fields['new_value'] - $qty->qty;
 
+
         ManufactureProductTransactions::insert([
             'product_id' => $form_fields['id'],
             'type' => 'ADJ',
