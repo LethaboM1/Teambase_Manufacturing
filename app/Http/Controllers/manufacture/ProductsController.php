@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Manufacture;
+namespace App\Http\Controllers\manufacture;
 
 use App\Http\Controllers\Controller;
 use App\Models\ManufactureProductRecipe;
