@@ -90,7 +90,7 @@ class ProductsController extends Controller
         return back()->with('alertMessage', 'Product has been saved');
     }
 
-    function delete_product(Request $request)
+    public function delete_product(Request $request)
     {
         $form_fields = $request->validate([
             'id' => 'required|exists:manufacture_products'
