@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manufacture;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManufactureProductRecipe;
 use App\Models\ManufactureProducts;
 use App\Models\ManufactureProductTransactions;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class ProductsController extends Controller
 
         return back()->with('alertMessage', 'Product qty has been adjusted.');
     }
+
     public function products()
     {
         return view('manufacture.products.list');
@@ -86,5 +88,20 @@ class ProductsController extends Controller
         ManufactureProducts::where('id', $form_fields['id'])->update($form_fields);
 
         return back()->with('alertMessage', 'Product has been saved');
+    }
+
+    function delete_product(Request $request)
+    {
+        $form_fields = $request->validate([
+            'id' => 'required|exists:manufacture_products'
+        ]);
+
+        ManufactureProductRecipe::select('id')->where('product_add_id', $form_fields['id'])->delete();
+        ManufactureProductTransactions::select('id')->where('product_add_id', $form_fields['id'])->delete();
+        ManufactureProducts::select('id')->where('product_add_id', $form_fields['id'])->delete();
+
+
+
+        return back()->with('alertMessage', 'Product has been removed.');
     }
 }

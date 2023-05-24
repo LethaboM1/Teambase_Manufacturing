@@ -149,27 +149,29 @@
                 <header class="card-header">
                     <h2 class="card-title">Are you sure?</h2>
                 </header>
-                <div class="card-body">
-                    <div class="modal-wrapper">
-                        <div class="modal-icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                        <div class="modal-text">
-                            <h4>Danger</h4>
-                            <x-form.hidden wire=0 name="id" :value="$item->id" />
-                            <p>Are you sure that you want to delete this Product?</p>
-                        </div>
-                    </div>
-                </div>
-                <footer class="card-footer">
-                    <div class="row">
-                        <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-danger">Confirm</button>
-                            <button type="button" class="btn btn-danger modal-dismiss"
-                                data-bs-dismiss="modal">Cancel</button>
+                <form action="products/delete" method="post">
+                    <div class="card-body">
+                        <div class="modal-wrapper">
+                            <div class="modal-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="modal-text">
+                                <h4>Danger</h4>
+                                <x-form.hidden wire=0 name="id" :value="$item->id" />
+                                <p>Are you sure that you want to delete this Product?</p>
+                                <x-form.hidden name="id" value="{{$item->id}}" />
+                            </div>
                         </div>
                     </div>
-                </footer>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <button type="submit" class="btn btn-danger">Confirm</button>
+                                <button type="button" class="btn btn-danger modal-dismiss" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </footer>
+                </form>
             </section>
         </div>
         <!-- Modal Delete End -->

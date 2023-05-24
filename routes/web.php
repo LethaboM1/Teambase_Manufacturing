@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
             Route::post('products/add', [ProductsController::class, 'add_product']);
             Route::post('products/save', [ProductsController::class, 'save_product']);
             Route::post('products/adjust', [ProductsController::class, 'adjust_product']);
+            Route::post('products/delete', [ProductsController::class, 'delete_product']);
 
             /* Job Cards */
             Route::get('jobs', [JobsController::class, 'jobs']);
