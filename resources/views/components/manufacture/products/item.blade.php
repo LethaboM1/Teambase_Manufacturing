@@ -150,6 +150,7 @@
                     <h2 class="card-title">Are you sure?</h2>
                 </header>
                 <form action="products/delete" method="post">
+                    @csrf
                     <div class="card-body">
                         <div class="modal-wrapper">
                             <div class="modal-icon">
