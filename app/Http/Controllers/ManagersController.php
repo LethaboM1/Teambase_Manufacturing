@@ -66,7 +66,7 @@ class ManagersController extends Controller
         User::where('user_id', $form_fields['user_id'])->update($form_fields);
 
         return back()->with([
-            'alertMessage' => 'User added!'
+            'alertMessage' => 'User saved!'
         ]);
     }
 
