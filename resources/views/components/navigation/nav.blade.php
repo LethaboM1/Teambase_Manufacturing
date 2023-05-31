@@ -9,6 +9,14 @@
 				@if(auth()->user()->role=='recipe')
 					<x-navigation.manufacture.recipe />
 				@endif
+
+				@if(auth()->user()->role=='clerk')
+					<x-navigation.manufacture.clerk />
+				@endif
+
+				@if(auth()->user()->role=='dispatch')
+					<x-navigation.manufacture.dispatch />
+				@endif
 				
 			@endif
 							
