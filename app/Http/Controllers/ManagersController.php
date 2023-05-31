@@ -63,7 +63,7 @@ class ManagersController extends Controller
         }
 
         $form_fields['depart'] = auth()->user()->depart;
-        User::where('user_id', $form_fields['user_id'])->insert($form_fields);
+        User::where('user_id', $form_fields['user_id'])->update($form_fields);
 
         return back()->with([
             'alertMessage' => 'User added!'
