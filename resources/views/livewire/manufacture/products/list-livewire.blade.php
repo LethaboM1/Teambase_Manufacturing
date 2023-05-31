@@ -1,5 +1,6 @@
  
     <div class="row">
+        @if(auth()->user()->role == 'manager')
         <div class="col-lg-12 mb-3">
             <form method="post" action="products/add" id="addplant">
                 @csrf
@@ -37,6 +38,7 @@
                 </section>
             </form>
         </div>
+        @endif
         
         
        
