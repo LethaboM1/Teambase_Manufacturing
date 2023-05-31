@@ -162,44 +162,46 @@
             </section>
         </div>
         <!-- Modal recipe End -->
-            
+        <!-- Modal Edit recipe End -->            
         @endif
-        <!-- Modal Edit recipe End -->
-        <!-- Modal Delete -->
-        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeader_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i class="fas fa-trash-alt"></i></a>
-        <!-- Modal Delete -->
-        <div id="modalHeader_{{$item->id}}" class="modal-block modal-header-color modal-block-danger mfp-hide">
-            <section class="card">
-                <header class="card-header">
-                    <h2 class="card-title">Are you sure?</h2>
-                </header>
-                <form action="products/delete" method="post">
-                    @csrf
-                    <div class="card-body">
-                        <div class="modal-wrapper">
-                            <div class="modal-icon">
-                                <i class="fas fa-times-circle"></i>
-                            </div>
-                            <div class="modal-text">
-                                <h4>Danger</h4>
-                                <x-form.hidden wire=0 name="id" :value="$item->id" />
-                                <p>Are you sure that you want to delete this Product?</p>
-                                <x-form.hidden name="id" value="{{$item->id}}" />
-                            </div>
-                        </div>
-                    </div>
-                    <footer class="card-footer">
-                        <div class="row">
-                            <div class="col-md-12 text-right">
-                                <button type="submit" class="btn btn-danger">Confirm</button>
-                                <button type="button" class="btn btn-danger modal-dismiss" data-bs-dismiss="modal">Cancel</button>
+
+        @if(auth()->user()->role == 'manager')
+            <!-- Modal Delete -->
+            <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeader_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i class="fas fa-trash-alt"></i></a>
+            <!-- Modal Delete -->
+            <div id="modalHeader_{{$item->id}}" class="modal-block modal-header-color modal-block-danger mfp-hide">
+                <section class="card">
+                    <header class="card-header">
+                        <h2 class="card-title">Are you sure?</h2>
+                    </header>
+                    <form action="products/delete" method="post">
+                        @csrf
+                        <div class="card-body">
+                            <div class="modal-wrapper">
+                                <div class="modal-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="modal-text">
+                                    <h4>Danger</h4>
+                                    <x-form.hidden wire=0 name="id" :value="$item->id" />
+                                    <p>Are you sure that you want to delete this Product?</p>
+                                    <x-form.hidden name="id" value="{{$item->id}}" />
+                                </div>
                             </div>
                         </div>
-                    </footer>
-                </form>
-            </section>
-        </div>
-        <!-- Modal Delete End -->
-        <!-- Modal Delete End -->
+                        <footer class="card-footer">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <button type="submit" class="btn btn-danger">Confirm</button>
+                                    <button type="button" class="btn btn-danger modal-dismiss" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </footer>
+                    </form>
+                </section>
+            </div>
+            <!-- Modal Delete End -->
+            <!-- Modal Delete End -->            
+        @endif
     </td>
 </tr>
