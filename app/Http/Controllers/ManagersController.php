@@ -23,8 +23,8 @@ class ManagersController extends Controller
             'company_number' => 'nullable',
             'contact_number' => 'nullable',
             'email' => 'nullable',
-            'username' => 'required|confirmed|unique:users_tbl,username',
-            'password' => 'required',
+            'username' => 'required|unique:users_tbl,username',
+            'password' => 'required|confirmed',
             'role' => 'required',
             'active' => 'nullable',
         ]);

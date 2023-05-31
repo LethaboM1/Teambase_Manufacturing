@@ -101,6 +101,23 @@
                                 </div>
                             </div>
                         </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Qty</th>
+                                    <th>User</th>
+                                    <th>Comment</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            @if($history->count())
+                                @foreach($history as $line)
+                                    <x-manufacture.products.adjust.line :line="$line" />
+                                @endforeach
+                            @else
+                            @endif
+                        </table>
                     </div>
                     <footer class="card-footer">
                         <div class="row">
