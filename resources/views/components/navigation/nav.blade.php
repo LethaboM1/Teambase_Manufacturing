@@ -5,6 +5,10 @@
 				@if(auth()->user()->role=='manager')
 					<x-navigation.manufacture.manager />
 				@endif
+
+				@if(auth()->user()->role=='recipe')
+					<x-navigation.manufacture.recipe />
+				@endif
 				
 			@endif
 							
