@@ -25,9 +25,10 @@ class DefaultsController
         ],
         'manufacture' => [
             ['value' => "manager", 'name' => 'Manager'],
-            ['value' => "supervisor", 'name' => 'Supervisor'],
+            //['value' => "supervisor", 'name' => 'Supervisor'],
+            ['value' => "recipe", 'name' => 'Recipe'],
             ['value' => "clerk", 'name' => 'Clerk'],
-            ['value' => "waybridge", 'name' => 'Waybridge'],
+            ['value' => "dispatch", 'name' => 'Dispatch'],
         ]
     ];
 }
