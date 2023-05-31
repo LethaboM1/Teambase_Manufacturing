@@ -1,46 +1,45 @@
  
     <div class="row">
-        
+
         @if(auth()->user()->role == 'manager')
-        <div class="col-lg-12 mb-3">
-            <form method="post" action="products/add" id="addplant">
-                @csrf
-                <section class="card">
-                    <header class="card-header">
-                        <h2 class="card-title">Add New Product or Recipe</h2>
-                    </header>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">                               
-                                <x-form.input wire=0 name="code" label="Product Code" :value="old('code')" />
-                            </div>
-                            <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">                                
-                                <x-form.input wire=0 name="description" label="Product Description" :value="old('description')" />
-                            </div>
-                            <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
-                                <x-form.number wire=0 step="0.1" name="opening_balance" label="Opening Balance" :value="old('opening_balance')" />
-                            </div>
-                            <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
-                                <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="old('unit_measure')" :list="$unit_measure_list" />
-                            </div>
-                            <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                {{-- <div class="checkbox-custom checkbox-default">
-                                    <input id="checkbox1" name="has_recipe" type="checkbox" value="1">
-                                    <label for="checkbox1">Requires recipe</label>
-                                </div> --}}
-                                <x-form.checkbox wire=0 name="has_recipe" label="Has a recipe?" :toggle="old('has_recipe')" :value="1" />
+            <div class="col-lg-12 mb-3">
+                <form method="post" action="products/add" id="addplant">
+                    @csrf
+                    <section class="card">
+                        <header class="card-header">
+                            <h2 class="card-title">Add New Product or Recipe</h2>
+                        </header>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">                               
+                                    <x-form.input wire=0 name="code" label="Product Code" :value="old('code')" />
+                                </div>
+                                <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">                                
+                                    <x-form.input wire=0 name="description" label="Product Description" :value="old('description')" />
+                                </div>
+                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                    <x-form.number wire=0 step="0.1" name="opening_balance" label="Opening Balance" :value="old('opening_balance')" />
+                                </div>
+                                <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                    <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="old('unit_measure')" :list="$unit_measure_list" />
+                                </div>
+                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                    {{-- <div class="checkbox-custom checkbox-default">
+                                        <input id="checkbox1" name="has_recipe" type="checkbox" value="1">
+                                        <label for="checkbox1">Requires recipe</label>
+                                    </div> --}}
+                                    <x-form.checkbox wire=0 name="has_recipe" label="Has a recipe?" :toggle="old('has_recipe')" :value="1" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <footer class="card-footer text-end">
-                        <button class="btn btn-primary">Add Products</button>
-                        <button type="reset" class="btn btn-default">Reset</button>
-                    </footer>
-                </section>
-            </form>
-        </div>
-        @endif
-        
+                        <footer class="card-footer text-end">
+                            <button class="btn btn-primary">Add Products</button>
+                            <button type="reset" class="btn btn-default">Reset</button>
+                        </footer>
+                    </section>
+                </form>
+            </div>
+        @endif  
         
        
 

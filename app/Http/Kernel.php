@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'is_workshop' => \App\Http\Middleware\DepartWorkshopMiddleware::class,
         'is_manufacture' => \App\Http\Middleware\DepartManufactureMiddleware::class,
         'is_manager' => \App\Http\Middleware\RoleManagerMiddleware::class,
+        'is_products' => \App\Http\Middleware\ProductsMiddleware::class,
     ];
 }

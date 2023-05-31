@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('is_manufacture')->group(function () {
-        Route::middleware('is_manager')->group(function () {
+        Route::middleware('is_products')->group(function () {
             /* */
             Route::get('products', [ProductsController::class, 'products']);
             Route::post('products/add', [ProductsController::class, 'add_product']);
