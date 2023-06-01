@@ -1,5 +1,5 @@
 
-<tr wire:key="{{$item->id}}">
+<tr wire:key="{{now()}}">
     <td>{{$item->created_at}}</td>
     <td>{{$item->code}}</td>
     <td>{{$item->description}}</td>
