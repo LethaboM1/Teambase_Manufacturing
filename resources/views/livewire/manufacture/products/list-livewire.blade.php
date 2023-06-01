@@ -79,9 +79,9 @@
                                 </tr>
                             @endif
                         </tbody>
-                    </table>
-                    {{$products_list->links()}}
-                </div>
+                    </table>                   
+                </div> 
+                {{$products_list->links()}}
             </section>
         </div>
     </div>
