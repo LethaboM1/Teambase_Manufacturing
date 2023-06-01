@@ -12,7 +12,7 @@ class ListLivewire extends Component
     use WithPagination;
 
     public $search, $unit_measure_list;
-    protected $paginateTheme = 'boostrap', $products_list;
+    protected $paginateTheme = 'bootstrap', $products_list;
 
     function mount()
     {
