@@ -26,7 +26,7 @@ class ListLivewire extends Component
             $term = "%{$term}%";
             $query->where('code', 'like', $term)
                 ->orWhere('description', 'like', $term);
-        })->orderBy('code')->paginate(15);
+        })->orderBy('code')->paginate(15, ['*'], 'pg');
 
         return view('livewire.manufacture.products.list-livewire', [
             'products_list' => $this->products_list
