@@ -148,7 +148,7 @@
                 <div class="card-body">
                     <div class="modal-wrapper">
                         <div class="modal-text">
-                    <livewire:manufacture.products.recipe-add-livewire :key="now()" :item="$item">
+                    <livewire:manufacture.products.recipe-add-livewire key="{{now()}}" :item="$item">
                     </div>
                 </div>
                 <footer class="card-footer">
