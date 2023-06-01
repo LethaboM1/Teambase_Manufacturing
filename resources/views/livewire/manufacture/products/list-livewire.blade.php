@@ -66,7 +66,7 @@
                         </thead>
                             @if(count($products_list)>0)
                                 @foreach($products_list as $product)
-                                    <x-manufacture.products.item wire:key="$product->id" :item="$product" />
+                                    <x-manufacture.products.item wire:key="{{$product->id}}" :item="$product" />
                                 @endforeach
                             @else
                                 <tr>
