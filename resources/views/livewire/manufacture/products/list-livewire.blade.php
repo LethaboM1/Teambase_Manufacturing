@@ -80,6 +80,7 @@
                             @endif
                         </tbody>
                     </table>
+                    {{$products_list->links()}}
                 </div>
             </section>
         </div>
