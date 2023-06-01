@@ -12,7 +12,7 @@ class ListLivewire extends Component
     use WithPagination;
 
     public $search, $unit_measure_list;
-    protected $paginationTheme = 'bootstrap', $products_list;
+    protected $paginationTheme = 'bootstrap';
 
     function mount()
     {
@@ -21,7 +21,7 @@ class ListLivewire extends Component
 
     public function render()
     {
-        $this->products_list = ManufactureProducts::where('active', 1)->when($this->search, function ($query, $term) {
+        $products_list = ManufactureProducts::where('active', 1)->when($this->search, function ($query, $term) {
 
             $term = "%{$term}%";
             $query->where('code', 'like', $term)
@@ -29,7 +29,7 @@ class ListLivewire extends Component
         })->orderBy('code')->paginate(15, ['*'], 'pg');
 
         return view('livewire.manufacture.products.list-livewire', [
-            'products_list' => $this->products_list
+            'products_list' => $products_list
         ]);
     }
 }
