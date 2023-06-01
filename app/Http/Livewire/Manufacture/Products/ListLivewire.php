@@ -22,7 +22,6 @@ class ListLivewire extends Component
     public function render()
     {
         $products_list = ManufactureProducts::where('active', 1)->when($this->search, function ($query, $term) {
-
             $term = "%{$term}%";
             $query->where('code', 'like', $term)
                 ->orWhere('description', 'like', $term);
