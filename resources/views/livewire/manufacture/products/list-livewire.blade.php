@@ -64,7 +64,6 @@
                                 <th width="15%">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
                             @if(count($products_list)>0)
                                 @foreach($products_list as $product)
                                     <x-manufacture.products.item :key="$product->id" :item="$product" />
@@ -74,7 +73,6 @@
                                     <td colspan="5">No products..</td>
                                 </tr>
                             @endif
-                        </tbody>
                     </table>                   
                 </div> 
                 {{$products_list->links()}}
