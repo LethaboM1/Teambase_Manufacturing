@@ -1,3 +1,3 @@
 <x-layout pageTitle="Products">
-    <livewire:manufacture.products.list-livewire />
+    <livewire:manufacture.products.list-livewire :key="time()"/>
 </x-layout>

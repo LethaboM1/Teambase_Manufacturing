@@ -1,6 +1,5 @@
  
     <div class="row">
-
         @if(auth()->user()->role == 'manager')
             <div class="col-lg-12 mb-3">
                 <form method="post" action="products/add" id="addplant">
@@ -41,9 +40,6 @@
             </div>
         @endif  
         
-       
-
-        
         <div class="col-lg-12 mb-3">
             <section class="card">
                 <header class="card-header">
@@ -71,7 +67,7 @@
                         <tbody>
                             @if(count($products_list)>0)
                                 @foreach($products_list as $product)
-                                    <x-manufacture.products.item :item="$product" />
+                                    <x-manufacture.products.item :key="$product->id" :item="$product" />
                                 @endforeach
                             @else
                                 <tr>
