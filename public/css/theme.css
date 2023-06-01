@@ -21632,3 +21632,7 @@ html.dark .mailbox-compose .bootstrap-tagsinput {
 html.dark .mailbox-compose .bootstrap-tagsinput > input {
 	color: #FFF;
 }
+
+button .page-link {
+	background-color: #121212;
+}
