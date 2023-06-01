@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 class DefaultsController
 {
     const unit_measure = [
+        ['value' => 'each', 'name' => 'Each'],
         ['value' => 'kg', 'name' => 'Kg'],
         ['value' => 'ton', 'name' => 'Tons'],
         ['value' => 'bag', 'name' => 'Bag'],
         ['value' => 'liter', 'name' => 'Liters'],
+        ['value' => '5l', 'name' => '5L'],
+        ['value' => '20l', 'name' => '20L'],
+        ['value' => '200l', 'name' => '200L Drum'],
+
     ];
 
     const roles = [
