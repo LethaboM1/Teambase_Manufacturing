@@ -6,14 +6,15 @@ use Illuminate\View\Component;
 
 class Item extends Component
 {
+    public $jobcard;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($jobcard)
     {
-        //
+        $this->jobcard = $jobcard;
     }
 
     /**

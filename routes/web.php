@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
             /* Job Cards */
             Route::get('jobs', [JobsController::class, 'jobs']);
             Route::get('jobs/create', [JobsController::class, 'create_job']);
+            Route::post('jobs/create', [JobsController::class, 'add_job']);
+
+            Route::get('job/{job}', [JobsController::class, 'view_job']);
+            Route::post('job/{job}', [JobsController::class, 'save_job']);
 
             /* Production */
             Route::get('productions', [ProductionController::class, 'productions']);

@@ -13,15 +13,4 @@ class ManufactureJobcards extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
-
-    // function transactions()
-    // {
-    //     return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');
-    // }
-
-
-    // function getQtyAttribute()
-    // {
-    //     return $this->transactions->sum('qty');
-    // }
 }

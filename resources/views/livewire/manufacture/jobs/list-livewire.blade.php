@@ -43,36 +43,88 @@
                     <h2 class="card-title">Jobcards</h2>
                 </header>
                 <div class="card-body">
-                    <div class="header-right">
-                        <form action="#" class="search nav-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Jobcard...">
-                                <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
-                            </div>
-                        </form>
-                    </div>
-                    <table width="100%" class="table table-responsive-md mb-0">
-                        <thead>
-                            <tr>
-                                <th width="10%">Date</th>
-                                <th width="15%">Job Number</th>
-                                <th width="15%">Contact Number</th>
-                                <th width="45%">Product Discription</th>
-                                <th width="15%">Action</th>
-                            </tr>
-                        </thead>
-                            @if(count($jobcards_list)>0)
-                                @foreach($jobcards_list as $jobcard)
-                                    <x-manufacture.jobs.item :item="$jobcard" />
-                                @endforeach
-                            @else
+                   
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" id="JobTabs" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link {{($tab=='open'?'active':'')}}" id="open-tab" data-bs-toggle="tab" data-bs-target="#open" type="button" role="tab" aria-controls="open" aria-selected="{{($tab=='open'?'true':'false')}}">Open Jobcards</button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
+                      </li>
+                    </ul>
+                    
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                      <div class="tab-pane {{($tab=='open'?'active':'')}}" id="open" role="tabpanel" aria-labelledby="open-tab">
+                        <div class="header-right">
+                            <h4>Open</h4>
+                            <form action="#" class="search nav-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Jobcard...">
+                                    <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <table width="100%" class="table table-hover table-responsive-md mb-0">
+                            <thead>
                                 <tr>
-                                    <td colspan="5">No jobcards..</td>
+                                    <th width="10%">Date</th>
+                                    <th width="15%">Job Number</th>
+                                    <th width="15%">Contact Person</th>
+                                    <th width="45%">Contact Number</th>
+                                    <th width="15%">Action</th>
                                 </tr>
-                            @endif
-                    </table>                   
+                            </thead>
+                                @if($jobcards_list->count()>0)
+                                    @foreach($jobcards_list as $jobcard)
+                                        <x-manufacture.jobs.item :jobcard="$jobcard" />
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5">No jobcards..</td>
+                                    </tr>
+                                @endif
+                        </table>          
+                        {{$jobcards_list->links()}}         
+
+                      </div>
+                      <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
+                        <div class="header-right">
+                            <h4>Archive</h4>
+                            <form action="#" class="search nav-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="search" wire:model="search_arc" placeholder="Search Jobcard...">
+                                    <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <table width="100%" class="table table-hover table-responsive-md mb-0">
+                            <thead>
+                                <tr>
+                                    <th width="10%">Date</th>
+                                    <th width="15%">Job Number</th>
+                                    <th width="15%">Contact Person</th>
+                                    <th width="45%">Contact Number</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                                @if($archive_list->count()>0)
+                                    @foreach($archive_list as $jobcard)
+                                        <x-manufacture.jobs.item :jobcard="$jobcard" />
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5">No jobcards..</td>
+                                    </tr>
+                                @endif
+                        </table>          
+                        {{$jobcards_list->links()}}         
+                        
+                      </div>
+                    </div>
                 </div> 
-                {{$jobcards_list->links()}}
             </section>
         </div>
     </div>
