@@ -18,8 +18,6 @@ alter table manufacture_products add column updated_at datetime default CURRENT_
 alter table manufacture_products add column created_at datetime default CURRENT_TIMESTAMP();
 
 
-/* Done */
-
 create table manufacture_product_transactions (
     id bigint primary key auto_increment,
     product_id bigint,
@@ -42,3 +40,85 @@ create table manufacture_product_recipe (
 ); 
 
 alter table manufacture_products add column active boolean default 1 after has_recipe;
+
+create table manufacture_jobcards (
+    id bigint primary key auto_increment,
+    jobcard_number varchar(100),
+    contractor varchar(100),
+    site_number varchar(100),
+    contact_person varchar(100),
+    delivery boolean default 0,
+    delivery_address text,
+    notes text,
+    status varchar(20),
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+    -- Open / Onhold / Busy / Dispatch / Delivery / Completed / Canceled
+);
+
+create table manufacture_jobcard_products (
+    id bigint primary key auto_increment,
+    job_id bigint,
+    batch_id bigint,
+    product_id bigint,
+    qty decimal(10,2),
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+);
+
+create table manufacture_batch (
+    id bigint primary key auto_increment,
+    batch_number varchar(100),
+    product_id bigint,
+    qty decimal(10,2),
+    notes text,
+    status varchar(20),
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+);
+
+create table manufacture_batch_recipe (
+    id bigint,
+    batch_id bigint,
+    product_id bigint,
+    qty decimal(10,2),
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+);
+
+create table manufacture_batch_labs (
+    id bigint primary key auto_increment,
+    batch_id bigint,
+    date datetime,
+    description text,
+    quantity decimal(10,2),
+    results text,
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+);
+
+
+
+
+alter table manufacture_jobcards add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_jobcards add column created_at datetime default CURRENT_TIMESTAMP();
+alter table manufacture_jobcards add column delivery boolean default 0;
+
+alter table manufacture_jobcard_products add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_jobcard_products add column created_at datetime default CURRENT_TIMESTAMP();
+
+alter table manufacture_batch add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_batch add column created_at datetime default CURRENT_TIMESTAMP();
+
+alter table manufacture_batch_recipe add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_batch_recipe add column created_at datetime default CURRENT_TIMESTAMP();
+
+alter table manufacture_batch_labs add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_batch_labs add column created_at datetime default CURRENT_TIMESTAMP();
+
+alter table manufacture_product_transactions change column qty qty decimal(10,3);
+alter table manufacture_product_recipe change column qty qty decimal(10,3);
+
+/* Done */
+
+

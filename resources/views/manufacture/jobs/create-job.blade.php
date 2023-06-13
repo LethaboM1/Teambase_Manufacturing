@@ -1,3 +1,3 @@
 <x-layout pageTitle="Job">
-    <h2>Create Job Card</h2>
+    <livewire:manufacture.jobs.create-job-livewire />
 </x-layout>

@@ -2,7 +2,7 @@
     <td>{{$product['code']}}</td>
     <td>{{$product['description']}}</td>
     <td>
-        <x-form.number name="qty" step="0.1" :value="$item['qty']" />
+        <x-form.number name="qty" step="0.001" :value="$item['qty']" />
     </td>
     <td class="actions">       
         <!-- Modal Delete -->

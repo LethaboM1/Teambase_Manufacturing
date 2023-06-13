@@ -29,7 +29,7 @@
                                 @enderror
                             </div>
                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">                                
-                                <x-form.number name="qty" label="Quantity" step="0.1"  />
+                                <x-form.number name="qty" label="Quantity" step="0.001"  />
                                 @error('qty')
                                     <small class="text-danger">{{$message}}</small>
                                 @enderror
