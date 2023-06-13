@@ -97,6 +97,7 @@ create table manufacture_batch_labs (
     created_at datetime default CURRENT_TIMESTAMP()
 );
 
+alter table manufacture_jobcards add column contact_number varchar(100) after contact_person;
 
 
 
@@ -122,3 +123,4 @@ alter table manufacture_product_recipe change column qty qty decimal(10,3);
 /* Done */
 
 
+alter table manufacture_jobcard_products change column qty qty decimal(10,3);
