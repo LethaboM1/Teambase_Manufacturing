@@ -138,9 +138,9 @@
         
         @if($item->has_recipe)
         <!-- Modal Edit Recipe -->
-        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladdrecipe" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Add Recipe"><i class="fas fa-list-alt"></i></a>
+        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladdrecipe_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Add Recipe"><i class="fas fa-list-alt"></i></a>
          <!-- Modal Recipe -->
-         <div id="modaladdrecipe" class="modal-block modal-block-lg mfp-hide">
+         <div id="modaladdrecipe_{{$item->id}}" class="modal-block modal-block-lg mfp-hide">
             <section class="card">
                 <header class="card-header">
                     <h2 class="card-title">Add Recipe</h2>
