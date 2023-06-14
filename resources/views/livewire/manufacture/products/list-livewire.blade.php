@@ -75,7 +75,7 @@
                             @endif
                     </table>                   
                 </div> 
-                {{$products_list->links()}}
+                {{ $products_list->links() }}
             </section>
         </div>
     </div>
