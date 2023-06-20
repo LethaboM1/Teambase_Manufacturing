@@ -47,10 +47,10 @@
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="JobTabs" role="tablist">
-                      <li class="nav-item" role="presentation">
+                      <li class="nav-item {{($tab=='open'?'active':'')}}" role="presentation">
                         <button class="nav-link {{($tab=='open'?'active':'')}}" id="open-tab" data-bs-toggle="tab" data-bs-target="#open" type="button" role="tab" aria-controls="open" aria-selected="{{($tab=='open'?'true':'false')}}">Open Jobcards</button>
                       </li>
-                      <li class="nav-item" role="presentation">
+                      <li class="nav-item {{($tab=='archive'?'active':'')}}" role="presentation">
                         <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
                       </li>
                     </ul>
