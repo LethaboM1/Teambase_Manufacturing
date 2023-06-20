@@ -6,20 +6,11 @@ use App\Models\ManufactureProductTransactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ManufactureJobcards extends Model
+class ManufactureBatches extends Model
 {
     use HasFactory;
-
-    protected $table = 'manufacture_jobcards', $guard = [], $dates = ['updated_at', 'created_at'];
-
+    protected $table = 'manufacture_batch', $guard = [], $dates = ['updated_at', 'created_at'];
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
-
-
-
-    function products()
-    {
-        return $this->hasMany(ManufactureJobcardProducts::class, 'job_id', 'id');
-    }
 }

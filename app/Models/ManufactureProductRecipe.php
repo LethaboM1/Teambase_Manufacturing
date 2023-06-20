@@ -13,4 +13,14 @@ class ManufactureProductRecipe extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
+
+    function ManProduct()
+    {
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+    }
+
+    function product()
+    {
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_add_id')->first();
+    }
 }

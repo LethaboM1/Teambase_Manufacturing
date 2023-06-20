@@ -6,6 +6,7 @@ use App\Http\Controllers\ManagersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Manufacture\JobsController;
 use App\Http\Controllers\Manufacture\LabsController;
+use App\Http\Controllers\Manufacture\BatchesController;
 use App\Http\Controllers\Manufacture\DispatchController;
 use App\Http\Controllers\Manufacture\ProductsController;
 use App\Http\Controllers\Manufacture\ProductionController;
@@ -60,6 +61,15 @@ Route::middleware('auth')->group(function () {
 
             Route::get('job/{job}', [JobsController::class, 'view_job']);
             Route::post('job/{job}', [JobsController::class, 'save_job']);
+
+            /* Batches */
+            Route::get('batches', [BatchesController::class, 'batches']);
+            Route::get('batches/create', [BatchesController::class, 'create_batch']);
+            Route::post('batches/create', [BatchesController::class, 'add_batch']);
+
+            Route::get('batch/{batch}', [BatchesController::class, 'view_batch']);
+            Route::post('batch/{batch}', [BatchesController::class, 'save_batch']);
+
 
             /* Production */
             Route::get('productions', [ProductionController::class, 'productions']);

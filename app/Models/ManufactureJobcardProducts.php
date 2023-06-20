@@ -14,6 +14,11 @@ class ManufactureJobcardProducts extends Model
         'created_at'  => 'datetime:Y-m-d',
     ];
 
+    function jobcard()
+    {
+        return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id');
+    }
+
     // function transactions()
     // {
     //     return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');

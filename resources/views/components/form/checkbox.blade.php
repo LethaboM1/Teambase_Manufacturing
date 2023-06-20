@@ -13,8 +13,8 @@
             @if($wire) 
                 wire:model="{{$name}}"
             @endif
-            >    
-    @if(strlen($label)>0)
+            >
+    
         <label for="{{$name}}">{{$label}}</label>
-    @endif    
+    
 </div>
