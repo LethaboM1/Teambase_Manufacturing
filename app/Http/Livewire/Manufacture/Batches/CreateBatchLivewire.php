@@ -70,7 +70,7 @@ class CreateBatchLivewire extends Component
         array_unshift($products_list, ['name' => '...', 'value' => 0]);
 
         if ($this->product_id > 0) {
-            $jobcard_list = ManufactureJobcardProducts::where('batch_id', null)->orWhere('batch_id', 0)->where('product_id', $this->product_id)->get();
+            $jobcard_list = ManufactureJobcardProducts::where('batch_id', null)->where('product_id', $this->product_id)->get();
             $this->recipe = ManufactureProductRecipe::where('product_id', $this->product_id)->get();
         } else {
             $jobcard_list = [];
