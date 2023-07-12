@@ -36,31 +36,33 @@ class BatchesController extends Controller
             'product_id' => 'required|exists:manufacture_products,id',
             'qty' => 'required|gt:0'
         ]);
+
         $form_fields['status'] = 'Open';
         $form_fields['batch_number'] = Functions::get_doc_number('batch');
         if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Coul dnot generate batch number.');
 
         $recipe = ManufactureProductRecipe::where('product_id', $form_fields['product_id'])->get();
+
         if ($recipe->count() == 0)  return back()->with('alertError', 'No recipe for this product. Create your recipe first.');
 
-        foreach ($recipe as $item) {
-            $qty = ($item->qty * $form_fields['qty']);
-            $product = ManufactureProducts::where('id', $item->product_add_id)->first();
-            if ($product->qty < $qty) return back()->with('alertError', "You dont have enough \"{$product->code} {$product->description}\" to create this batch.");
-        }
+        // foreach ($recipe as $item) {
+        //     $qty = ($item->qty * $form_fields['qty']);
+        //     $product = ManufactureProducts::where('id', $item->product_add_id)->first();
+        //     if ($product->qty < $qty) return back()->with('alertError', "You dont have enough \"{$product->code} {$product->description}\" to create this batch.");
+        // }
 
         $batch_id = ManufactureBatches::insertGetId($form_fields);
 
-        foreach ($recipe as $item) {
-            $qty = ($item->qty * $form_fields['qty']);
+        // foreach ($recipe as $item) {
+        //     $qty = ($item->qty * $form_fields['qty']);
 
-            ManufactureProductTransactions::insert([
-                'product_id' => $item->product_add_id,
-                'qty' => Functions::negate($qty),
-                'type' => 'BAT',
-                'type_id' => $batch_id
-            ]);
-        }
+        //     ManufactureProductTransactions::insert([
+        //         'product_id' => $item->product_add_id,
+        //         'qty' => Functions::negate($qty),
+        //         'type' => 'BAT',
+        //         'type_id' => $batch_id
+        //     ]);
+        // }
 
         return redirect("batch/{$batch_id}");
     }
