@@ -13,7 +13,8 @@ class Functions extends Controller
         switch ($type) {
             case 'batch':
                 $settings = ManufactureSettings::first();
-                ManufactureSettings::get()->update(['batch_number' => DB::raw("@doc_number := batch_number+1")]);
+
+                DB::table('manufacture_settings')->update(['batch_number' => DB::raw("@doc_number := batch_number+1")]);
                 $number = DB::select(DB::raw("select @doc_number as number"));
                 $number = $number[0]->number;
 
