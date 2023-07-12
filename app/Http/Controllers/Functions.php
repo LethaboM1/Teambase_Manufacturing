@@ -8,6 +8,18 @@ use App\Models\ManufactureSettings;
 
 class Functions extends Controller
 {
+
+    static function negate($number)
+    {
+        if ($number > 0) {
+            return -abs($number);
+        } else if ($number < 0) {
+            return abs($number);
+        } else {
+            return 0;
+        }
+    }
+
     static function get_doc_number($type)
     {
         switch ($type) {
