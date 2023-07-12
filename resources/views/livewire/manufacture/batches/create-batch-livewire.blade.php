@@ -1,7 +1,8 @@
 
 <div class="row">
 	<div class="col-lg-12 mb-3">
-		<form wire:submit.prevent="add_batch" method="post" >
+		<form method="post" >
+			@csrf
 			<section class="card">
 				<header class="card-header">
 					<h2 class="card-title">Create New Batch</h2>
@@ -20,7 +21,7 @@
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
 							<label class="col-form-label" for="formGroupExampleInput">Quantity</label>
-							<input type="text" name="plantNumber" placeholder=""
+							<input type="text" name="qty" placeholder=""
 								class="form-control">
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">

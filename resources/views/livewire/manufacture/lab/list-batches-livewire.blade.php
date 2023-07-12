@@ -3,7 +3,7 @@
         <div class="col-lg-12 mb-3">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">Batches</h2>
+                    <h2 class="card-title">Lab Batches</h2>
                 </header>
                 <div class="card-body">
                    
@@ -43,7 +43,7 @@
                             </thead>
                                 @if($batches_list->count()>0)
                                     @foreach($batches_list as $batch)
-                                        <x-manufacture.batches.item :batch="$batch" />
+                                        <x-manufacture.lab.batches-item :batch="$batch" />
                                     @endforeach
                                 @else
                                     <tr>
@@ -76,7 +76,7 @@
                             </thead>
                                 @if($archive_list->count()>0)
                                     @foreach($archive_list as $batch)
-                                        <x-manufacture.batches.item :batch="$batch" />
+                                    <x-manufacture.lab.batches-item :batch="$batch" />
                                     @endforeach
                                 @else
                                     <tr>

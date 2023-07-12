@@ -37,11 +37,6 @@ class CreateBatchLivewire extends Component
         $this->qty_selected = 0;
     }
 
-    function add_batch()
-    {
-        dd('save!');
-    }
-
     function select_job($value)
     {
         if ($value['checked']) {

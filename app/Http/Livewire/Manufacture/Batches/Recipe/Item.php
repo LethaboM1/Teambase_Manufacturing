@@ -8,12 +8,11 @@ class Item extends Component
 {
     public $product, $qty, $in_stock, $flag;
 
-    function mount($product, $qtyselected)
+    function mount($product, $qtyselected = 0)
     {
         $this->product = $product;
         $this->qty = ($qtyselected > 0 ? $product->qty * $qtyselected : 0);
         $this->in_stock = $product->product()->qty;
-
         $this->flag = ($this->qty > $this->in_stock) ? ($this->qty - $this->in_stock) : 0;
     }
 

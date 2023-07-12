@@ -1,100 +1,75 @@
+
 <div class="row">
-    <div class="col-lg-12 mb-3">
+	<div class="col-lg-12 mb-3">
+		<form method="post" >
+			@csrf
 			<section class="card">
 				<header class="card-header">
-					<h2 class="card-title">Job Card : {{$jobcard['jobcard_number']}}</h2>
+					<h2 class="card-title">Edit Batch</h2>
 				</header>
-				<div class="card-body">					
-				<form wire:submit.prevent="save_jobcard" method="post">			
-					@csrf
-					<x-form.hidden name="id" :value="$jobcard['id']" />
-					<div class="row">
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							{{-- <label class="col-form-label" for="formGroupExampleInput">Job Number</label>
-							<input type="text" name="jobnumber" placeholder="DB01" class="form-control"> --}}
-							<x-form.input name="jobcard.jobcard_number" label="Job Number" />
-						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							<x-form.input name="jobcard.contractor" label="Contractor" />
-						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							<x-form.input name="jobcard.site_number" label="Site Number" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							<x-form.input name="jobcard.contact_person" label="Contact Person" />
-						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">							
-							<x-form.textarea name="jobcard.delivery_address" label="Delivery Address" />
-						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							<x-form.textarea name="jobcard.notes" label="Notes" />
-						</div>
-					</div>
-					<br>
-					<div class="row">
-						<div class="form-group row pb-4">
-							<div class="col-lg-6">
-								<div class="radio">
-									<label><input type="radio" wire:model="jobcard.delivery" name="delivery" value=1 checked="">Delivery</label>
-									<label><input type="radio" wire:model="jobcard.delivery" name="delivery" value=0>Collection</label>
-								</div>
-							</div>
-						</div>
-						<div class=" style="width:80px"row pb-4">
-							<div class="col-lg-6">
-								@if($edit)									
-									<button class="btn btn-primary">Save Job Card</button>
-								@else																		
-									<button class="btn btn-secondary" disabled>Save Job Card</button>
-								@endif
-								
-							</div>
-						</div>						
-					</div>						
-					</form>			
-					<hr>
+				<div class="card-body">
+					<h3>Batch No. {{$batch->batch_number}}</h3>	
 					<div class="row">
 						<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
 							<h3>Product</h3>
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-							<x-form.select name="product_id" :list="$product_list" label="Product"/>
+							<label class="col-form-label" for="formGroupExampleInput">Description</label>
+							<h4>{{$batch_product->name}}</h4>
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-							<x-form.number name="qty" label="Qty {{strtoupper($unit_measure)}}" step="0.001" />
+							<label class="col-form-label" for="formGroupExampleInput">Quantity</label>
+							<h4>{{$batch->qty}}</h4>
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-							<br>
-							<button wire:click="add_product" class="btn  btn-primary"><i class="fa fa-plus"></i></button>
+							<label class="col-form-label" for="formGroupExampleInput">Unit</label>
+							<h4>{{strtoupper($batch_product->unit_measure)}}</h4>
 						</div>
 					</div>
+					<div class="row">						
+						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">						
+							<x-form.select wire:model="status" name="status" label="Status" :list="$status_list" />
+						</div>
+						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+							@if($saved)
+								<h4 class="text-success"><i class="fa fa-check"></i>&nbsp;Saved!</h4>
+							@endif
+						</div>
+						<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">						
+							<x-form.textarea wire:model.debounce="notes" name="notes" label="Notes" />
+						</div>
+					</div>
+					<hr>
 					<div class="row">
-						@if(Session::get('error'))
-							<small class="text-danger">{{Session::get('error')}}</small>
-						@endif
-					</div>
-					<table class="table table-hover table-responsive">
-						<thead>
-							<tr>
-								<th>Product</th>
-								<th>Qty</th>
-								<th style="width:80px">Actions</th>
-							</tr>
-						</thead>
-						@if($products->count()>0)
-							@foreach($products as $product)
-								<livewire:manufacture.jobs.item key="{{$product['id']}}" :item="$product" />
-							@endforeach
-						@else
-							<tr>
-								<td colspan="3">Nothing to list...</td>
-							</tr>
-						@endif
-					</table>
-					{{$products->links()}}
+						<h3>Recipe</h4>
+						<table width="100%" class="table table-responsive-md mb-0">
+							<thead>
+								<tr>
+									<th style="width:150px">Status</th>
+									<th style="width:100px">Quantity</th>
+									<th style="width:100px">In Stock</th>
+									<th>Code</th>
+									<th>Product.</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if(!empty($recipe))
+									@foreach($recipe as $product)
+										<livewire:manufacture.batches.recipe.item key="{{$product['id']}}" :product="$product" :qtyselected="$batch->qty" >
+									@endforeach
+								@else
+										<tr>
+											<td colspan="3">Nothing selected</td>
+										</tr>
+								@endif
+							</tbody>
+						</table>
+					</div>					
 				</div>
+				<footer class="card-footer text-end">
+					&nbsp;
+				</footer>
 			</section>
+		</form>
 	</div>
 </div>

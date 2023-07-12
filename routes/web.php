@@ -76,7 +76,10 @@ Route::middleware('auth')->group(function () {
             Route::get('productions/create', [ProductionController::class, 'create_batch']);
 
             /* Labs */
-            Route::get('labs/create', [LabsController::class, 'create_lab']);
+            Route::get('labs/batches', [LabsController::class, 'list_batches']);
+            // Route::get('labs/create', [LabsController::class, 'create_lab']);
+            Route::get('labs/batch/{batch}', [LabsController::class, 'view_batch']);
+            Route::post('labs/add', [LabsController::class, 'add_lab']);
 
             /* Dispatch */
             Route::get('dispatch/ready', [DispatchController::class, 'ready']);

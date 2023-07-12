@@ -49,7 +49,7 @@
         <span>Labs</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="{{url('labs/create')}}">Create Lab for Batch</a></li>
+        <li><a class="nav-link" href="{{url('labs/batches')}}">Batches</a></li>
         </ul>
       </li>
       <li class="nav-parent">

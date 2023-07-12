@@ -120,7 +120,17 @@ alter table manufacture_batch_labs add column created_at datetime default CURREN
 alter table manufacture_product_transactions change column qty qty decimal(10,3);
 alter table manufacture_product_recipe change column qty qty decimal(10,3);
 
-/* Done */
 
 
 alter table manufacture_jobcard_products change column qty qty decimal(10,3);
+
+create table manufacture_settings (
+    batch_number bigint default 0 not null,
+    batch_prefix varchar(25) default '#',
+    batch_digits int default 5
+);
+
+alter table manufacture_settings add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_settings add column created_at datetime default CURRENT_TIMESTAMP();
+
+/* Done */

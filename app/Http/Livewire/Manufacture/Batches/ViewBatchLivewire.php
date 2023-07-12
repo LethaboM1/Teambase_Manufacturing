@@ -2,86 +2,46 @@
 
 namespace App\Http\Livewire\Manufacture\Batches;
 
-use App\Models\ManufactureJobcardProducts;
+use App\Http\Controllers\SelectLists;
 use Livewire\Component;
-use Illuminate\Support\Facades\DB;
-use App\Models\ManufactureJobcards;
-use App\Models\ManufactureProducts;
 use Livewire\WithPagination;
+use App\Models\ManufactureBatches;
+use Illuminate\Support\Facades\DB;
+use App\Models\ManufactureProducts;
+use App\Models\ManufactureProductRecipe;
+use App\Models\ManufactureJobcardProducts;
 
 class ViewBatchLivewire extends Component
 {
     use WithPagination;
 
-    public $jobcard, $edit = 0, $unit_measure, $product_list, $product_id, $qty;
+    public $batch, $batch_product, $recipe, $status_list, $status, $notes, $saved = 0;
 
-    protected $listeners = ['remove_product' => 'rem_product'];
-
-    function mount($job)
+    function mount($batch)
     {
-        $this->jobcard = ManufactureJobcards::where('id', $job)->first()->toArray();
-        unset($this->jobcard['updated_at']);
-        unset($this->jobcard['created_at']);
+        $this->batch = ManufactureBatches::where('id', $batch)->first();
 
-        $this->product_list = ManufactureProducts::select(DB::raw("concat(code,' - ',description) as name, id as value"))->where('active', 1)->get()->toArray();
-        array_unshift($this->product_list, ['name' => '...', 'value' => 0]);
-
-        $this->unit_measure = '';
-        $this->qty = 1;
+        $this->notes = $this->batch->notes;
+        $this->status = $this->batch->status;
+        $this->status_list = SelectLists::batch_status_list;
     }
 
-    function rem_product($value)
+    function updatedNotes()
     {
-        ManufactureJobcardProducts::where('id', $value)->delete();
+        ManufactureBatches::where('id', $this->batch->id)->update(['notes' => $this->notes]);
     }
 
-    function updatedJobcard()
+    function updatedStatus()
     {
-        $this->edit = 1;
-    }
-
-    function updatedProductId()
-    {
-        $product = ManufactureProducts::where('id', $this->product_id)->first();
-        $this->unit_measure = $product->unit_measure;
-    }
-
-    function save_jobcard()
-    {
-        ManufactureJobcards::where('id', $this->jobcard['id'])->update($this->jobcard);
-        $this->edit = 0;
-    }
-
-    function add_product()
-    {
-        if ($this->product_id <= 0) return back()->with('error', 'Choose a product');
-        if ($this->qty <= 0)  return back()->with('error', 'Choose a qty');
-
-        $chk = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->where('product_id', $this->product_id)->first();
-
-        if (isset($chk) && $chk->count() > 0) {
-            $qty = $this->qty +  $chk->qty;
-            ManufactureJobcardProducts::where('id', $chk->id)->update([
-                'qty' => $qty
-            ]);
-        } else {
-            ManufactureJobcardProducts::insert([
-                'job_id' => $this->jobcard['id'],
-                'product_id' => $this->product_id,
-                'qty' => $this->qty
-            ]);
-        }
-
-        $this->product_id = 0;
-        $this->qty = 1;
+        ManufactureBatches::where('id', $this->batch->id)->update(['status' => $this->status]);
     }
 
     public function render()
     {
-        $products = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->paginate(15);
-
-        return view('livewire.manufacture.batches.view-job-livewire', [
-            'products' => $products
+        $this->recipe = ManufactureProductRecipe::where('product_id', $this->batch->product_id)->get();
+        $this->batch_product = ManufactureProducts::select(DB::raw("concat(code,' - ',description) as name, unit_measure "))->where('id', $this->batch->product_id)->first();
+        return view('livewire.manufacture.batches.view-batch-livewire', [
+            'recipe' => $this->recipe
         ]);
     }
 }
