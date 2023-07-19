@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
                                 <label class="col-form-label" for="formGroupExampleInput">Sample No:</label>
-                                <input type="text" placeholder="" class="form-control">
+                                <input type="text" placeholder="" class="form-control" value="{{sample}}" disabled>
                             </div>
                         </div>
                         <div class="row">
