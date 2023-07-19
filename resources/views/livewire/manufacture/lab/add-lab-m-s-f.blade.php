@@ -18,7 +18,7 @@
                         <div class='modal-text'>
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
-                                    <h3>Sample {{$sammple}}</h3>
+                                    <h3>Sample {{$sample}}</h3>
                                 </div>
                                 <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">Contact:</label>

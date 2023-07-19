@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureProducts;
 use App\Models\ManufactureProductRecipe;
 use App\Http\Controllers\DefaultsController;
+use App\Http\Controllers\SelectLists;
 
 class RecipeAddLivewire extends Component
 {
-    public  $item, $product_list, $unit_measure_list, $unit_measure, $delete;
+    public  $item, $product_list, $unit_measure_list, $lab_test_list, $unit_measure, $delete, $lab_test;
 
     public  $product,
         $qty;
@@ -25,6 +26,7 @@ class RecipeAddLivewire extends Component
     {
         $this->item = $item;
         $this->unit_measure_list = DefaultsController::unit_measure;
+        $this->lab_test = $this->item['lab_test'];
         $this->delete = 0;
     }
 
@@ -32,6 +34,11 @@ class RecipeAddLivewire extends Component
     {
         ManufactureProductRecipe::where('id', $value)->delete();
         $this->delete = null;
+    }
+
+    function updatedLabTest($value)
+    {
+        ManufactureProducts::where('id', $this->item['id'])->update(['lab_test' => $value]);
     }
 
     function updatedProduct($value)
@@ -70,8 +77,8 @@ class RecipeAddLivewire extends Component
 
 
         $recipe_items = ManufactureProductRecipe::where('product_id', $this->item['id'])->get()->toArray();
-
-
+        $this->lab_test_list = SelectLists::labs;
+        array_unshift($this->lab_test_list, SelectLists::empty_select);
         return view('livewire.manufacture.products.recipe-add-livewire', [
             'recipe_items' => $recipe_items
         ]);

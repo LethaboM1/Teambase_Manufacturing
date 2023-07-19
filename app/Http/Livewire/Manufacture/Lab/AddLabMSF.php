@@ -6,11 +6,11 @@ use Livewire\Component;
 
 class AddLabMSF extends Component
 {
-    public $sammple, $batch;
+    public $samplev, $batch;
 
-    function mount($sammple, $batch)
+    function mount($samplev, $batch)
     {
-        $this->sammple = $sammple;
+        $this->samplev = $samplev;
         $this->batch = $batch;
     }
 

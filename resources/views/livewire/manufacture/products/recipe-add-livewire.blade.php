@@ -19,6 +19,9 @@
                         <b><h3>{{ucfirst($item->unit_measure)}}</h3></b>
                         </div>
                     </div>
+                    <div class="row">
+                        <x-form.select name="lab_test" label="Lab Test" :list="$lab_test_list" />
+                    </div>
                     <hr>
                     <form wire:submit.prevent="submit">
                         <div class="form-group row">

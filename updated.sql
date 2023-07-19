@@ -133,4 +133,6 @@ create table manufacture_settings (
 alter table manufacture_settings add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
 alter table manufacture_settings add column created_at datetime default CURRENT_TIMESTAMP();
 
+alter table manufacture_products add column lab_test varchar(100) after has_recipe;
 /* Done */
+

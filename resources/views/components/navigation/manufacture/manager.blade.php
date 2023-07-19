@@ -58,8 +58,8 @@
         <span>Dispatch</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="{{url('dispatch/ready')}}">Orders Ready for Dispatch</a></li>
-        <li><a class="nav-link" href="{{url('dispatch/orders')}}">Dispatched Orders</a></li>
+        <li><a class="nav-link" href="{{url('dispatchs/ready')}}">Orders Ready for Dispatch</a></li>
+        <li><a class="nav-link" href="{{url('dispatchs/orders')}}">Dispatched Orders</a></li>
         </ul>
       </li>
       <li class="nav-parent">

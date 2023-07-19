@@ -61,18 +61,45 @@
                         </thead>
                         <tbody>
                             @if($labs->count()>0)
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <!-- Modal view batch -->
-                                    <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalview" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="View Lab"><i
-                                    class="fas fa-magnifying-glass"></i></a>
-                                    <!-- Modal view batch End -->
-                                </td>
-                            </tr>
+                                @foreach($labs as $test)
+                                    <tr>
+                                        <td>{{$test->date}}</td>
+                                        <td>Test : {{$test->quantity}}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <!-- Modal view batch -->
+                                            <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalview_{{$test->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="View Lab"><i
+                                            class="fas fa-magnifying-glass"></i></a>
+
+                                            
+                                            <div id='modalview_{{$test->id}}' class='modal-block modal-block-lg mfp-hide'>
+                                                <form method='post' enctype='multipart/form-data'>
+                                                    <section class='card'>
+                                                        <header id='modalview_{{$test->id}}header' class='card-header'><h2 class='card-title'>Sample: {{$test->quantity}}</h2></header>
+                                                            <div class='card-body'>
+                                                                <div class='modal-wrapper'>
+                                                                    <div class='modal-text'>
+                                                                        <pre>{{print_r(json_decode(base64_decode($test->results),true))}}</pre>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <footer class='card-footer'>
+                                                                <div class='row'>
+                                                                    <div class='col-md-12 text-right'>
+                                                                        <button type='submit' name='save' value='save' class='btn btn-primary'>Save</button>
+                                                                        <button class='btn btn-default modal-dismiss'>Cancel</button></div>
+                                                                    </div>
+                                                                </div>
+                                                            </footer>
+                                                    </section>
+                                                </form>
+                                            </div>
+                                            
+                                            <!-- Modal view batch End -->
+                                        </td>
+                                    </tr>
+                                @endforeach
 
                             @else
                                 <tr>
@@ -82,7 +109,25 @@
                         </tbody>
                         </table>
                 </div>
-                <livewire:manufacture.lab.add-lab-m-s-f :sammple="$labs->count()+1" :batch="$batch" />
+                @switch($product->lab_test)
+                    @case("grading")
+                    <livewire:manufacture.lab.add-lab-grading :sample="$labs->count()+1" :batch="$batch" />
+                        @break
+
+                    @case("m-s-f")
+                    <livewire:manufacture.lab.add-lab-m-s-f :sample="$labs->count()+1" :batch="$batch" />
+                        @break
+
+                    @case("max-viodless-density")
+                    <livewire:manufacture.lab.add-lab-max-viodless-density :sample="$labs->count()+1" :batch="$batch" />
+                        @break
+
+                    @case("road-test-cores")
+                    <livewire:manufacture.lab.add-lab-road-test-cores :sample="$labs->count()+1" :batch="$batch" />
+                        @break
+                        
+                @endswitch
+                
             </div>
         </div>
         </div>
