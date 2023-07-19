@@ -125,7 +125,31 @@
                     @case("road-test-cores")
                     <livewire:manufacture.lab.add-lab-road-test-cores :sample="$labs->count()+1" :batch="$batch" />
                         @break
+                    $@default                       
                         
+                        <div id='addLabTest' class='modal-block modal-block-lg mfp-hide'>
+                            <form method='post' enctype='multipart/form-data'>
+                                <section class='card'>
+                                    <header id='addLabTestheader' class='card-header'><h2 class='card-title'>Missing Lab Test</h2></header>
+                                        <div class='card-body'>
+                                            <div class='modal-wrapper'>
+                                                <div class='modal-text'>                                                    
+                                                    <p>Ask the Manager to add the type of lab test to this Product.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <footer class='card-footer'>
+                                            <div class='row'>
+                                                <div class='col-md-12 text-right'>
+                                                    <button class='btn btn-default modal-dismiss'>Close</button></div>
+                                                </div>
+                                            </div>
+                                        </footer>
+                                </section>
+                            </form>
+                        </div>
+                        
+
                 @endswitch
                 
             </div>
