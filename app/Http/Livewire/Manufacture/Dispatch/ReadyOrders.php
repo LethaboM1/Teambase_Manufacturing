@@ -11,6 +11,9 @@ class ReadyOrders extends Component
     use WithPagination;
     protected $paginateTheme = 'bootstrap';
 
+    public $drivers;
+
+
 
     public function render()
     {
