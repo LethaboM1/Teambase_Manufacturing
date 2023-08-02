@@ -19,12 +19,13 @@
                             <thead>
                                 <tr>
                                     <th width="10%">Date</th>
-                                    <th width="15%">Dispatch Number</th>
-                                    <th width="15%">Job Card</th>
+                                    <th width="10%">Dispatch Number</th>
+                                    <th width="10%">Job Card</th>
+                                    <th width="15%">Contractor</th>
                                     <th witdh="15%">Driver</th>
                                     <th width="15%">Qty</th>
                                     <th width="15%">Status</th>
-                                    <th width="15%">Action</th>
+                                    <th width="10%">Action</th>
                                 </tr>
                             </thead>
                                 @if($dispatches->count()>0)
@@ -33,6 +34,7 @@
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->created_at}}</td>
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->dispatch_number}}</td>
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->jobcard_number}}</td>
+                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->contractor}}</td>
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->driver()!==null?$dispatch->driver()->name:"None")}}</td>
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->qty}}</td>
                                             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>

@@ -16,7 +16,12 @@ class ManufactureJobcards extends Model
         'created_at'  => 'datetime:Y-m-d',
     ];
 
-
+    function getUnfilledProductsAttribute()
+    {
+        $qty = $this->products()->where('filled', 0)->count();
+        if (!is_numeric($qty)) dd("Not numeric Unfilled Products : {$qty}");
+        return $this->products()->where('filled', 0)->count();
+    }
 
     function products()
     {

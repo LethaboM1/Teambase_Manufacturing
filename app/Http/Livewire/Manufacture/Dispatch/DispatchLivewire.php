@@ -7,6 +7,7 @@ use App\Models\ManufactureBatches;
 use App\Models\ManufactureJobcardProductDispatches;
 use Livewire\Component;
 use App\Models\ManufactureJobcardProducts;
+use App\Models\ManufactureJobcards;
 use App\Models\ManufactureProducts;
 use Livewire\WithPagination;
 
@@ -40,6 +41,8 @@ class DispatchLivewire extends Component
                     ManufactureJobcardProductDispatches::insert($form_fields);
                     $job = ManufactureJobcardProducts::where('id', $key)->first();
                     if ($job->qty_due == 0) ManufactureProducts::where('id', $key)->update(['filled' => 1]);
+                    $chk_job = ManufactureJobcards::where('id', $job->job_id)->first();
+                    if ($chk_job->unfilled_products == 0) ManufactureJobcards::where('id', $job->job_id)->update('status', 'Completed');
                 }
             }
         }
