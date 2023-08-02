@@ -56,28 +56,28 @@
 					<hr>
 					<div class="row">
 					<table width="100%" class="table table-responsive-md mb-0">
-									<thead>
-										<tr>
-											<th width="5%"><i class="fa fa-check"></i></th>
-											<th width="15%">Job Number</th>
-											<th width="20%">Customer</th>
-											<th width="40%">Product</th>
-											<th width="15%">Quantity</th>
-										</tr>
-									</thead>
-									<tbody>										
-										@if(!empty($jobcard_list))
-											@foreach($jobcard_list as $jobcard)
-												<livewire:manufacture.batches.create.job-item key="{{$jobcard['id']}}" :jobcards="$jobcards" :jobcard="$jobcard->jobcard()->first()" :product="$jobcard" />
-											@endforeach
-										@else
-										<tr>
-											<td colspan="5">No jobs for this product</td>
-										</tr>
+						<thead>
+							<tr>
+								<th width="5%"><i class="fa fa-check"></i></th>
+								<th width="15%">Job Number</th>
+								<th width="20%">Customer</th>
+								<th width="40%">Product</th>
+								<th width="15%">Quantity</th>
+							</tr>
+						</thead>
+						<tbody>										
+							@if(!empty($jobcard_list))
+								@foreach($jobcard_list as $jobcardproduct)
+									<livewire:manufacture.batches.create.job-item key="{{$jobcardproduct['id']}}" :jobcards="$jobcards"  :jobcardproduct="$jobcardproduct" />
+								@endforeach
+							@else
+							<tr>
+								<td colspan="5">No jobs for this product</td>
+							</tr>
 
-										@endif
-									</tbody>
-								</table>
+							@endif
+						</tbody>
+					</table>
 					</div>
 				</div>
 				<footer class="card-footer text-end">

@@ -21,15 +21,16 @@
                                 <tr>
                                     <th width="10%">Date</th>
                                     <th width="15%">Batch Number</th>
-                                    <th width="35%">Product</th>
-                                    <th width="15%">Qty</th>
+                                    <th width="25%">Product</th>
+                                    <th witdh="15%">Qty</th>
+                                    <th width="15%">Qty Left</th>
                                     <th width="10%">Status</th>
                                     <th width="15%">Action</th>
                                 </tr>
                             </thead>
                                 @if($batches_list->count()>0)
                                     @foreach($batches_list as $batch)
-                                        <x-manufacture.dispatch.batches.item :batch="$batch" />
+                                        <x-manufacture.dispatch.batches.item :batch="$batch" />   
                                     @endforeach
                                 @else
                                     <tr>

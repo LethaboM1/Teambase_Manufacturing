@@ -7,21 +7,22 @@ use Livewire\Component;
 
 class JobItem extends Component
 {
-    public $jobcard, $product, $toggle, $check, $job_product, $qty;
+    public $jobcard, $jobcardproduct, $product, $toggle, $check, $job_product, $qty;
 
-    function mount($jobcards, $jobcard, $product)
+    function mount($jobcards, $jobcardproduct)
     {
-        $this->jobcard = $jobcard;
-        $this->check = (in_array($jobcard['id'], array_column($jobcards, 'id')) ? 1 : 0);
-        $this->qty = $product->qty;
+        $this->jobcardproduct = $jobcardproduct;
+        $this->jobcard = $this->jobcardproduct->jobcard();
+        $this->product = $this->jobcardproduct->product();
 
-        $product_ = ManufactureProducts::where('id', $product->product_id)->first();
-        $this->product = $product_;
+        $this->check = (in_array($this->jobcard['id'], array_column($jobcards, 'id')) ? 1 : 0);
+        $this->qty = $this->jobcardproduct->qty;
     }
 
     function updatedCheck($value)
     {
         if ($value != 1) $value = 0;
+
         $this->emitUp('select_job', [
             'id' => $this->jobcard['id'],
             'qty' => $this->qty,

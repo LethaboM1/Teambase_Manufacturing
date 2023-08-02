@@ -136,3 +136,23 @@ alter table manufacture_settings add column created_at datetime default CURRENT_
 alter table manufacture_products add column lab_test varchar(100) after has_recipe;
 /* Done */
 
+create table manufacture_jobcard_product_dispatches(
+    id bigint primary key auto_increment,
+    dispatch_number varchar(100),
+    manufacture_jobcard_product_id bigint,
+    batch_id bigint,
+    qty decimal(10,3),
+    updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP(),
+    created_at datetime default CURRENT_TIMESTAMP()
+);
+
+alter table manufacture_jobcard_products add column filled boolean default 0 after qty;
+alter table manufacture_jobcard_product_dispatches add column dispatch_number varchar(100) after id;
+
+
+alter table manufacture_jobcard_product_dispatches add column driver_id bigint  default 0 after dispatch_number;
+alter table manufacture_jobcard_product_dispatches add column status varchar(25)  default 'Ready' after dispatch_number;
+
+alter table manufacture_settings add column dispatch_number bigint default 0 after batch_digits;
+alter table manufacture_settings add column dispatch_prefix varchar(25) default 'D#' after dispatch_number;
+alter table manufacture_settings add column dispatch_digits integer default 5 after dispatch_prefix;

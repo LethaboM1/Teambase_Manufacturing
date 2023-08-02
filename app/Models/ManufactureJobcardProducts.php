@@ -16,17 +16,28 @@ class ManufactureJobcardProducts extends Model
 
     function jobcard()
     {
-        return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id');
+        return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id')->first();
     }
 
-    // function transactions()
-    // {
-    //     return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');
-    // }
+    function product()
+    {
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+    }
 
+    function dispatches()
+    {
+        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get();
+    }
 
-    // function getQtyAttribute()
-    // {
-    //     return $this->transactions->sum('qty');
-    // }
+    function getQtyDueAttribute()
+    {
+        return round($this->qty - $this->getQtyFilledAttribute(), 3);
+    }
+
+    function getQtyFilledAttribute()
+    {
+        $qty =  $this->dispatches()->sum('qty');
+        if (!is_numeric($qty)) $qty = 0;
+        return round($qty, 3);
+    }
 }

@@ -13,4 +13,26 @@ class ManufactureBatches extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
+
+    function product()
+    {
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+    }
+
+    function dispatches()
+    {
+        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'batch_id', 'id')->get();
+    }
+
+    function getQtyDispatchedAttribute()
+    {
+        return $this->dispatches()->sum('qty');
+    }
+
+    function getQtyLeftAttribute()
+    {
+        $dispatched = $this->getQtyDispatchedAttribute();
+        $left = $this->qty - $dispatched;
+        return $left;
+    }
 }

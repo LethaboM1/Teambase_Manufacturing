@@ -44,6 +44,27 @@ class Functions extends Controller
                 return $number;
 
                 break;
+
+            case 'dispatch':
+                $settings = ManufactureSettings::first();
+
+                DB::table('manufacture_settings')->update(['dispatch_number' => DB::raw("@doc_number := dispatch_number+1")]);
+                $number = DB::select(DB::raw("select @doc_number as number"));
+                $number = $number[0]->number;
+
+                $length = strlen($number);
+                if ($length < $settings->batch_digits) {
+                    $digits = $settings->batch_digits - $length;
+
+                    for ($a = 1; $a <= $digits; $a++) {
+                        $number = "0" . $number;
+                    }
+                }
+
+                $number = $settings->batch_prefix . $number;
+
+                return $number;
+                break;
         }
     }
 
