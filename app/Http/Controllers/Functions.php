@@ -45,6 +45,28 @@ class Functions extends Controller
 
                 break;
 
+            case 'jobcard':
+                $settings = ManufactureSettings::first();
+
+                DB::table('manufacture_settings')->update(['jobcard_number' => DB::raw("@doc_number := jobcard_number+1")]);
+                $number = DB::select(DB::raw("select @doc_number as number"));
+                $number = $number[0]->number;
+
+                $length = strlen($number);
+                if ($length < $settings->jobcard_digits) {
+                    $digits = $settings->jobcard_digits - $length;
+
+                    for ($a = 1; $a <= $digits; $a++) {
+                        $number = "0" . $number;
+                    }
+                }
+
+                $number = $settings->jobcard_prefix . $number;
+
+                return $number;
+
+                break;
+
             case 'dispatch':
                 $settings = ManufactureSettings::first();
 

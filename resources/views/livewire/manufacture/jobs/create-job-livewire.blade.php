@@ -9,11 +9,6 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							{{-- <label class="col-form-label" for="formGroupExampleInput">Job Number</label>
-							<input type="text" name="jobnumber" placeholder="DB01" class="form-control"> --}}
-							<x-form.input name="jobcard_number" label="Job Number" />
-						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							<x-form.input name="contractor" label="Contractor" />
 						</div>
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">

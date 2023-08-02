@@ -156,3 +156,7 @@ alter table manufacture_jobcard_product_dispatches add column status varchar(25)
 alter table manufacture_settings add column dispatch_number bigint default 0 after batch_digits;
 alter table manufacture_settings add column dispatch_prefix varchar(25) default 'D#' after dispatch_number;
 alter table manufacture_settings add column dispatch_digits integer default 5 after dispatch_prefix;
+
+alter table manufacture_settings add column jobcard_number bigint default 0 after batch_digits;
+alter table manufacture_settings add column jobcard_prefix varchar(25) default 'D#' after jobcard_number;
+alter table manufacture_settings add column jobcard_digits integer default 5 after jobcard_prefix;

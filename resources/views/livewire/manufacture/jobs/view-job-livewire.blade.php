@@ -5,19 +5,13 @@
 					<h2 class="card-title">Job Card : {{$jobcard['jobcard_number']}} : {{$jobcard['status']}}</h2>
 				</header>
 				<div class="card-body">					
-				<form wire:submit.prevent="save_jobcard" method="post">			
-					@csrf
+				{{-- <form wire:submit.prevent="save_jobcard" method="post">			
+					@csrf --}}
 					<x-form.hidden name="id" :value="$jobcard['id']" />
 					<div class="row">
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							{{-- <label class="col-form-label" for="formGroupExampleInput">Job Number</label>
-							<input type="text" name="jobnumber" placeholder="DB01" class="form-control"> --}}
-							@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
-								<x-form.input name="jobcard.jobcard_number" label="Job Number" />
-							@else
-								<label>Job#</label>
+						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">					
+								<label>Job.</label>
 								<h5>{{$jobcard['jobcard_number']}}</h5>
-							@endif
 						</div>
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
@@ -77,11 +71,11 @@
 								@endif
 							</div>
 						</div>
-						<div class=" style="width:80px"row pb-4">
+						<div  class="row pb-4">
 							<div class="col-lg-6">
 								@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
 									@if($edit)									
-										<button class="btn btn-primary">Save Job Card</button>
+										<button wire:click="save_jobcard" class="btn btn-primary">Save Job Card</button>
 									@else																		
 										<button class="btn btn-secondary" disabled>Save Job Card</button>
 									@endif									
@@ -90,7 +84,7 @@
 							</div>
 						</div>						
 					</div>						
-					</form>			
+					{{-- </form>			 --}}
 					<hr>
 					@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
 						<div class="row">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manufacture;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Functions;
 use App\Models\ManufactureJobcards;
 use Illuminate\Http\Request;
 
@@ -28,7 +29,6 @@ class JobsController extends Controller
     function add_job(Request $request)
     {
         $form_fields = $request->validate([
-            'jobcard_number' => 'required',
             'contractor' => 'nullable',
             'site_number' => 'nullable',
             'contact_person' => 'nullable',
@@ -37,9 +37,12 @@ class JobsController extends Controller
             'delivery' => 'nullable',
         ]);
 
+
         // dd($form_fields);
         if ($form_fields['delivery'] && strlen($form_fields['delivery_address']) == 0) return back()->with('alertMessage', 'Please type in a delivery address if delivery is required');
+
         $form_fields['status'] = 'Open';
+        $form_fields['jobcard_number'] = Functions::get_doc_number('jobcard');
 
         $job_id = ManufactureJobcards::insertGetId($form_fields);
         return redirect("job/{$job_id}");
