@@ -160,3 +160,27 @@ alter table manufacture_settings add column dispatch_digits integer default 5 af
 alter table manufacture_settings add column jobcard_number bigint default 0 after batch_digits;
 alter table manufacture_settings add column jobcard_prefix varchar(25) default 'D#' after jobcard_number;
 alter table manufacture_settings add column jobcard_digits integer default 5 after jobcard_prefix;
+
+
+alter table manufacture_products add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_products add column created_at datetime default CURRENT_TIMESTAMP();
+
+alter table manufacture_products add column filled boolean default 0;
+
+
+alter table manufacture_jobcard_product_dispatches add column reference varchar(100) after dispatch_number;
+alter table manufacture_jobcard_product_dispatches add column haulier_code varchar(100) after reference;
+alter table manufacture_jobcard_product_dispatches add column weight_in decimal(10,3) after reference;
+alter table manufacture_jobcard_product_dispatches add column weight_in_datetime datetime after weight_in;
+alter table manufacture_jobcard_product_dispatches add column weight_out decimal(10,3) after weight_in_datetime;
+alter table manufacture_jobcard_product_dispatches add column weight_out_datetime datetime after weight_out;
+
+alter table manufacture_jobcard_product_dispatches change column driver_id plant_id bigint;
+alter table manufacture_jobcard_product_dispatches add column registration_number varchar(100) after plant_id;
+
+alter table manufacture_jobcard_product_dispatches add column comment text after haulier_code;
+
+
+
+alter table plants_tbl add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table plants_tbl add column created_at datetime default CURRENT_TIMESTAMP();

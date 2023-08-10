@@ -48,9 +48,16 @@ class ViewJobLivewire extends Component
 
     function save_jobcard()
     {
+        dd($this->jobcard);
         ManufactureJobcards::where('id', $this->jobcard['id'])->update($this->jobcard);
         $this->edit = 0;
     }
+
+    // function save_jobcard()
+    // {
+    //     ManufactureJobcards::where('id', $this->jobcard['id'])->update($this->jobcard);
+    //     $this->edit = 0;
+    // }
 
     function add_product()
     {

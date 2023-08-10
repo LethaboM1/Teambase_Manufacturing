@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 
 class DispatchController extends Controller
 {
-    function ready()
+    function new()
     {
-        return view('manufacture.dispatch.ready');
+        return view('manufacture.dispatch.new');
     }
 
-    function orders()
+    function archive()
     {
-        return view('manufacture.dispatch.orders');
+        return view('manufacture.dispatch.archive');
     }
 
     function batch_dispatch(ManufactureBatches $batch)

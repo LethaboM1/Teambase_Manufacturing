@@ -58,8 +58,8 @@
         <span>Dispatch</span>
         </a>
         <ul class="nav nav-children">
-          <li><a class="nav-link" href="{{url('dispatchs/ready')}}">Batches Ready to Dispatch</a></li>  
-        <li><a class="nav-link" href="{{url('dispatchs/orders')}}">Orders Ready for Dispatch</a></li>
+          <li><a class="nav-link" href="{{url('dispatches/new')}}">Dispatches</a></li>  
+        <li><a class="nav-link" href="{{url('dispatches/archive')}}">Archive Dispatches</a></li>
         <li><a class="nav-link" href="#">Dispatched Orders</a></li>
         </ul>
       </li>

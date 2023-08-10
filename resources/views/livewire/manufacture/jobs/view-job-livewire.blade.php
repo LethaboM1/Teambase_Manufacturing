@@ -75,7 +75,7 @@
 							<div class="col-lg-6">
 								@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
 									@if($edit)									
-										<button wire:click="save_jobcard" class="btn btn-primary">Save Job Card</button>
+										<button class="btn btn-primary" wire:click="save_jobcard">Save Job Card</button>
 									@else																		
 										<button class="btn btn-secondary" disabled>Save Job Card</button>
 									@endif									
