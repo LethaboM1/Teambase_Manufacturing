@@ -83,6 +83,9 @@ Route::middleware('auth')->group(function () {
 
             /* Dispatch */
             Route::get('dispatches/new', [DispatchController::class, 'new']);
+            Route::post('dispatches/new', [DispatchController::class, 'add_dispatch']);
+            Route::post('dispatches/out', [DispatchController::class, 'out_dispatch']);
+
             Route::get('dispatches/archive', [DispatchController::class, 'archive']);
             // Route::get('dispatch/{batch}', [DispatchController::class, 'batch_dispatch']);
 

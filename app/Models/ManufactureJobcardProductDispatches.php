@@ -20,13 +20,25 @@ class ManufactureJobcardProductDispatches extends Model
         return $this->hasOne(ManufactureJobcardProducts::class, 'id', 'manufacture_jobcard_product_id')->first();
     }
 
+    function plant()
+    {
+        if ($this->plant_id > 0) {
+            return $this->hasOne(Plants::class, 'plant_id', 'plant_id')->first();
+        }
+    }
+
     function driver()
     {
-        return $this->hasOne(User::class, 'user_id', 'driver_id')->first();
+        return $this->hasOne(User::class, 'user_id', '')->first();
     }
 
     function jobcard()
     {
         return $this->jobcard_product()->jobcard();
+    }
+
+    function product()
+    {
+        return $this->jobcard_product()->product();
     }
 }

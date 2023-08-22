@@ -30,6 +30,7 @@
                         
                         <div id='addDispatch' class='modal-block modal-block-lg mfp-hide'>
                             <form method='post' enctype='multipart/form-data'>
+                                @csrf
                                 <section class='card'>
                                     <header id='addDispatchheader' class='card-header'><h2 class='card-title'></h2></header>
                                         <div class='card-body'>
@@ -42,7 +43,7 @@
                                         <footer class='card-footer'>
                                             <div class='row'>
                                                 <div class='col-md-12 text-right'>
-                                                    <button type='submit' name='save' value='save' class='btn btn-primary'>Confirm</button>
+                                                    <button type='submit' class='btn btn-primary'>Confirm</button>
                                                     <button class='btn btn-default modal-dismiss'>Cancel</button>
                                                 </div>
                                             </div>
@@ -59,7 +60,7 @@
                                     <th width="10%">Dispatch Number</th>
                                     <th width="10%">Job Card</th>
                                     <th width="15%">Contractor</th>
-                                    <th witdh="15%">Driver</th>
+                                    <th witdh="15%">Vehicle</th>
                                     <th width="15%">Qty</th>
                                     <th width="15%">Status</th>
                                     <th width="10%">Action</th>
@@ -67,41 +68,7 @@
                             </thead>
                                 @if($dispatches->count()>0)
                                     @foreach($dispatches as $dispatch)
-                                        <tr class="pointer">
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->created_at}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->dispatch_number}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->jobcard_number}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->contractor}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->driver()!==null?$dispatch->driver()->name:"None")}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->qty}}</td>
-                                            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>
-                                            <td>
-                                                <a id="edit_btn_{{$dispatch->id}}" href="#editDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic"><i class="fas fa-edit"></i></a>                                                
-                                                <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>
-                                                    <form method='post' enctype='multipart/form-data'>
-                                                        <section class='card'>
-                                                            <header id='editDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'></h2></header>
-                                                                <div class='card-body'>
-                                                                    <div class='modal-wrapper'>
-                                                                        <div class='modal-text'>
-                                                                            Dispatch to Driver
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <footer class='card-footer'>
-                                                                    <div class='row'>
-                                                                        <div class='col-md-12 text-right'>
-                                                                            <button type='submit' name='save' value='save' class='btn btn-primary'>Save</button>
-                                                                            <button class='btn btn-default modal-dismiss'>Cancel</button></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </footer>
-                                                        </section>
-                                                    </form>
-                                                </div>
-                                            
-                                            </td>
-                                        </tr>
+                                        <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch">
                                     @endforeach
                                 @else
                                     <tr>

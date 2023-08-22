@@ -32,6 +32,7 @@ class AddDispatchModal extends Component
     {
         $this->job_id = 0;
         $this->delivery = 0;
+        $this->weight_in_datetime = date("Y-m-d\TH:i");
     }
 
     function updatedJobId($value)
@@ -54,13 +55,16 @@ class AddDispatchModal extends Component
         array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
 
         $manufacture_jobcard_products_list = [];
-        if ($this->job_id > 0) $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
-            ->where('job_id', $this->job_id)
-            ->whereIn('manufacture_jobcard_products.product_id', ManufactureBatches::select('product_id')->where('status', 'Ready for dispatch')->get())
-            ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
-            // ->join('manufacture_batch', 'manufacture_batch.id', 'manufacture_jobcard_products.batch_id')
-            ->get()
-            ->toArray();
+
+        if ($this->job_id > 0) {
+            $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
+                ->where('job_id', $this->job_id)
+                ->whereIn('manufacture_jobcard_products.product_id', ManufactureBatches::select('product_id')->where('status', 'Ready for dispatch')->get())
+                ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
+                // ->join('manufacture_batch', 'manufacture_batch.id', 'manufacture_jobcard_products.batch_id')
+                ->get()
+                ->toArray();
+        }
         // if ($this->job_id > 0) dd($manufacture_jobcard_products_list)
         array_unshift($manufacture_jobcard_products_list, ['value' => 0, 'name' => 'Select']);
 

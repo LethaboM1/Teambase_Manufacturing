@@ -1,6 +1,6 @@
 <div class="mb-1">
     @if(strlen($label)>0)
-        <label class="form-label">{{$label}}</label>
+        <label class="form-label col-form-label">{{$label}}</label>
     @endif
     <input type="datetime-local" class="form-control form-control-sm
         @if(isset($class) && strlen($class)>0)

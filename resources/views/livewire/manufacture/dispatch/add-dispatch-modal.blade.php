@@ -25,9 +25,5 @@
     <div class="col-md-6">
         <x-form.input name="registration_number" label="Reg No." />
     </div>
-
     @endif
-    <div class="col-md-6">
-        <x-form.number name="qty" label="Qty" step="0.001" />
-    </div>
 </div>

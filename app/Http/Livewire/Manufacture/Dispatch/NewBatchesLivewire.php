@@ -11,6 +11,10 @@ class NewBatchesLivewire extends Component
     use WithPagination;
     public $search, $search_arc;
 
+    protected $listeners = [
+        'refreshNewDispatch' => '$refresh'
+    ];
+
     function mount()
     {
     }
@@ -21,7 +25,7 @@ class NewBatchesLivewire extends Component
     }
     public function render()
     {
-        $dispatches = ManufactureJobcardProductDispatches::where('status', 'New')->paginate(15);
+        $dispatches = ManufactureJobcardProductDispatches::where('status', 'Loading')->paginate(15);
 
         return view('livewire.manufacture.dispatch.new-batches-livewire', [
             'dispatches' => $dispatches
