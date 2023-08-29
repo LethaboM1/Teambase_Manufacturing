@@ -11,6 +11,7 @@ use App\Http\Controllers\Manufacture\DispatchController;
 use App\Http\Controllers\Manufacture\ProductsController;
 use App\Http\Controllers\Manufacture\ProductionController;
 use App\Http\Controllers\Manufacture\Report\ManufactureReportsController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,14 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('is_manufacture')->group(function () {
+        Route::middleware('is_manager')->group(function () {
+            /* Suppliers */
+            Route::get('suppliers', [SupplierController::class, 'suppliers']);
+            Route::post('suppliers/add', [SupplierController::class, 'add_supplier']);
+            Route::post('suppliers/save', [SupplierController::class, 'save_supplier']);
+            Route::post('suppliers/delete', [SupplierController::class, 'delete_supplier']);
+        });
+
         Route::middleware('is_products')->group(function () {
             /* */
             Route::get('products', [ProductsController::class, 'products']);

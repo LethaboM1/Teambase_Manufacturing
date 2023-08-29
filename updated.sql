@@ -184,3 +184,30 @@ alter table manufacture_jobcard_product_dispatches add column comment text after
 
 alter table plants_tbl add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
 alter table plants_tbl add column created_at datetime default CURRENT_TIMESTAMP();
+
+create table manufacture_suppliers (
+    id bigint primary key auto_increment,
+    name varchar(100),
+    contact_name  varchar(100),
+    contact_number varchar(15),
+    email varchar(255),
+    vat_number varchar(30),
+    address text,
+    
+);
+
+
+alter table manufacture_suppliers add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+alter table manufacture_suppliers add column updated_at datetime default CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP();
+
+alter table manufacture_suppliers change column id id bigint auto_increment;
+
+alter table manufacture_product_transactions add column reference_number varchar(100);
+
+alter table manufacture_product_transactions change column reference_number reference_number varchar(100) after type_id;
+alter table manufacture_product_transactions add column weight_in decimal(10,3) after reference_number;
+alter table manufacture_product_transactions add column weight_in_datetime datetime after weight_in;
+alter table manufacture_product_transactions add column weight_in_user bigint after weight_in_datetime;
+alter table manufacture_product_transactions add column weight_out decimal(10,3) after reference_number;
+alter table manufacture_product_transactions add column weight_out_datetime datetime after weight_out;
+alter table manufacture_product_transactions add column weight_out_user bigint after weight_out_datetime;

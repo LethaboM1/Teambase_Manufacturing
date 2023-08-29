@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\ManufactureProductTransactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class ManufactureBatches extends Model
 {
@@ -34,5 +35,12 @@ class ManufactureBatches extends Model
         $dispatched = $this->getQtyDispatchedAttribute();
         $left = $this->qty - $dispatched;
         return $left;
+    }
+
+    function scopeDueProduct($query)
+    {
+        $dispatched = $this->getQtyDispatchedAttribute();
+        $left = $this->qty - $dispatched;
+        $query->whereRaw("{$left} > 0");
     }
 }

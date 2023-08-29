@@ -10,6 +10,7 @@ class ManufactureJobcardProducts extends Model
 {
     use HasFactory;
     protected $table = 'manufacture_jobcard_products', $guard = [], $dates = ['updated_at', 'created_at'];
+
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
@@ -29,15 +30,16 @@ class ManufactureJobcardProducts extends Model
         return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get();
     }
 
-    function getQtyDueAttribute()
-    {
-        return round($this->qty - $this->getQtyFilledAttribute(), 3);
-    }
-
     function getQtyFilledAttribute()
     {
         $qty =  $this->dispatches()->sum('qty');
+        // dd($qty);
         if (!is_numeric($qty)) $qty = 0;
         return round($qty, 3);
+    }
+
+    function getQtyDueAttribute()
+    {
+        return round($this->qty - $this->getQtyFilledAttribute(), 3);
     }
 }

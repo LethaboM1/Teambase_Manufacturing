@@ -72,7 +72,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="6">No Orders ready for dispatch..</td>
+                                        <td colspan="8">No Dispatches Loading..</td>
                                     </tr>
                                 @endif
                         </table>          
