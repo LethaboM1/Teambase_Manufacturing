@@ -23,11 +23,13 @@
                                         Actions
                                     </a>
                             <div class="dropdown-menu" aria-labelledby="btnActions">
-                                <a class="dropdown-item modal-basic" href="#addDispatch" >Dispatch</a>
+                                <a class="dropdown-item modal-basic" href="#addDispatch" >Job Card Collection / Dispatch</a>
+                                <a class="dropdown-item modal-basic" href="#addReturn" >Job Card Return</a>
+                                <a class="dropdown-item modal-basic" href="#receiveGoods" >Good Received</a>
                             </div>
                         </div>
 
-                        
+                        {{-- Job Card Collection / Dispatch --}}
                         <div id='addDispatch' class='modal-block modal-block-lg mfp-hide'>
                             <form method='post' enctype='multipart/form-data'>
                                 @csrf
@@ -37,6 +39,30 @@
                                             <div class='modal-wrapper'>
                                                 <div class='modal-text'>
                                                     <livewire:manufacture.dispatch.add-dispatch-modal />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <footer class='card-footer'>
+                                            <div class='row'>
+                                                <div class='col-md-12 text-right'>
+                                                    <button type='submit' class='btn btn-primary'>Confirm</button>
+                                                    <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                                </div>
+                                            </div>
+                                        </footer>
+                                </section>
+                            </form>
+                        </div>
+                        {{-- Job Card Return --}}
+                        <div id='addReturn' class='modal-block modal-block-lg mfp-hide'>
+                            <form method='post' action="{{url("dispatches/return")}}" enctype='multipart/form-data'>
+                                @csrf
+                                <section class='card'>
+                                    <header id='addReturnheader' class='card-header'><h2 class='card-title'></h2></header>
+                                        <div class='card-body'>
+                                            <div class='modal-wrapper'>
+                                                <div class='modal-text'>
+                                                    <livewire:manufacture.dispatch.return-dispatch-modal />
                                                 </div>
                                             </div>
                                         </div>

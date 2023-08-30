@@ -79,4 +79,9 @@ class DispatchController extends Controller
             'batch' => $batch
         ]);
     }
+
+    function return_dispatch(Request $request)
+    {
+        dd('Difference in weights will be returned', $request->toArray());
+    }
 }
