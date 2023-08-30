@@ -77,6 +77,32 @@
                                 </section>
                             </form>
                         </div>
+
+                        {{-- Good Received --}}
+                        <div id='addReturn' class='modal-block modal-block-lg mfp-hide'>
+                            <form method='post' action="{{url("dispatches/receiveGoods")}}" enctype='multipart/form-data'>
+                                @csrf
+                                <section class='card'>
+                                    <header id='addReturnheader' class='card-header'><h2 class='card-title'></h2></header>
+                                        <div class='card-body'>
+                                            <div class='modal-wrapper'>
+                                                <div class='modal-text'>
+                                                    <h4>Receive Goods</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <footer class='card-footer'>
+                                            <div class='row'>
+                                                <div class='col-md-12 text-right'>
+                                                    <button type='submit' class='btn btn-primary'>Confirm</button>
+                                                    <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                                </div>
+                                            </div>
+                                        </footer>
+                                </section>
+                            </form>
+                        </div>
+
                         
 
                         <table width="100%" class="table table-hover table-responsive-md mb-0">
