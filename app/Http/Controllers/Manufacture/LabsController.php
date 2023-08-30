@@ -23,6 +23,8 @@ class LabsController extends Controller
 
     function add_lab(Request $request)
     {
+
+        dd($request->toArray());
         $request->validate([
             'sample.batch_id' => 'required|exists:manufacture_batch,id',
             'sample.batch_number' => 'required',

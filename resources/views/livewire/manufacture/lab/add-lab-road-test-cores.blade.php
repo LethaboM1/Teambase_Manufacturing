@@ -26,6 +26,10 @@
                             </div>
                             <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
                                 <label class="col-form-label" for="formGroupExampleInput">Batch No:</label>
+                                <x-form.hidden name="sample[type]" value="road-test-cores" />
+                                <x-form.hidden name="sample[batch_id]" value="{{$batch->id}}" />
+                                <x-form.hidden name="sample[sample]" value="{{$sample}}" />
+                                <x-form.hidden name="sample[batch_number]" value="{{$batch->batch_number}}" />
                                 <h4>{{$batch->batch_number}}</h4>
                             </div>
                             <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
