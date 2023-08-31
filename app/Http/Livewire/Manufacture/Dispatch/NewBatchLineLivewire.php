@@ -56,6 +56,10 @@ class NewBatchLineLivewire extends Component
 
             $this->emit('refreshNewDispatch');
 
+            /* Close job card if filled  */
+
+            /* Connie */
+
             // dd($form_fields);
         }
     }

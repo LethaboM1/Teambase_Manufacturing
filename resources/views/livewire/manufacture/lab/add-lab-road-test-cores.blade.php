@@ -38,6 +38,16 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
+                                <label class="col-form-label" for="formGroupExampleInput">Time:</label>
+                                <input type="datetime-local" name="sample[datetime]" value="{{date("Y-m-d\TH:i")}}" placeholder="" class="form-control">
+                            </div>
+                            <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
+                                <label class="col-form-label" for="formGroupExampleInput">location:</label>
+                                <input type="text" name="sample[location]" placeholder="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Sample Number</div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Lane</div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Chainage</div>

@@ -51,10 +51,12 @@ class AddDispatchModal extends Component
     {
 
         $jobcard_list = [];
+
         $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
             ->where('status', 'Open')
             ->get()
             ->toArray();
+
         array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
 
         $manufacture_jobcard_products_list = [];

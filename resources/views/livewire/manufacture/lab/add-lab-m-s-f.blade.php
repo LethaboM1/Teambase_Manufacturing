@@ -46,7 +46,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">Time:</label>
-                                    <input type="text" name="time" placeholder="" class="form-control">
+                                    <input type="datetime-local" name="sample[datetime]" value="{{date("Y-m-d\TH:i")}}" placeholder="" class="form-control">db
                                 </div>
                                 <div class="col-sm-12 col-md-6 pb-sm-3 pb-md-0">
                                     <label class="col-form-label" for="formGroupExampleInput">location:</label>

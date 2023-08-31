@@ -10,6 +10,8 @@ use App\Models\ManufactureSettings;
 class Functions extends Controller
 {
 
+
+
     static function negate($number)
     {
         if ($number > 0) {
