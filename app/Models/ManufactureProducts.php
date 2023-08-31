@@ -27,6 +27,9 @@ class ManufactureProducts extends Model
 
     function getQtyAttribute()
     {
-        return $this->transactions->sum('qty');
+        $qty = $this->transactions()->sum('qty');
+        $qty = (!is_numeric($qty) ? 0 : $qty);
+
+        return $qty;
     }
 }
