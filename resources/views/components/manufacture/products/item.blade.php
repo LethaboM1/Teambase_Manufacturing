@@ -16,7 +16,7 @@
                 <header class="card-header">
                     <h2 class="card-title">Edit Product</h2>
                 </header>
-                <form action="products/save" method="post">
+                <form action="{{url("products/save")}}" method="post">
                     @csrf
                     <div class="card-body">
                         <div class="modal-wrapper">
@@ -26,20 +26,25 @@
                                     <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">                                    
                                         <x-form.input wire=0 name="code" label="Product Code" :value="$item->code" />
                                     </div>
-                                    <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                         <x-form.input wire=0 name="description" label="Product Description" :value="$item->description" />
                                     </div>
                                     <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                         <label class="col-form-label" for="formGroupExampleInput">Qty</label>
                                         <input type="text" name="openvalue" class="form-control" value="{{$item->qty}}" disabled>
                                     </div>
-                                    <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                         <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="$item->unit_measure" :list="$unit_measure_list" />
                                     </div>
-                                    <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                         <x-form.checkbox wire=0 name="has_recipe" label="Has recipe?" value=1 :toggle="$item->has_recipe" />
                                     </div>
                                 </div>
+                                @if($item->has_recipe)
+                                    <div class="row">
+                                        <x-form.select wire=0 name='lab_test' label="Lab test" :list="$lab_test_list" :value="$item->lab_test" />
+                                    </div>                                    
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -56,83 +61,86 @@
         </div>
         <!-- Modal Edit Product End -->
 
-        <!-- Modal adjust stock -->
-        <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladjust_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Adjust Stock"><i class="fas fa-chart-simple"></i></a>
-        <!-- Modal Adjust Product -->
-        <div id="modaladjust_{{$item->id}}" class="modal-block modal-block-lg mfp-hide">
-            <section class="card">
-                <header class="card-header">
-                    <h2 class="card-title">Adjust Product</h2>
-                </header>
-                <form action="products/adjust" method="post">
-                    @csrf
-                    <div class="card-body">
-                        <div class="modal-wrapper">
-                            <div class="modal-text">
-                                <div class="row">
-                                
-                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                        <label class="col-form-label" for="formGroupExampleInput">Product Code</label>
-                                        <b><h3>{{$item->code}}</h3></b>
-                                        {{-- <input type="text" name="code" class="form-control"> --}}
-                                    </div>
-                                    <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                                        <label class="col-form-label" for="formGroupExampleInput">Product Description</label>
-                                        <b><h3>{{$item->description}}</h3></b>
-                                    </div>
-                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                        <label class="col-form-label" for="formGroupExampleInput">Opening Value</label>
-                                        <b><h3>{{$item->qty}}</h3></b>
-                                    </div>
-                                    <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
-                                    <label class="col-form-label" for="formGroupExampleInput">Unit</label>
-                                    <b><h3>{{$item->unit_measure}}</h3></b>
-                                    </div>
-                                    <hr>
-                                    <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                                        <label class="col-form-label" for="formGroupExampleInput">Current Value</label>
-                                        <input type="text" name="current_value" class="form-control" value="{{$item->qty}}" disabled>
-                                    </div>
-                                    <x-form.hidden wire=0 name="id" :value="$item->id" />
-                                    <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">                                    
-                                        <x-form.input wire=0 name="new_value" label="New Value" />
-                                    </div>
-                                    <div class="col-sm-12 col-md-7 pb-sm-3 pb-md-0">
-                                        <x-form.input wire=0 name="comment" label="Reason / Comment" />
+            @if(!$item->has_recipe)
+                
+                <!-- Modal adjust stock -->
+                <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladjust_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Adjust Stock"><i class="fas fa-chart-simple"></i></a>
+                <!-- Modal Adjust Product -->
+                <div id="modaladjust_{{$item->id}}" class="modal-block modal-block-lg mfp-hide">
+                    <section class="card">
+                        <header class="card-header">
+                            <h2 class="card-title">Adjust Product</h2>
+                        </header>
+                        <form action="products/adjust" method="post">
+                            @csrf
+                            <div class="card-body">
+                                <div class="modal-wrapper">
+                                    <div class="modal-text">
+                                        <div class="row">
+                                        
+                                            <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                                <label class="col-form-label" for="formGroupExampleInput">Product Code</label>
+                                                <b><h3>{{$item->code}}</h3></b>
+                                                {{-- <input type="text" name="code" class="form-control"> --}}
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+                                                <label class="col-form-label" for="formGroupExampleInput">Product Description</label>
+                                                <b><h3>{{$item->description}}</h3></b>
+                                            </div>
+                                            <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                                <label class="col-form-label" for="formGroupExampleInput">Opening Value</label>
+                                                <b><h3>{{$item->qty}}</h3></b>
+                                            </div>
+                                            <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                                            <label class="col-form-label" for="formGroupExampleInput">Unit</label>
+                                            <b><h3>{{$item->unit_measure}}</h3></b>
+                                            </div>
+                                            <hr>
+                                            <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                                <label class="col-form-label" for="formGroupExampleInput">Current Value</label>
+                                                <input type="text" name="current_value" class="form-control" value="{{$item->qty}}" disabled>
+                                            </div>
+                                            <x-form.hidden wire=0 name="id" :value="$item->id" />
+                                            <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">                                    
+                                                <x-form.input wire=0 name="new_value" label="New Value" />
+                                            </div>
+                                            <div class="col-sm-12 col-md-7 pb-sm-3 pb-md-0">
+                                                <x-form.input wire=0 name="comment" label="Reason / Comment" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Qty</th>
+                                            <th>User</th>
+                                            <th>Comment</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    @if($history->count())
+                                        @foreach($history as $line)
+                                            <x-manufacture.products.adjust.line :line="$line" />
+                                        @endforeach
+                                    @else
+                                    @endif
+                                </table>
                             </div>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Qty</th>
-                                    <th>User</th>
-                                    <th>Comment</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            @if($history->count())
-                                @foreach($history as $line)
-                                    <x-manufacture.products.adjust.line :line="$line" />
-                                @endforeach
-                            @else
-                            @endif
-                        </table>
-                    </div>
-                    <footer class="card-footer">
-                        <div class="row">
-                            <div class="col-md-12 text-right">
-                                <button class="btn btn-primary">Adjust Product</button>
-                                <button class="btn btn-default modal-dismiss">Cancel</button>
-                            </div>
-                        </div>
-                    </footer>
-                </form>
-            </section>
-        </div>
-        <!-- Modal adjust Product End -->
+                            <footer class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <button class="btn btn-primary">Adjust Product</button>
+                                        <button class="btn btn-default modal-dismiss">Cancel</button>
+                                    </div>
+                                </div>
+                            </footer>
+                        </form>
+                    </section>
+                </div>
+                <!-- Modal adjust Product End -->
+            @endif
         @endif
         <!-- Modal adjust stock End -->
         

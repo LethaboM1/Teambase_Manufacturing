@@ -56,6 +56,14 @@ class NewBatchLineLivewire extends Component
 
             $this->emit('refreshNewDispatch');
 
+            if ($this->dispatch->jobcard_product()->product()->has_recipe == 0) {
+                /* Adjust transaction if no recipe  */
+            }
+
+            /* Close job card if filled  */
+
+            /* Connie */
+
             // dd($form_fields);
         }
     }

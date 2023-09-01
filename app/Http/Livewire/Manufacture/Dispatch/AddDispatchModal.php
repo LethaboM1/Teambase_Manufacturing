@@ -8,6 +8,7 @@ use App\Models\ManufactureBatches;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureJobcards;
 use App\Models\ManufactureJobcardProducts;
+use App\Models\ManufactureProducts;
 
 class AddDispatchModal extends Component
 {
@@ -51,25 +52,33 @@ class AddDispatchModal extends Component
     {
 
         $jobcard_list = [];
+
         $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
             ->where('status', 'Open')
             ->get()
             ->toArray();
+
         array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
 
         $manufacture_jobcard_products_list = [];
 
         if ($this->job_id > 0) {
+            $raw_products = ManufactureProducts::select('id as product_id')->where('has_recipe', 0)->get()->toArray();
+
             $batches = ManufactureBatches::select('product_id', 'id', 'qty')->where('status', 'Ready for dispatch')->get()->filter(function ($batch) {
                 return $batch->qty_left > 0;
             });
+
             foreach ($batches as $item) $batch[] = $item->product_id;
 
             // dd($batch);
             $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
                 ->where('manufacture_jobcard_products.job_id', $this->job_id)
                 ->where('manufacture_jobcard_products.filled', 0)
-                ->whereIn('manufacture_jobcard_products.product_id', $batch)
+                ->where(function ($query) use ($raw_products, $batch) {
+                    $query->whereIn('manufacture_jobcard_products.product_id', $batch)
+                        ->orWhere('manufacture_jobcard_products.product_id', $raw_products);
+                })
                 ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
                 // ->join('manufacture_batch', 'manufacture_batch.id', 'manufacture_jobcard_products.batch_id')
                 ->get()

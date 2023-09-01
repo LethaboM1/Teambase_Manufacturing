@@ -79,6 +79,7 @@ class ProductsController extends Controller
             'code' => "required|unique:manufacture_products,code,{$request->id}",
             'description' => "required|unique:manufacture_products,description,{$request->id}",
             'unit_measure' => 'required',
+            'lab_test' => 'required',
             'has_recipe' => 'nullable',
         ]);
 
