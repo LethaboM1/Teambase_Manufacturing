@@ -18,3 +18,4 @@ yarn-error.log
 *.cmd
 *.sql
 
+config/database.php
