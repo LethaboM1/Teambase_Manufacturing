@@ -7,8 +7,11 @@ use App\Http\Controllers\Functions;
 use App\Models\ManufactureBatches;
 use App\Models\ManufactureJobcardProductDispatches;
 use App\Models\ManufactureJobcardProducts;
+use App\Models\ManufactureProducts;
 use App\Models\Plants;
 use Illuminate\Http\Request;
+
+use function PHPSTORM_META\elementType;
 
 class DispatchController extends Controller
 {
@@ -50,11 +53,17 @@ class DispatchController extends Controller
         $jobcard_product = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
         if ($jobcard_product == null) return back()->with('alertError', 'Could not find job card.');
 
+        //Check batch is ready to dispatch on Manufacturing
         $batch = ManufactureBatches::where('product_id', $jobcard_product->product_id)->where('status', 'Ready for dispatch')->first();
-        if ($batch == null) return back()->with('alertError', 'Could not find batch.');
+        //Check is dispathed Product is a Raw Product -> Has Recipe?
+        $has_recipe = ManufactureProducts::select(['has_recipe'])->where('id', $jobcard_product->product_id)->first();
 
-
-        $form_fields['batch_id'] = $batch->id;
+        //No Ready batch and is not Raw Product
+        if ($batch == null && $has_recipe == '1') return back()->with('alertError', 'Could not find batch.');
+        //No Ready batch but is Raw Product
+        elseif ($batch == null && $has_recipe == '0') $form_fields['batch_id'] = '0';
+        //Has ready batch and is not Raw Product
+        elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;        
 
         $form_fields['status'] = 'Loading';
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
