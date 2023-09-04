@@ -82,7 +82,7 @@ class AddDispatchModal extends Component
                 ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
                 // ->join('manufacture_batch', 'manufacture_batch.id', 'manufacture_jobcard_products.batch_id')
                 ->get()
-                ->toArray();
+                ->toArray();            
         }
 
 

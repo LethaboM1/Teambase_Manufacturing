@@ -11,9 +11,9 @@
         <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>           
             <section class='card'>
                 <header id='editDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Dispatch No. {{$dispatch->dispatch_number}}</h2></header>
-                    @if(Session::get('dispatch_error'))
+                    {{-- @if(Session::get('dispatch_error'))
                         <small class="text-danger">{{Session::get('dispatch_error')}}</small>
-                    @endif
+                    @endif --}}
 
                     <div class='card-body'>
                         <div class='modal-wrapper'>
