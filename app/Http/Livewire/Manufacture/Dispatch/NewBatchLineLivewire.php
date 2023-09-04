@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class NewBatchLineLivewire extends Component
 {
-    public $dispatch, $weight_out, $weight_out_datetime, $qty;
+    public $dispatch, $weight_out, $weight_out_datetime, $qty, $new;
 
     function mount($dispatch)
     {
@@ -24,11 +24,15 @@ class NewBatchLineLivewire extends Component
         // dd("Ola!");
         if ($this->qty == 0) {
             $error = true;
-            session()->flash('dispatch_error', 'Qty is zero');
+            return back()->with('dispatch_error', 'Qty is zero');
+            /*session()->flash('dispatch_error', 'Qty is zero');
+            dd(session('dispatch_error'));
+            session()->flash('dispatch_error', 'Qty is zero'); */
         }
 
         if (!Functions::validDate($this->weight_out_datetime, "Y-m-d\TH:i")) {
             $error = true;
+            dd('date wrong');
             session()->flash('dispatch_error', 'Invalid date time');
         }
 
@@ -36,7 +40,9 @@ class NewBatchLineLivewire extends Component
 
         if ($product_qty < $this->qty) {
             $error = true;
+            dd('dispacthing too much');
             session()->flash('dispatch_error', "Too much product. Due amount on this job card is {$product_qty}");
+
         }
 
         if (!$error) {
@@ -47,6 +53,8 @@ class NewBatchLineLivewire extends Component
                 'qty' => $this->qty,
                 'status' => 'Dispatched'
             ];
+            
+            dd($form_fields);
 
             ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update($form_fields);
 
