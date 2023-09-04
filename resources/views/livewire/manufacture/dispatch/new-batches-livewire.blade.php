@@ -178,7 +178,7 @@
                                             @endforeach
                                             <script>
                                                 setTimeout(function() {
-                                                    $.getScript('{{url('js/examples/examples.modals.js')}}');
+                                                    $.getScript(url('js/examples/examples.modals.js'));
                                                 }, 300);
                                             </script>
                                         @else
