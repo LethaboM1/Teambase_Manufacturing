@@ -56,6 +56,11 @@
                                 @foreach($users_list as $user)
                                     <x-managers.users.item :item="$user" />
                                 @endforeach
+                                <script>
+                                    setTimeout(function() {
+                                        $.getScript('js/examples/examples.modals.js');
+                                    }, 300);
+                                </script>
                             @else
                                 <tr>
                                     <td colspan='9'>No Users to list...</td>
