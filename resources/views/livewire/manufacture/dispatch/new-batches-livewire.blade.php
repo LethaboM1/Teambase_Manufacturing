@@ -133,6 +133,11 @@
                                             @foreach($dispatches as $dispatch)
                                                 <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="true">
                                             @endforeach
+                                            <script>
+                                                setTimeout(function() {
+                                                    $.getScript('js/examples/examples.modals.js');
+                                                }, 300);
+                                            </script>
                                         @else
                                             <tr>
                                                 <td colspan="8">{{(strlen($search)==0?"No Dispatches Loading..":"Could not find '{$search}'")}}</td>
