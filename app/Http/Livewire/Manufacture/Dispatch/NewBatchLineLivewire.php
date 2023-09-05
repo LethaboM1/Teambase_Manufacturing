@@ -15,32 +15,29 @@ class NewBatchLineLivewire extends Component
     {
         $this->dispatch = $dispatch;
         $this->weight_out_datetime = date("Y-m-d\TH:i");
+        $this->weight_out = 0;
         $this->qty = 0;
     }
 
     function dispatch_out()
     {
-        $error = false;
-        // dd("Ola!");
+        /* $error = false;
+        
         if ($this->qty == 0) {
-            $error = true;
-            return back()->with('dispatch_error', 'Qty is zero');
-            /*session()->flash('dispatch_error', 'Qty is zero');
-            dd(session('dispatch_error'));
-            session()->flash('dispatch_error', 'Qty is zero'); */
+            $error = true;            
+            session()->flash('dispatch_error', 'Qty is zero');            
+            
         }
 
         if (!Functions::validDate($this->weight_out_datetime, "Y-m-d\TH:i")) {
-            $error = true;
-            dd('date wrong');
+            $error = true;            
             session()->flash('dispatch_error', 'Invalid date time');
         }
 
         $product_qty = $this->dispatch->jobcard_product()->qty_due;
 
         if ($product_qty < $this->qty) {
-            $error = true;
-            dd('dispacthing too much');
+            $error = true;            
             session()->flash('dispatch_error', "Too much product. Due amount on this job card is {$product_qty}");
 
         }
@@ -65,15 +62,18 @@ class NewBatchLineLivewire extends Component
             $this->emit('refreshNewDispatch');
 
             if ($this->dispatch->jobcard_product()->product()->has_recipe == 0) {
-                /* Adjust transaction if no recipe  */
+                //Adjust transaction if no recipe
             }
 
-            /* Close job card if filled  */
+            //Close job card if filled 
 
-            /* Connie */
+            //Connie
 
             // dd($form_fields);
-        }
+        } */
+
+        
+                                            
     }
 
     function updatedWeightOut($value)

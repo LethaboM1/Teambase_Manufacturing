@@ -24,7 +24,7 @@
                                     <h4>Loading Dispatches</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Dispacthes...">
+                                            <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Dispatches...">
                                             <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
                                         </div>
                                     </form>
@@ -123,9 +123,10 @@
                                             <th width="10%">Dispatch Number</th>
                                             <th width="10%">Job Card</th>
                                             <th width="15%">Contractor</th>
-                                            <th witdh="15%">Vehicle</th>
-                                            <th width="15%">Qty</th>
-                                            <th width="15%">Status</th>
+                                            <th width="15%">Vehicle</th>
+                                            <th width="15%">Product</th>
+                                            <th width="5%">Qty</th>
+                                            <th width="10%">Status</th>
                                             <th width="10%">Action</th>
                                         </tr>
                                     </thead>
@@ -133,10 +134,11 @@
                                             @foreach($dispatches as $dispatch)
                                                 <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="true">
                                             @endforeach
+                                            {{-- Refresh listeners on Modals --}}
                                             <script>
                                                 setTimeout(function() {
                                                     $.getScript('{{url("js/examples/examples.modals.js")}}');
-                                                }, 300);
+                                                }, 500);
                                             </script>
                                         @else
                                             <tr>
@@ -166,9 +168,10 @@
                                             <th width="10%">Dispatch Number</th>
                                             <th width="10%">Job Card</th>
                                             <th width="15%">Contractor</th>
-                                            <th witdh="15%">Vehicle</th>
-                                            <th width="15%">Qty</th>
-                                            <th width="15%">Status</th>
+                                            <th width="15%">Vehicle</th>
+                                            <th width="15%">Product</th>
+                                            <th width="5%">Qty</th>
+                                            <th width="10%">Status</th>
                                             <th width="10%">Action</th>
                                         </tr>
                                     </thead>
@@ -176,10 +179,11 @@
                                             @foreach($dispatches_archived as $dispatch)
                                                 <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="false">
                                             @endforeach
+                                            {{-- Refresh listeners on Modals --}}
                                             <script>
                                                 setTimeout(function() {
                                                     $.getScript('{{url("js/examples/examples.modals.js")}}');
-                                                }, 300);
+                                                }, 500);
                                             </script>
                                         @else
                                             <tr>
@@ -316,9 +320,8 @@
                                     </tr>
                                 @endif
                         </table>          
-                        {{$dispatches->links()}} --}}         
-
-                      
+                        {{$dispatches->links()}} --}}                         
+                        
                 </div> 
             </section>
         </div>

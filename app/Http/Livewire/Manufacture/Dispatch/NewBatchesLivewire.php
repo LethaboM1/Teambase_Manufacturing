@@ -14,7 +14,7 @@ class NewBatchesLivewire extends Component
     public $tab, $search, $search_arc;
 
     protected $listeners = [
-        'refreshNewDispatch' => '$refresh'
+        'refreshNewDispatch'
     ];
 
     function mount()
@@ -27,6 +27,11 @@ class NewBatchesLivewire extends Component
         $this->resetPage();
     } */
     //2023-09-01 - removed to allow for Tab Navs
+
+    function refreshNewDispatch()
+    {        
+        $this->resetPage();
+    }
 
     function updatedSearchArc()
     {
