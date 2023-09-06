@@ -10,6 +10,8 @@ class ReceiveGoodsLivewire extends Component
     public function render()
     {
         $supplier_list = ManufactureSuppliers::select('id as value', 'name')->get();
-        return view('livewire.manufacture.dispatch.receive-goods-livewire');
+        return view('livewire.manufacture.dispatch.receive-goods-livewire', [
+            'supplier_list' => $supplier_list
+        ]);
     }
 }
