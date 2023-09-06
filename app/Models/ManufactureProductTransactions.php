@@ -12,4 +12,11 @@ class ManufactureProductTransactions extends Model
     protected $casts = [
         'created_at'  => 'date:Y-m-d',
     ];
+
+    function supplier()
+    {
+        if ($this->type == 'REC') {
+            return $this->hasOne(ManufactureSuppliers::class, 'id', 'type_id');
+        }
+    }
 }
