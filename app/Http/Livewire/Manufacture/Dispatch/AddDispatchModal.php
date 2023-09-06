@@ -70,6 +70,7 @@ class AddDispatchModal extends Component
             });
 
             foreach ($batches as $item) $batch[] = $item->product_id;
+            if (!isset($batch)) $batch = [];
 
             // dd($batch);
             $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
@@ -82,7 +83,7 @@ class AddDispatchModal extends Component
                 ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
                 // ->join('manufacture_batch', 'manufacture_batch.id', 'manufacture_jobcard_products.batch_id')
                 ->get()
-                ->toArray();            
+                ->toArray();
         }
 
 
