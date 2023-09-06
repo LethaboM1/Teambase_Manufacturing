@@ -22,7 +22,57 @@ class DispatchController extends Controller
 
     function out_dispatch(Request $request)
     {
-        dd($request);
+        $error = false;
+
+        $qty = $request->weight_out - $request->weight_in;
+        
+        if ($qty == 0) {
+            $error = true;            
+            return back()->with('alertError', 'Cannot Complete Dispatch. Qty is Zero');            
+            
+        }
+
+        if (!Functions::validDate($request->weight_out_datetime, "Y-m-d\TH:i")) {
+            $error = true;            
+            return back()->with('alertError', 'Invalid date time');
+        }
+
+        $product_qty = $request->qty_due;
+
+        if ($product_qty < $qty) {
+            $error = true;            
+            return back()->with('alertError', "Too much product. Due amount on this job card is {$product_qty}");
+
+        }
+
+        if (!$error) {
+            $form_fields = [
+                'weight_out' => $request->weight_out,
+                'weight_out_datetime' => $request->weight_out_datetime,
+                'weight_out_user_id' => auth()->user()->user_id,
+                'qty' => $qty,
+                'status' => 'Dispatched',
+                'batch_id' => '0'
+            ];
+            
+            
+
+            ManufactureJobcardProductDispatches::where('id', $request->id)->update($form_fields);
+
+            if ($product_qty == $qty) {
+                ManufactureJobcardProducts::where('id', $request->jobcard_product_id)->update(['filled' => 1]);
+            }            
+
+            if ($request->jobcard_product_has_recipe == 0) {
+                //Adjust transaction if no recipe
+                dd('here');
+            }
+
+            //Close job card if filled 
+
+            //Connie
+            
+        }
     }
 
     function add_dispatch(Request $request)
