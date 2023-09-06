@@ -11,7 +11,7 @@
         <a id="edit_btn_{{$dispatch->id}}" href="#editDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic"><i class="fas fa-edit"></i></a>                                                
         
           <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>           
-            <form method='post' action="{{url("dispatches/out")}}" enctype='multipart/form-data'>
+            <form method='post' action="{{url("dispatches/out/{$dispatch->id}")}}" enctype='multipart/form-data'>
                 @csrf
                 <section class='card'>
                     <header id='editDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Dispatch No. {{$dispatch->dispatch_number}}</h2></header>
@@ -51,10 +51,10 @@
 
                                         @if ($new == "true")
                                             <div>
-                                                <x-form.hidden wire=0 name="id" value="{{$dispatch->id}}"/>
-                                                <x-form.hidden wire=0 name="qty_due" value="{{$dispatch->jobcard_product()->qty_due}}"/>
-                                                <x-form.hidden wire=0 name="jobcard_product_id" value="{{$dispatch->jobcard_product()->id}}"/>    
-                                                <x-form.hidden wire=0 name="jobcard_product_has_recipe" value="{{$dispatch->jobcard_product()->product()->has_recipe}}"/>    
+                                                {{-- <x-form.hidden wire=0 name="id" value="{{$dispatch->id}}"/> --}}
+                                                {{-- <x-form.hidden wire=0 name="qty_due" value="{{$dispatch->jobcard_product()->qty_due}}"/> --}}
+                                                {{-- <x-form.hidden wire=0 name="jobcard_product_id" value="{{$dispatch->jobcard_product()->id}}"/>     --}}
+                                                {{-- <x-form.hidden wire=0 name="jobcard_product_has_recipe" value="{{$dispatch->jobcard_product()->product()->has_recipe}}"/>     --}}
                                             </div>
 
                                             <div class="col-md-4">

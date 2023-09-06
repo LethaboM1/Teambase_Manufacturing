@@ -15,16 +15,19 @@ use function PHPSTORM_META\elementType;
 
 class DispatchController extends Controller
 {
+
+    //public $dispatch;
+
     function new()
     {
         return view('manufacture.dispatch.new');
     }
 
-    function out_dispatch(Request $request)
+    function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
         $error = false;
 
-        $qty = $request->weight_out - $request->weight_in;
+        $qty = $request->weight_out - $dispatch->weight_in;
         
         if ($qty == 0) {
             $error = true;            
@@ -37,7 +40,8 @@ class DispatchController extends Controller
             return back()->with('alertError', 'Invalid date time');
         }
 
-        $product_qty = $request->qty_due;
+        //$product_qty = $request->qty_due;
+        $product_qty = $dispatch->jobcard_product()->qty_due;
 
         if ($product_qty < $qty) {
             $error = true;            
@@ -57,13 +61,13 @@ class DispatchController extends Controller
             
             
 
-            ManufactureJobcardProductDispatches::where('id', $request->id)->update($form_fields);
+            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
             if ($product_qty == $qty) {
-                ManufactureJobcardProducts::where('id', $request->jobcard_product_id)->update(['filled' => 1]);
+                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
             }            
 
-            if ($request->jobcard_product_has_recipe == 0) {
+            if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
                 //Adjust transaction if no recipe
                 dd('here');
             }
