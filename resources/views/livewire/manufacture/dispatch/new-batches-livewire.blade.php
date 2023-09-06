@@ -92,11 +92,11 @@
                                 </div>
 
                                 {{-- Good Received --}}
-                                <div id='addReturn' class='modal-block modal-block-lg mfp-hide'>
+                                <div id='receiveGoods' class='modal-block modal-block-lg mfp-hide'>
                                     <form method='post' action="{{url("dispatches/receiveGoods")}}" enctype='multipart/form-data'>
                                         @csrf
                                         <section class='card'>
-                                            <header id='addReturnheader' class='card-header'><h2 class='card-title'></h2></header>
+                                            <header id='receiveGoodsheader' class='card-header'><h2 class='card-title'></h2></header>
                                                 <div class='card-body'>
                                                     <div class='modal-wrapper'>
                                                         <div class='modal-text'>
