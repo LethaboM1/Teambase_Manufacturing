@@ -99,9 +99,8 @@
                                             <header id='receiveGoodsheader' class='card-header'><h2 class='card-title'>Good Receive</h2></header>
                                                 <div class='card-body'>
                                                     <div class='modal-wrapper'>
-                                                        <div class='modal-text'>
-                                                            
-
+                                                        <div class='modal-text'>                                                            
+                                                            <livewire:manufacture.dispatch.receive-goods-livewire />
                                                         </div>
                                                     </div>
                                                 </div>
