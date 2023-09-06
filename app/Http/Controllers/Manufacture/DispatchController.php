@@ -8,6 +8,7 @@ use App\Models\ManufactureBatches;
 use App\Models\ManufactureJobcardProductDispatches;
 use App\Models\ManufactureJobcardProducts;
 use App\Models\ManufactureProducts;
+use App\Models\ManufactureProductTransactions;
 use App\Models\Plants;
 use Illuminate\Http\Request;
 
@@ -28,15 +29,14 @@ class DispatchController extends Controller
         $error = false;
 
         $qty = $request->weight_out - $dispatch->weight_in;
-        
+
         if ($qty == 0) {
-            $error = true;            
-            return back()->with('alertError', 'Cannot Complete Dispatch. Qty is Zero');            
-            
+            $error = true;
+            return back()->with('alertError', 'Cannot Complete Dispatch. Qty is Zero');
         }
 
         if (!Functions::validDate($request->weight_out_datetime, "Y-m-d\TH:i")) {
-            $error = true;            
+            $error = true;
             return back()->with('alertError', 'Invalid date time');
         }
 
@@ -44,9 +44,8 @@ class DispatchController extends Controller
         $product_qty = $dispatch->jobcard_product()->qty_due;
 
         if ($product_qty < $qty) {
-            $error = true;            
+            $error = true;
             return back()->with('alertError', "Too much product. Due amount on this job card is {$product_qty}");
-
         }
 
         if (!$error) {
@@ -58,14 +57,14 @@ class DispatchController extends Controller
                 'status' => 'Dispatched',
                 'batch_id' => '0'
             ];
-            
-            
+
+
 
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
             if ($product_qty == $qty) {
                 ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
-            }            
+            }
 
             if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
                 //Adjust transaction if no recipe
@@ -75,7 +74,7 @@ class DispatchController extends Controller
             //Close job card if filled 
 
             //Connie
-            
+
         }
     }
 
@@ -117,7 +116,7 @@ class DispatchController extends Controller
         //No Ready batch but is Raw Product
         elseif ($batch == null && $has_recipe == '0') $form_fields['batch_id'] = '0';
         //Has ready batch and is not Raw Product
-        elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;        
+        elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;
 
         $form_fields['status'] = 'Loading';
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
@@ -146,5 +145,49 @@ class DispatchController extends Controller
     function return_dispatch(Request $request)
     {
         dd('Difference in weights will be returned', $request->toArray());
+    }
+
+    function receiving_goods(Request $request)
+    {
+        $form_fields = $request->validate([
+            "reference_number" => "required",
+            "registration_number" => "required",
+            "type_id" => "required|gt:0",
+            "product_id" => "required|gt:0",
+            "weight_in_datetime" => "required",
+            "weight_in" => "required|gt:0",
+        ]);
+
+
+        $form_fields['type'] = 'REC';
+        $form_fields['status'] = 'Pending';
+        $form_fields['qty'] = 0;
+        $form_fields['weight_in_user'] = auth()->user()->user_id;
+
+
+        ManufactureProductTransactions::insert($form_fields);
+        return back()->with([
+            'alertMessage' => 'Good receiving.',
+            'tab' => 'receiving'
+        ]);
+    }
+
+    function received_goods(Request $request, ManufactureProductTransactions $transaction)
+    {
+        $form_fields = $request->validate([
+            "weight_out" => 'required|gt:0',
+            "comment" => 'nullable'
+        ]);
+
+        if ($form_fields['weight_out'] > $transaction->weight_in) return back()->with(['alertError' => 'Truck weighs more than when weighed in.', 'tab' => 'receiving']);
+        $qty = $transaction->weight_in - $form_fields['weight_out'];
+        $form_fields['status'] = 'Completed';
+        $form_fields['qty'] = $qty;
+
+        ManufactureProductTransactions::where('id', $transaction->id)->update($form_fields);
+        return back()->with([
+            'alertMessage' => 'Good Received.',
+            'tab' => 'receiving'
+        ]);
     }
 }

@@ -16,7 +16,12 @@ class ManufactureProductTransactions extends Model
     function supplier()
     {
         if ($this->type == 'REC') {
-            return $this->hasOne(ManufactureSuppliers::class, 'id', 'type_id');
+            return $this->hasOne(ManufactureSuppliers::class, 'id', 'type_id')->first();
         }
+    }
+
+    function product()
+    {
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
     }
 }

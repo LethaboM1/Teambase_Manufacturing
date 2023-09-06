@@ -1,0 +1,64 @@
+<tr class="pointer">
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->created_at}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->reference_number}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->supplier()->name}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->registration_number}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->product()->code}} - {{$transaction->product()->description}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->weight_in}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->status}}</td>
+    <td>
+        <button id="complete_{{$transaction->id}}_btn" href="#complete_receive_{{$transaction->id}}" class="btn btn-warning modal-sizes"><i class="fa fa-edit"></i></button>
+        
+        <div id='complete_receive_{{$transaction->id}}' class='modal-block modal-block-lg mfp-hide'>
+            <form action="{{url("dispatches/received-goods/{$transaction->id}")}}" method='post' enctype='multipart/form-data'>
+                @csrf
+                <section class='card'>
+                    <header id='complete_receive_{{$transaction->id}}header' class='card-header'><h2 class='card-title'></h2></header>
+                        <div class='card-body'>
+                            <div class='modal-wrapper'>
+                                <div class='modal-text'>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Supplier</label>
+                                            <h4>{{$transaction->supplier()->name}}</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Dispatch Number</label>
+                                            <h4>{{$transaction->reference_number}}</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Registration No.</label>
+                                            <h4>{{$transaction->registration_number}}</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Weighed In Date/Time</label>
+                                            <h4>{{$transaction->created_at}}</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Weighed In</label>
+                                            <h4>{{$transaction->weight_in}}</h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <x-form.number wire=0 name="weight_out" step="0.001" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <x-form.textarea wire=0 name="comment" label="Comment" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class='card-footer'>
+                            <div class='row'>
+                                <div class='col-md-12 text-right'>
+                                    <button type='submit' name='save' value='save' class='btn btn-primary'>Confirm</button>
+                                    <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                </div>
+                            </div>
+                        </footer>
+                </section>
+            </form>
+        </div>
+        
+    </td>
+</tr>

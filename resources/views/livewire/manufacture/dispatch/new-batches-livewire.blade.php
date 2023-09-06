@@ -69,7 +69,7 @@
 
                     {{-- Good Received --}}
                     <div id='receiveGoods' class='modal-block modal-block-lg mfp-hide'>
-                        <form method='post' action="{{url("dispatches/receiveGoods")}}" enctype='multipart/form-data'>
+                        <form method='post' action="{{url("dispatches/receiving-goods")}}" enctype='multipart/form-data'>
                             @csrf
                             <section class='card'>
                                 <header id='receiveGoodsheader' class='card-header'><h2 class='card-title'>Good Receive</h2></header>
@@ -107,7 +107,7 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
                             <div class="tab-pane {{($tab=='loading'?'active':'')}}" id="loading" role="tabpanel" aria-labelledby="loading-tab">
-                                <div class="header-right">
+                                <div class="header-right mb-2">
                                     <h4>Loading Dispatches</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
@@ -116,7 +116,7 @@
                                         </div>
                                     </form>
                                 </div>
-                                
+                                <br><br><br>
 
                                 <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
@@ -154,7 +154,7 @@
                             </div>
 
                             <div class="tab-pane {{($tab=='receiving'?'active':'')}}" id="receiving" role="tabpanel" aria-labelledby="receiving-tab">
-                                <div class="header-right">
+                                <div class="header-right mb-2">
                                     <h4>Good Receiving</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
@@ -162,7 +162,7 @@
                                             <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
                                         </div>
                                     </form>
-                                </div>
+                                </div><br><br><br>
                                 <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
                                         <tr>
@@ -170,16 +170,15 @@
                                             <th width="10%">Reference Number</th>
                                             <th width="10%">Supplier</th>
                                             <th width="15%">Reg Number</th>
-                                            <th width="15%">Vehicle</th>
                                             <th width="15%">Product</th>
-                                            <th width="5%">Qty</th>
+                                            <th width="5%">Weigh In</th>
                                             <th width="10%">Status</th>
                                             <th width="10%">Action</th>
                                         </tr>
                                     </thead>
-                                        @if($dispatches_archived->count()>0)
-                                            @foreach($dispatches_archived as $dispatch)
-                                                <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="false">
+                                        @if($product_transactions->count()>0)
+                                            @foreach($product_transactions as $transaction)
+                                                <livewire:manufacture.dispatch.new-receive-transactions-livewire :transaction="$transaction" />
                                             @endforeach
                                             {{-- Refresh listeners on Modals --}}
                                             <script>
@@ -189,15 +188,15 @@
                                             </script>
                                         @else
                                             <tr>
-                                                <td colspan="8">{{(strlen($search_arc)==0?"No Dispatches Archived..":"Could not find '{$search_arc}'")}}</td>
+                                                <td colspan="8">{{(strlen($search_arc)==0?"No pending goods received Archived..":"Could not find '{$search_arc}'")}}</td>
                                             </tr>
                                         @endif
                                 </table>          
-                                {{$dispatches_archived->links()}}   
+                                {{$product_transactions->links()}}   
                             </div>
 
                             <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
-                                <div class="header-right">
+                                <div class="header-right mb-2">
                                     <h4>Archive</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
@@ -205,7 +204,7 @@
                                             <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
                                         </div>
                                     </form>
-                                </div>
+                                </div><br><br><br>
                                 <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
                                         <tr>
