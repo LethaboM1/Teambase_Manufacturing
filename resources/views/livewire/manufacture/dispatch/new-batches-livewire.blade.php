@@ -96,11 +96,12 @@
                                     <form method='post' action="{{url("dispatches/receiveGoods")}}" enctype='multipart/form-data'>
                                         @csrf
                                         <section class='card'>
-                                            <header id='receiveGoodsheader' class='card-header'><h2 class='card-title'></h2></header>
+                                            <header id='receiveGoodsheader' class='card-header'><h2 class='card-title'>Good Receive</h2></header>
                                                 <div class='card-body'>
                                                     <div class='modal-wrapper'>
                                                         <div class='modal-text'>
-                                                            <h4>Receive Goods</h4>
+                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
