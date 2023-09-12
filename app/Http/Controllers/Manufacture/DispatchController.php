@@ -24,6 +24,11 @@ class DispatchController extends Controller
         return view('manufacture.dispatch.new');
     }
 
+    function new_goods()
+    {
+        return view('manufacture.goods-received');
+    }
+
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
         $error = false;
