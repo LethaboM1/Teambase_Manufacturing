@@ -7,11 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureSettings;
 
+use Spipu\Html2Pdf\Html2Pdf;
+use Spipu\Html2Pdf\Exception\Html2PdfException;
+use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+
 class Functions extends Controller
 {
-
-
-
     static function negate($number)
     {
         if ($number > 0) {
@@ -112,5 +113,55 @@ class Functions extends Controller
         $d = DateTime::createFromFormat($format, $date);
         // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
         return $d && $d->format($format) === $date;
+    }
+
+    static function printPDF($pdf_html, $pdf_filename = 'temp', $pdf_save = false, $pdf_open = false, $pdf_orientation = 'P', $pdf_page = 'A4', $stylesheet = '')
+    {
+        global $error;
+
+        if (strlen($pdf_page) == 0) {
+            $pdf_page = 'A4';
+        }
+        if (strlen($pdf_orientation) == 0) {
+            $pdf_orientation = 'P';
+        }
+        if (strlen($pdf_filename) == 0) {
+            $pdf_filename = 'temp';
+        }
+        if (!$pdf_open && !$pdf_save) {
+            $pdf_open = true;
+        }
+
+
+        if (strlen($pdf_html) > 0) {
+            //require_once('assets/html2pdf/html2pdf.class.php');
+            try {
+
+                $html2pdf = new Html2Pdf($pdf_orientation, $pdf_page, 'en', true, 'UTF-8');
+                if (strlen($stylesheet) > 0) {
+                    if (file_exists($stylesheet)) {
+                        $style = file_get_contents($stylesheet);
+                        $html2pdf->writeHTML("<style>" . $style . "</style>");
+                    } else {
+                        //$_SESSION['error'] = "Could not find stylesheet: " . $stylesheet;
+                    }
+                }
+
+                $html2pdf->writeHTML($pdf_html);
+                unset($pdf_html);
+
+
+                if ($pdf_open) {
+                    $html2pdf->Output("$pdf_filename.pdf");
+                }
+
+                if ($pdf_save) {
+                    $html2pdf->Output("$pdf_filename.pdf", "F");
+                }
+            } catch (Html2PdfException $e) {
+                echo  $e;
+                exit;
+            }
+        }
     }
 }
