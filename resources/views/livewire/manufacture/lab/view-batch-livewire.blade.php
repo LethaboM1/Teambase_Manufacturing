@@ -39,7 +39,10 @@
                                     Actions
                                 </a>
                         <div class="dropdown-menu" aria-labelledby="labsDropdown">
-                            <a class="dropdown-item modal-basic" href="#addLabTest">Add Lab Test</a>                            
+                            <a class="dropdown-item modal-basic" href="#addLabTestGrading">Add Grading Lab Test</a>
+                            <a class="dropdown-item modal-basic" href="#addLabTestMSFL">Add Marshall Stability & Flow Lab</a>
+                            <a class="dropdown-item modal-basic" href="#addLabTestMVD">Add Max-viodless Density Lab Test</a>
+                            <a class="dropdown-item modal-basic" href="#addLabTestRCT">Add Road Test Core Lab Test</a>
                         </div>
                     </div>
                     <div class="row">
@@ -109,48 +112,11 @@
                         </tbody>
                         </table>
                 </div>
-                @switch($product->lab_test)
-                    @case("grading")
-                    <livewire:manufacture.lab.add-lab-grading :sample="$labs->count()+1" :batch="$batch" />
-                        @break
-
-                    @case("m-s-f")
-                    <livewire:manufacture.lab.add-lab-m-s-f :sample="$labs->count()+1" :batch="$batch" />
-                        @break
-
-                    @case("max-viodless-density")
-                    <livewire:manufacture.lab.add-lab-max-viodless-density :sample="$labs->count()+1" :batch="$batch" />
-                        @break
-
-                    @case("road-test-cores")
-                    <livewire:manufacture.lab.add-lab-road-test-cores :sample="$labs->count()+1" :batch="$batch" />
-                        @break
-                    $@default                       
-                        
-                        <div id='addLabTest' class='modal-block modal-block-lg mfp-hide'>
-                            <form method='post' enctype='multipart/form-data'>
-                                <section class='card'>
-                                    <header id='addLabTestheader' class='card-header'><h2 class='card-title'>Missing Lab Test</h2></header>
-                                        <div class='card-body'>
-                                            <div class='modal-wrapper'>
-                                                <div class='modal-text'>                                                    
-                                                    <p>Ask the Manager to add the type of lab test to this Product.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <footer class='card-footer'>
-                                            <div class='row'>
-                                                <div class='col-md-12 text-right'>
-                                                    <button class='btn btn-default modal-dismiss'>Close</button></div>
-                                                </div>
-                                            </div>
-                                        </footer>
-                                </section>
-                            </form>
-                        </div>
-                        
-
-                @endswitch
+                <livewire:manufacture.lab.add-lab-grading :sample="$labs->count()+1" :batch="$batch" />
+                <livewire:manufacture.lab.add-lab-m-s-f :sample="$labs->count()+1" :batch="$batch" />
+                <livewire:manufacture.lab.add-lab-max-viodless-density :sample="$labs->count()+1" :batch="$batch" />
+                <livewire:manufacture.lab.add-lab-road-test-cores :sample="$labs->count()+1" :batch="$batch" />
+                
                 
             </div>
         </div>

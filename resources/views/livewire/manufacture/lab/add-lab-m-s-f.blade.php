@@ -1,4 +1,4 @@
-<div id='addLabTest' class='modal-block modal-block-lg mfp-hide'>
+<div id='addLabTestMSFL' class='modal-block modal-block-lg mfp-hide'>
     <form action="{{url("labs/add")}}" method='post' enctype='multipart/form-data'>
         @csrf
         <section class='card'>
@@ -201,7 +201,7 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Avarage</div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Average</div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="location" placeholder="g/cm" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>

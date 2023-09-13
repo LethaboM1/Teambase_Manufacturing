@@ -1,4 +1,4 @@
-<div id='addLabTest' class='modal-block modal-block-lg mfp-hide'>
+<div id='addLabTestRCT' class='modal-block modal-block-lg mfp-hide'>
     <form action="{{url("labs/add")}}" method='post' enctype='multipart/form-data'>
         @csrf
         <section class='card'>

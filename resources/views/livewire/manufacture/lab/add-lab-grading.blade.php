@@ -1,4 +1,4 @@
-<div id='addLabTest' class='modal-block modal-block-lg mfp-hide'>
+<div id='addLabTestGrading' class='modal-block modal-block-lg mfp-hide'>
     <form action="{{url("labs/add")}}" method='post' enctype='multipart/form-data'>
         @csrf
         <section class='card'>
@@ -68,37 +68,37 @@
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Method Used</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[method]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[method]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Centrifuge Binder</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[centrifuge_binder]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[centrifuge_binder]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">a</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[a]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[a]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">b</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[b]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[b]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">c</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[c]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[c]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"></div>
                             <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">d</div>
-                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[d]" placeholder="mm" class="form-control"></div>
+                            <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[d]" placeholder="" class="form-control"></div>
                         </div>
                         <br>
                         <tr>
@@ -132,63 +132,63 @@
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">10,000</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[10_1]" placeholder="8,8" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[10_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[10_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[10_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">7,100</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[7_1_1]" placeholder="227,9" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[7_1_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[7_1_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[7_1_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">5,000</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[5_1]" placeholder="365,0" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[5_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[5_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[5_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">2,000</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[2_1]" placeholder="338,0" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[2_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[2_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[2_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">1,000</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[1_1]" placeholder="188,8" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[1_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[1_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[1_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">0,600</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_6_1]" placeholder="104,1" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_6_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_6_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_6_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">0,300</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_3_1]" placeholder="78,1" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_3_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_3_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_3_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">0,150</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_15_1]" placeholder="66,7" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_15_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_15_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_15_3]" placeholder="" class="form-control"></div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">0,075</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_075_1]" placeholder="36,4" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_075_1]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_075_2]" placeholder="" class="form-control"></div>
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[0_075_3]" placeholder="" class="form-control"></div>
                             </div>
@@ -202,9 +202,9 @@
                             <hr>
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0">Total</div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_1]" placeholder="g" class="form-control"></div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_2]" placeholder="g" class="form-control"></div>
-                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_3]" placeholder="g" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_1]" placeholder="" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_2]" placeholder="" class="form-control"></div>
+                                <div class="col-sm-3 col-md-3 pb-sm-3 pb-md-0"><input type="text" name="sample[total_3]" placeholder="" class="form-control"></div>
                             </div>
                     </div>
                 </div>
