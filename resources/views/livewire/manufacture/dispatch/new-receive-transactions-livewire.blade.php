@@ -60,7 +60,7 @@
                                             </div>                                            
                                         @else
                                             <div class="col-md-6">
-                                                <x-form.number wire=0 name="weight_out" step="0.001" />
+                                                <x-form.number wire=0 name="weight_out" label="Weight Out" step="0.001" />
                                             </div>
                                             <div class="col-md-12">
                                                 <x-form.textarea wire=0 name="comment" label="Comment" />
