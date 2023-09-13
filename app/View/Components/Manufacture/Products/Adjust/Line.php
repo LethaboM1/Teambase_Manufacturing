@@ -26,6 +26,7 @@ class Line extends Component
      */
     public function render()
     {
+        
         return view('components.manufacture.products.adjust.line');
     }
 }

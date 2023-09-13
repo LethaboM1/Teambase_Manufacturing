@@ -80,7 +80,7 @@
                                 </thead>
                                     @if($dispatches->count()>0)
                                         @foreach($dispatches as $dispatch)
-                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="true">
+                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" dispatchaction="new">
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -125,7 +125,7 @@
                                 </thead>
                                     @if($dispatches_archived->count()>0)
                                         @foreach($dispatches_archived as $dispatch)
-                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" :new="false">
+                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" dispatchaction="view">
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -270,6 +270,14 @@
                         </table>          
                         {{$dispatches->links()}} --}}                         
                         
+
+                        {{-- Print of Dispatch Note --}}
+                        @if(Session::get('print_dispatch'))
+                        <script>
+                           window.open('{{url("dispatches/print/".Session::get('print_dispatch'))}}','_blank');
+                        </script>
+
+                        @endif
                 </div> 
             </section>
         </div>

@@ -110,7 +110,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table>
+                                <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
