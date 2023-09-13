@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Manufacture\Dispatch;
 use App\Models\Plants;
 use Livewire\Component;
 use App\Models\ManufactureBatches;
+use App\Models\ManufactureJobcardProductDispatchDeliveryzones;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureJobcards;
 use App\Models\ManufactureJobcardProducts;
@@ -27,7 +28,8 @@ class AddDispatchModal extends Component
         $plant_id,
         $registration_number,
         $batch_id,
-        $qty;
+        $qty,
+        $delivery_zone;
 
     function mount()
     {
@@ -42,6 +44,11 @@ class AddDispatchModal extends Component
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
         }
+    }
+
+    function updatedDelivery($value)
+    {
+        $this->delivery = $value;        
     }
 
     function boot()
@@ -93,10 +100,15 @@ class AddDispatchModal extends Component
         if ($this->delivery) $plant_list = Plants::select('plant_id as value', DB::raw("concat(plant_number,' ',make,' ',model) as name"))->get()->toArray();
         array_unshift($plant_list, ['value' => 0, 'name' => 'Select']);
 
+        $delivery_zone_list = [];
+        if ($this->delivery) $delivery_zone_list = ManufactureJobcardProductDispatchDeliveryzones::select('description as value', DB::raw("description as name"))->get()->toArray();
+        array_unshift($delivery_zone_list, ['value' => 0, 'name' => 'Select']);
+
         return view('livewire.manufacture.dispatch.add-dispatch-modal', [
             'jobcard_list' => $jobcard_list,
             'manufacture_jobcard_products_list' => $manufacture_jobcard_products_list,
-            'plant_list' => $plant_list
+            'plant_list' => $plant_list,
+            'delivery_zone_list' => $delivery_zone_list
         ]);
     }
 }

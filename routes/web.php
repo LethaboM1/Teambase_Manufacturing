@@ -92,9 +92,11 @@ Route::middleware('auth')->group(function () {
 
             /* Dispatch */
             Route::get('dispatches/new', [DispatchController::class, 'new']);
+            
             Route::post('dispatches/new', [DispatchController::class, 'add_dispatch']);
             Route::post('dispatches/out/{dispatch}', [DispatchController::class, 'out_dispatch']);
-            Route::post('dispatches/return', [DispatchController::class, 'return_dispatch']);
+            Route::post('dispatches/return/{dispatch}', [DispatchController::class, 'return_dispatch']);
+            Route::get('dispatches/print/{dispatch}', [DispatchController::class, 'print_dispatch']);
             Route::post('dispatches/receiving-goods', [DispatchController::class, 'receiving_goods']);
             Route::post('dispatches/received-goods/{transaction}', [DispatchController::class, 'received_goods']);
 

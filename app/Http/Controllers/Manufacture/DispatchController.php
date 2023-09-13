@@ -7,6 +7,7 @@ use App\Http\Controllers\Functions;
 use App\Models\ManufactureBatches;
 use App\Models\ManufactureJobcardProductDispatches;
 use App\Models\ManufactureJobcardProducts;
+use App\Models\ManufactureJobcards;
 use App\Models\ManufactureProducts;
 use App\Models\ManufactureProductTransactions;
 use App\Models\Plants;
@@ -26,41 +27,48 @@ class DispatchController extends Controller
 
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
+        
         $error = false;
 
         $qty = $request->weight_out - $dispatch->weight_in;
+        $dispatch_temperature = $request->dispatch_temp;
 
-        if ($qty == 0) {
+        if ($qty <= 0) {
             $error = true;
             return back()->with('alertError', 'Cannot Complete Dispatch. Qty is Zero');
         }
 
-        if (!Functions::validDate($request->weight_out_datetime, "Y-m-d\TH:i")) {
+        if ($dispatch_temperature <= 0 || $dispatch_temperature =='') {
             $error = true;
-            return back()->with('alertError', 'Invalid date time');
+            return back()->with('alertError', 'Cannot Complete Dispatch. Dispatch Temperature cannot be blank.');
         }
 
-        //$product_qty = $request->qty_due;
+        /* if (!Functions::validDate($request->weight_out_datetime, "Y-m-d\TH:i")) {
+            $error = true;
+            return back()->with('alertError', 'Invalid date time');
+        } 
+        assigned in fields as timestamp 2023-09-13
+        */
+
         $product_qty = $dispatch->jobcard_product()->qty_due;
 
         if ($product_qty < $qty) {
             $error = true;
             return back()->with('alertError', "Too much product. Due amount on this job card is {$product_qty}");
-        }
+        }        
 
-        if (!$error) {
+        if (!$error) {          
             $form_fields = [
-                'weight_out' => $request->weight_out,
-                'weight_out_datetime' => $request->weight_out_datetime,
+                'weight_out' => $request->weight_out,                
+                'weight_out_datetime' => date("Y-m-d\TH:i"),
                 'weight_out_user_id' => auth()->user()->user_id,
                 'qty' => $qty,
-                'status' => 'Dispatched',
-                'batch_id' => '0'
+                'status' => 'Dispatched'                
             ];
 
+            $form_fields['dispatch_temp'] = $dispatch_temperature;            
 
-
-            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);            
 
             if ($product_qty == $qty) {
                 ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
@@ -68,12 +76,27 @@ class DispatchController extends Controller
 
             if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
                 //Adjust transaction if no recipe
-                dd('here');
+                $form_fields = [
+                    'product_id' => $dispatch->jobcard_product()->product_id,
+                    'type' => 'JDISP',                    
+                    'type_id' => $dispatch->id,
+                    'qty' => -1*($qty),
+                    'comment' => 'Dispatched on '.$dispatch->jobcard()->jobcard_number,
+                    'user_id' => auth()->user()->user_id,
+                    'registration_number' => $dispatch->plant()->reg_number,                    
+                    'status' => ' '
+                ];
+                ManufactureProductTransactions::insert($form_fields);
             }
 
-            //Close job card if filled 
+            //Close job card if all filled 
+            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() == 0) {
+                
+                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Completed']);
+            
+            }
 
-            //Connie
+            return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);                       
 
         }
     }
@@ -84,9 +107,7 @@ class DispatchController extends Controller
         $form_fields = $request->validate([
             "job_id" => "required|exists:manufacture_jobcards,id",
             "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
-            "reference" => 'nullable',
-            "haulier_code" => 'nullable',
-            "weight_in_datetime" => 'required',
+            "reference" => 'nullable',                        
             "weight_in" => 'required|gt:0',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
@@ -120,10 +141,12 @@ class DispatchController extends Controller
 
         $form_fields['status'] = 'Loading';
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
+        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
+        $form_fields['delivery_zone'] = $request->delivery_zone;        
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
-        unset($form_fields['job_id']);
-
+        unset($form_fields['job_id']);        
+        
         ManufactureJobcardProductDispatches::insert($form_fields);
 
         return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}");
@@ -142,9 +165,100 @@ class DispatchController extends Controller
         ]);
     }
 
-    function return_dispatch(Request $request)
+    function return_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
-        dd('Difference in weights will be returned', $request->toArray());
+        dd('out of time 2023-09-13');
+        //dd('Difference in weights will be returned', $request->toArray());        
+        $error = false;
+
+        $qty = $request->weight_in - $dispatch->weight_out;
+
+        if ($qty < 0) {
+            $error = true;
+                     
+            return back()->with('alertError', 'Cannot Complete Dispatch Return. Qty is less than Zero');
+        }
+
+        //Compare what was dispatched with what is being returned
+        $product_qty = $dispatch->qty;
+
+        if ($product_qty < $qty) {
+            $error = true;            
+            return back()->with('alertError', "Too much product. Amount dispatched on this Dispatch was {$product_qty}");
+        }
+
+
+        /* 
+
+        $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
+        unset($form_fields['job_id']);
+
+        ManufactureJobcardProductDispatches::insert($form_fields);
+
+        return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}"); */
+
+
+        if (!$error) {
+            $form_fields = [
+               /*  "job_id" => $dispatch->,
+                "manufacture_jobcard_product_id" => $dispatch->,
+                "reference" => $dispatch->,                          
+                "plant_id" => $dispatch->,
+                "registration_number" => $dispatch->,                
+                'weight_in' => $request->weight_in,
+                'weight_in_datetime' => date("Y-m-d\TH:i"),
+                'weight_in_user_id' => auth()->user()->user_id,
+                'weight_out' => $request->weight_out,
+                'weight_out_datetime' => date("Y-m-d\TH:i"),
+                'weight_out_user_id' => auth()->user()->user_id,
+                'dispatch_temp' => ,
+                'delivery_zone' => ,
+                'qty' => $qty,
+                'status' => 'Dispatched',
+                'batch_id' => $dispatch->batch_id, */
+                
+            ];
+
+            $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
+            unset($form_fields['job_id']);
+
+            ManufactureJobcardProductDispatches::insert($form_fields);
+
+            //return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}");
+
+
+
+            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+
+            if ($product_qty == $qty) {
+                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
+            }
+
+            if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
+                //Adjust transaction if no recipe
+                $form_fields = [
+                    'product_id' => $dispatch->jobcard_product()->product_id,
+                    'type' => 'JDISP',                    
+                    'typed_id' => $dispatch->id,
+                    'qty' => -1*($qty),
+                    'comment' => 'Dispatched on '.$dispatch->jobcard()->jobcard_number,
+                    'user_id' => auth()->user()->user_id,
+                    'registration_number' => $dispatch->plant()->reg_number,                    
+                    'status' => ' '
+                ];
+                ManufactureProductTransactions::insert($form_fields);
+            }
+
+            //Close job card if all filled 
+            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() == 0) {
+                
+                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Completed']);
+            
+            }
+
+            return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery");                       
+
+        }
     }
 
     function receiving_goods(Request $request)
@@ -190,4 +304,9 @@ class DispatchController extends Controller
             'tab' => 'receiving'
         ]);
     }
+
+    function print_dispatch(ManufactureJobcardProductDispatches $dispatch){
+        dd($dispatch);
+    }
 }
+ 

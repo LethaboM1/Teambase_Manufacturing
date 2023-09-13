@@ -9,72 +9,19 @@ use Livewire\Component;
 
 class NewBatchLineLivewire extends Component
 {
-    public $dispatch, $weight_out, $weight_out_datetime, $qty, $new;
+    public $dispatch, $weight_out, $weight_out_datetime, $qty, $dispatchaction, $weight_in_datetime, $weight_in, $dispatch_temp;
 
     function mount($dispatch)
     {
         $this->dispatch = $dispatch;
         $this->weight_out_datetime = date("Y-m-d\TH:i");
         $this->weight_out = 0;
+        $this->dispatch_temp = 0;
         $this->qty = 0;
-    }
-
-    function dispatch_out()
-    {
-        /* $error = false;
-        
-        if ($this->qty == 0) {
-            $error = true;            
-            session()->flash('dispatch_error', 'Qty is zero');            
-            
-        }
-
-        if (!Functions::validDate($this->weight_out_datetime, "Y-m-d\TH:i")) {
-            $error = true;            
-            session()->flash('dispatch_error', 'Invalid date time');
-        }
-
-        $product_qty = $this->dispatch->jobcard_product()->qty_due;
-
-        if ($product_qty < $this->qty) {
-            $error = true;            
-            session()->flash('dispatch_error', "Too much product. Due amount on this job card is {$product_qty}");
-
-        }
-
-        if (!$error) {
-            $form_fields = [
-                'weight_out' => $this->weight_out,
-                'weight_out_datetime' => $this->weight_out_datetime,
-                'weight_out_user_id' => auth()->user()->user_id,
-                'qty' => $this->qty,
-                'status' => 'Dispatched'
-            ];
-            
-            dd($form_fields);
-
-            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update($form_fields);
-
-            if ($product_qty == $this->qty) {
-                ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 1]);
-            }
-
-            $this->emit('refreshNewDispatch');
-
-            if ($this->dispatch->jobcard_product()->product()->has_recipe == 0) {
-                //Adjust transaction if no recipe
-            }
-
-            //Close job card if filled 
-
-            //Connie
-
-            // dd($form_fields);
-        } */
-
-        
-                                            
-    }
+        //for returns
+        $this->weight_in_datetime = date("Y-m-d\TH:i");
+        $this->weight_in = 0;
+    }    
 
     function updatedWeightOut($value)
     {
