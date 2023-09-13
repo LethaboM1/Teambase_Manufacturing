@@ -21,7 +21,7 @@ class NewBatchesLivewire extends Component
     function mount()
     {
         if (session()->get('tab')) {
-            if (in_array(session()->get('tab'), ['loading', 'receiving', 'archive'])) {
+            if (in_array(session()->get('tab'), ['loading', 'archive'])) {
                 $this->tab = session()->get('tab');
             }
         } else {
@@ -45,10 +45,6 @@ class NewBatchesLivewire extends Component
         $this->tab = 'archive';
     }
 
-    function updatedSearchReceiving()
-    {
-        $this->tab = 'receiving';
-    }
 
     function updatedSearch()
     {

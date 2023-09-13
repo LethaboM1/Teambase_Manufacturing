@@ -32,18 +32,40 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Weighed In Date/Time</label>
-                                            <h4>{{$transaction->created_at}}</h4>
+                                            <h4>{{$transaction->weight_in_datetime}}</h4>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Weighed In</label>
                                             <h4>{{$transaction->weight_in}}</h4>
                                         </div>
-                                        <div class="col-md-6">
-                                            <x-form.number wire=0 name="weight_out" step="0.001" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <x-form.textarea wire=0 name="comment" label="Comment" />
-                                        </div>
+                                        @if($archive)
+                                            <div class="col-md-6">
+                                                <label class="form-label">Weighed Out Date/Time</label>
+                                                <h4>{{$transaction->weight_out_datetime}}</h4>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Weighed Out</label>
+                                                <h4>{{$transaction->weight_out}}</h4>
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Qty</label>
+                                                <h4>{{$transaction->qty}}</h4>
+                                                
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Comment</label>
+                                                <h4>{{$transaction->comment}}</h4>
+                                                
+                                            </div>                                            
+                                        @else
+                                            <div class="col-md-6">
+                                                <x-form.number wire=0 name="weight_out" step="0.001" />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <x-form.textarea wire=0 name="comment" label="Comment" />
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

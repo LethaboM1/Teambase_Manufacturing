@@ -68,6 +68,7 @@
         </a>
         <ul class="nav nav-children">
           <li><a class="nav-link" href="{{url('dispatches/new')}}">Dispatches</a></li>  
+          <li><a class="nav-link" href="{{url('goods-receive/new')}}">Goods Received</a></li>
         {{-- <li><a class="nav-link" href="{{url('dispatches/archive')}}">Archive Dispatches</a></li> **Incorporated into Dispacthes with Tabs 2023-09-02 **--}}
         {{-- <li><a class="nav-link" href="#">Dispatched Orders</a></li> --}}
         </ul>

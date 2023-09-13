@@ -17,7 +17,7 @@
     //removed 2023-09-13 Marcia
     --}}
     <div class="col-md-6">
-        <x-form.number name="weight_in" label="Weight In" />
+        <x-form.number name="weight_in" label="Weight In" step="0.001"/>
     </div>
     {{-- <div class="col-md-6">
         <x-form.toggle idd='delivery' name="delivery" label="Delivery" value={{$delivery}}/>

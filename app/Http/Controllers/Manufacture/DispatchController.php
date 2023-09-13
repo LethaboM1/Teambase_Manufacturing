@@ -25,6 +25,11 @@ class DispatchController extends Controller
         return view('manufacture.dispatch.new');
     }
 
+    function new_goods()
+    {
+        return view('manufacture.dispatch.goods-received');
+    }
+
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
         
@@ -268,7 +273,6 @@ class DispatchController extends Controller
             "registration_number" => "required",
             "type_id" => "required|gt:0",
             "product_id" => "required|gt:0",
-            "weight_in_datetime" => "required",
             "weight_in" => "required|gt:0",
         ]);
 
@@ -277,6 +281,7 @@ class DispatchController extends Controller
         $form_fields['status'] = 'Pending';
         $form_fields['qty'] = 0;
         $form_fields['weight_in_user'] = auth()->user()->user_id;
+        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i:s");
 
 
         ManufactureProductTransactions::insert($form_fields);
@@ -295,6 +300,9 @@ class DispatchController extends Controller
 
         if ($form_fields['weight_out'] > $transaction->weight_in) return back()->with(['alertError' => 'Truck weighs more than when weighed in.', 'tab' => 'receiving']);
         $qty = $transaction->weight_in - $form_fields['weight_out'];
+
+        $form_fields['weight_out_user'] = auth()->user()->user_id;
+        $form_fields['weight_out_datetime'] = date("Y-m-d\TH:i:s");
         $form_fields['status'] = 'Completed';
         $form_fields['qty'] = $qty;
 
