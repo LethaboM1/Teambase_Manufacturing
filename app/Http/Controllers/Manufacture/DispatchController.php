@@ -195,7 +195,15 @@ class DispatchController extends Controller
         ManufactureProductTransactions::where('id', $transaction->id)->update($form_fields);
         return back()->with([
             'alertMessage' => 'Good Received.',
-            'tab' => 'receiving'
+            'tab' => 'receiving',
+            'print_receipt' => $transaction->id
         ]);
+    }
+
+    function print_receipt(ManufactureProductTransactions $transaction)
+    {
+        $receipt = "";
+
+        dd($transaction);
     }
 }

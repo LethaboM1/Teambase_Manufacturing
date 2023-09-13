@@ -138,7 +138,11 @@
                             
                             </div>
                         </div>                      
-                        
+                        @if(Session::get('print_receipt'))
+                            <script>
+                                window.open('{{url("dispatches/received-goods/".Session::get('print_receipt')."/print")}}','_blank');
+                            </script>
+                        @endif
                 </div> 
             </section>
         </div>
