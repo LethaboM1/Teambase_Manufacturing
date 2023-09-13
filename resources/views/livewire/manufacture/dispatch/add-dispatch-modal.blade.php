@@ -15,7 +15,7 @@
         <x-form.datetime name="weight_in_datetime" label="Date/Time" />
     </div>
     <div class="col-md-6">
-        <x-form.number name="weight_in" label="Weight In" />
+        <x-form.number name="weight_in" label="Weight In" step="0.001"/>
     </div>
     @if($delivery)  
         <div class="col-md-6">
