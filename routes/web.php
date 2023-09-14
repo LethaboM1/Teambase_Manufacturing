@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ManagersController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Manufacture\JobsController;
 use App\Http\Controllers\Manufacture\LabsController;
@@ -11,7 +13,6 @@ use App\Http\Controllers\Manufacture\DispatchController;
 use App\Http\Controllers\Manufacture\ProductsController;
 use App\Http\Controllers\Manufacture\ProductionController;
 use App\Http\Controllers\Manufacture\Report\ManufactureReportsController;
-use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,12 @@ Route::middleware('auth')->group(function () {
             Route::post('suppliers/add', [SupplierController::class, 'add_supplier']);
             Route::post('suppliers/save', [SupplierController::class, 'save_supplier']);
             Route::post('suppliers/delete', [SupplierController::class, 'delete_supplier']);
+
+            /* Customers */
+            Route::get('customers', [CustomerController::class, 'customers']);
+            Route::post('customers/add', [CustomerController::class, 'add_customer']);
+            Route::post('customers/save', [CustomerController::class, 'save_customer']);
+            Route::post('customers/delete', [CustomerController::class, 'delete_customer']);
         });
 
         Route::middleware('is_products')->group(function () {
@@ -92,7 +99,7 @@ Route::middleware('auth')->group(function () {
 
             /* Dispatch */
             Route::get('dispatches/new', [DispatchController::class, 'new']);
-            
+
             Route::get('goods-receive/new', [DispatchController::class, 'new_goods']);
 
             Route::post('dispatches/new', [DispatchController::class, 'add_dispatch']);

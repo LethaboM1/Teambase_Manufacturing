@@ -25,6 +25,15 @@
       </li>
       <li class="nav-parent">
         <a class="nav-link" href="#">
+        <i class="bx bx-user-pin" aria-hidden="true"></i>
+          <span>Customers</span>
+        </a>
+        <ul class="nav nav-children">
+        <li><a class="nav-link" href="{{url('customers')}}">Add/Manage Customers</a></li>
+        </ul>
+      </li>
+      <li class="nav-parent">
+        <a class="nav-link" href="#">
         <i class="bx bx-box" aria-hidden="true"></i>
         <span>Products</span>
         </a>
