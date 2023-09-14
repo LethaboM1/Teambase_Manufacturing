@@ -46,36 +46,120 @@
                     <h2 class="card-title">Products</h2>
                 </header>
                 <div class="card-body">
-                    <div class="header-right">
-                        <form action="#" class="search nav-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Product...">
-                                <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
+                        <li class="nav-item {{($tab=='all'?'active':'')}}" role="presentation">
+                            <button class="nav-link {{($tab=='all'?'active':'')}}" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="{{($tab=='all'?'true':'false')}}">All Products</button>
+                        </li>
+                        <li class="nav-item {{($tab=='recipe'?'active':'')}}" role="presentation">
+                            <button class="nav-link {{($tab=='recipe'?'active':'')}}" id="recipe-tab" data-bs-toggle="tab" data-bs-target="#recipe" type="button" role="tab" aria-controls="recipe" aria-selected="{{($tab=='recipe'?'true':'false')}}">Products with Recipes</button>
+                        </li>
+                        <li class="nav-item {{($tab=='raw'?'active':'')}}" role="presentation">
+                            <button class="nav-link {{($tab=='raw'?'active':'')}}" id="raw-tab" data-bs-toggle="tab" data-bs-target="#raw" type="button" role="tab" aria-controls="raw" aria-selected="{{($tab=='raw'?'true':'false')}}">Raw Material Products</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane {{($tab=='all'?'active':'')}}" id="all" role="tabpanel" aria-labelledby="all-tab">
+
+                            <div class="header-right">
+                                {{-- <form action="#" class="search nav-form"> --}}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="search" wire:model.debounce="search" placeholder="Search Product...">
+                                        <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                    </div>
+                                {{-- </form> --}}
                             </div>
-                        </form>
+                            <table width="100%" class="table table-responsive-md mb-0">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">Date</th>
+                                        <th width="15%">Product Code</th>
+                                        <th width="40%">Description</th>
+                                        <th width="15%">Opening Value</th>
+                                        <th width="15%">Action</th>
+                                    </tr>
+                                </thead>
+                                    @if(count($products_list)>0)
+                                        @foreach($products_list as $product)
+                                            <x-manufacture.products.item :item="$product" />
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="5">No products..</td>
+                                        </tr>
+                                    @endif
+                            </table>    
+                            {{ $products_list->links() }}    
+                        </div>
+                        <div class="tab-pane {{($tab=='recipe'?'active':'')}}" id="recipe" role="tabpanel" aria-labelledby="recipe-tab">
+
+                            <div class="header-right">
+                                {{-- <form action="#" class="search nav-form"> --}}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="search_recipe" wire:model.debounce="search_recipe" placeholder="Search Product...">
+                                        <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                    </div>
+                                {{-- </form> --}}
+                            </div>
+                            <table width="100%" class="table table-responsive-md mb-0">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">Date</th>
+                                        <th width="15%">Product Code</th>
+                                        <th width="40%">Description</th>
+                                        <th width="15%">Opening Value</th>
+                                        <th width="15%">Action</th>
+                                    </tr>
+                                </thead>
+                                    @if(count($products_recipe_list)>0)
+                                        @foreach($products_recipe_list as $product)
+                                            <x-manufacture.products.item :item="$product" />
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="5">No products..</td>
+                                        </tr>
+                                    @endif
+                            </table>    
+                            {{ $products_recipe_list->links() }}    
+                        </div>
+                        <div class="tab-pane {{($tab=='raw'?'active':'')}}" id="raw" role="tabpanel" aria-labelledby="raw-tab">
+
+                            <div class="header-right">
+                                {{-- <form action="#" class="search nav-form"> --}}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="search_raw" wire:model.debounce="search_raw" placeholder="Search Product...">
+                                        <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                    </div>
+                                {{-- </form> --}}
+                            </div>
+                            <table width="100%" class="table table-responsive-md mb-0">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">Date</th>
+                                        <th width="15%">Product Code</th>
+                                        <th width="40%">Description</th>
+                                        <th width="15%">Opening Value</th>
+                                        <th width="15%">Action</th>
+                                    </tr>
+                                </thead>
+                                    @if(count($products_raw_list)>0)
+                                        @foreach($products_raw_list as $product)
+                                            <x-manufacture.products.item :item="$product" />
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="5">No products..</td>
+                                        </tr>
+                                    @endif
+                            </table>    
+                            {{ $products_raw_list->links() }} 
+                        </div>
                     </div>
-                    <table width="100%" class="table table-responsive-md mb-0">
-                        <thead>
-                            <tr>
-                                <th width="15%">Date</th>
-                                <th width="15%">Product Code</th>
-                                <th width="40%">Description</th>
-                                <th width="15%">Opening Value</th>
-                                <th width="15%">Action</th>
-                            </tr>
-                        </thead>
-                            @if(count($products_list)>0)
-                                @foreach($products_list as $product)
-                                    <x-manufacture.products.item :item="$product" />
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="5">No products..</td>
-                                </tr>
-                            @endif
-                    </table>                   
+         
                 </div> 
-                {{ $products_list->links() }}
             </section>
         </div>
     </div>

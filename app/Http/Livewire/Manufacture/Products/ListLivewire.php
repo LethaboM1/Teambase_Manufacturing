@@ -11,24 +11,69 @@ class ListLivewire extends Component
 {
     use WithPagination;
 
-    public $search, $unit_measure_list;
+    public $search, $search_raw, $search_recipe, $unit_measure_list, $tab;
     protected $paginationTheme = 'bootstrap';
 
     function mount()
     {
         $this->unit_measure_list = DefaultsController::unit_measure;
+        $this->tab = 'all';
+    }
+
+    function updatingSearch()
+    {
+        $this->search_raw = '';
+        $this->search_recipe = '';
+    }
+
+    function updatingSearchRaw()
+    {
+        $this->search = '';
+        $this->search_recipe = '';
+    }
+
+    function updatingSearchRecipe()
+    {
+        $this->search_raw = '';
+        $this->search = '';
     }
 
     public function render()
     {
         $products_list = ManufactureProducts::where('active', 1)->when($this->search, function ($query, $term) {
-            $term = "%{$term}%";
-            $query->where('code', 'like', $term)
-                ->orWhere('description', 'like', $term);
-        })->orderBy('code')->paginate(15);
+            $this->tab = 'all';
+
+            $query->where(function ($query) {
+                $search = "%{$this->search}%";
+                $query->where('code', 'like', $search)
+                    ->orWhere('description', 'like', $search);
+            });
+        })->orderBy('code')->paginate(15, ['*'], 'pgall');
+
+        $products_raw_list = ManufactureProducts::where('active', 1)->where('has_recipe', 0)->when($this->search_raw, function ($query) {
+            $this->tab = 'raw';
+            $query->where(function ($query) {
+                $search = "%{$this->search_raw}%";
+                $query->where('code', 'like', $search)
+                    ->orWhere('description', 'like', $search);
+            });
+        })->orderBy('code')->paginate(15, ['*'], 'pgraw');
+
+
+        $products_recipe_list = ManufactureProducts::where('active', 1)->where('has_recipe', 1)->when($this->search_recipe, function ($query) {
+            $this->tab = 'recipe';
+
+            $query->where(function ($query) {
+                $search = "%{$this->search_recipe}%";
+                $query->where('code', 'like', $search)
+                    ->orWhere('description', 'like', $search);
+            });
+        })->orderBy('code')->paginate(15, ['*'], 'pgrecipe');
 
         return view('livewire.manufacture.products.list-livewire', [
-            'products_list' => $products_list
+            'products_list' => $products_list,
+            'products_raw_list' => $products_raw_list,
+            'products_recipe_list' => $products_recipe_list
         ]);
     }
 }
