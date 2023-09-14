@@ -276,6 +276,7 @@ class DispatchController extends Controller
         $form_fields['qty'] = 0;
         $form_fields['weight_in_user'] = auth()->user()->user_id;
         $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i:s");
+        $form_fields['user_id'] = auth()->user()->user_id;
 
 
         ManufactureProductTransactions::insert($form_fields);
