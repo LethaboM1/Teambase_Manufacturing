@@ -87,7 +87,7 @@ class Functions extends Controller
                     }
                 }
 
-                $number = $settings->batch_prefix . $number;
+                $number = $settings->dispatch_prefix . $number;
 
                 return $number;
                 break;
