@@ -47,40 +47,17 @@ class NewBatchLineLivewire extends Component
 
     public function render()
     {
-        //List Open Jobcards with Product Due and Same Product Required
+        //List Open Jobcards with Product Due
         $jobcard_list = [];
         $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
-            ->where('status', 'Open')            
+            ->where('status', 'Open')
+            ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
+            ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())                        
             ->get()
             ->toArray();
+               
         
-        //Remove Jobs with no matching unfilled ready batches
-        $manufacture_jobcard_products_list = [];
-        if (count($jobcard_list) > 0) {
-            //TO BE DONE 2023-09-14
-            /* $raw_products = ManufactureProducts::select('id as product_id')->where('has_recipe', 0)->get()->toArray();
-
-            $batches = ManufactureBatches::select('product_id', 'id', 'qty')->where('status', 'Ready for dispatch')->get()->filter(function ($batch) {
-                return $batch->qty_left > 0;
-            });
-
-            foreach ($batches as $item) $batch[] = $item->product_id;
-            if (!isset($batch)) $batch = [];
-
-            // dd($batch);
-            $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
-                ->where('manufacture_jobcard_products.job_id', $jobcard_list['value'])
-                ->where('manufacture_jobcard_products.filled', 0)                                
-                ->where(function ($query) use ($raw_products, $batch) {
-                    $query->whereIn('manufacture_jobcard_products.product_id', $batch)
-                        ->orWhere('manufacture_jobcard_products.product_id', $raw_products);
-                })
-                ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')                
-                ->get()
-                ->toArray();
-            if(count($manufacture_jobcard_products_list) > 0){
-
-            } */
+        if (count($jobcard_list) > 0) {           
 
             array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
 
