@@ -32,13 +32,6 @@ class CreateJobLivewire extends Component
         $customer = ManufactureCustomers::where('id', $value)->first();
         $this->contact_person = $customer['contact_name'];
         $this->delivery_address = $customer['address'];
-
-        /* if ($value !== 0){
-            $customer = ManufactureCustomers::where('id', $value)->first();
-            $this->customer_contact = $customer->contact_name;
-            $this->customer_address = $customer->address;
-                       
-        } */
     }
 
     public function render()
