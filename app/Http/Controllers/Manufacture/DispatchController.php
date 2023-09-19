@@ -286,6 +286,30 @@ class DispatchController extends Controller
         ]);
     }
 
+    function return_goods(Request $request)
+    {
+
+        $form_fields = $request->validate([
+            "registration_number" => "required",
+            "type_id" => "required|gt:0",
+            "product_id" => "required|gt:0",
+            "qty" => "required|gt:0",
+        ]);
+
+
+        $form_fields['type'] = 'RET';
+        $form_fields['status'] = 'Completed';
+        $form_fields['user_id'] = auth()->user()->user_id;
+
+
+        $return_id = ManufactureProductTransactions::insertGetId($form_fields);
+        return back()->with([
+            'alertMessage' => 'Goods returned.',
+            'tab' => 'receiving',
+            'print_return' => $return_id
+        ]);
+    }
+
     function received_goods(Request $request, ManufactureProductTransactions $transaction)
     {
         $form_fields = $request->validate([
@@ -305,13 +329,82 @@ class DispatchController extends Controller
         return back()->with([
             'alertMessage' => 'Good Received.',
             'tab' => 'receiving',
-            'print_receipt' => $transaction->id
+            // 'print_receipt' => $transaction->id
         ]);
     }
 
     function print_dispatch(ManufactureJobcardProductDispatches $dispatch)
     {
         dd($dispatch);
+    }
+
+    function print_return(ManufactureProductTransactions $transaction)
+    {
+        if ($transaction->type != 'RET') return;
+
+        $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
+                    <tr>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\"># {$transaction['id']}</th>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Return To Supplier</th>
+                    </tr> 
+                </table>
+                <br>
+                <table style=\"width: 750px; border-collapse: collapse; table-layout: fixed;\">
+                    <tr>
+                        <td style=\"width: 50%;padding:10px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Supplier:</strong> " . ucfirst($transaction->supplier()['name']) . "</td>
+                        <td style=\"width: 50%;padding:10px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Reg No.:</strong> " . ucfirst($transaction['registration_number']) . "</td>
+                    </tr>
+                    <tr>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>User:</strong> {$transaction->user()->name} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\">&nbsp;</td>
+                    </tr>
+                </table>
+                <br><br>
+                <table style=\"border-collapse: collapse; table-layout: fixed;\">
+                    <thead>
+                        <tr>
+                            <th style=\"font-weight: bold; font-size: 16px; text-align: left; padding: 10px;\" colspan='3'>Product Details</th>
+                        </tr>
+                        <tr style=\"background-color: rgb(85, 85, 85);\">
+                            <th style=\"width: 12%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Code</th>
+                            <th style=\"width: 78%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Description</th>
+                            <th style=\"width: 10%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$transaction->product()->code}</td>
+                            <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$transaction->product()->description}</td>
+                            <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$transaction->qty}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br><br>
+                <table style=\"width: 750px; border-collapse: collapse; table-layout: fixed;\">
+                    <tr>
+                        <td style=\"width: 30%;font-weight: normal; font-size: 13px; text-align: right; border: 1.5px solid rgb(39, 39, 39); border-right: none; border-bottom: none; padding-left: 5px; padding-top: 5px; height:25px;\"><strong>Driver Name:</strong></td>
+                        <td style=\"width: 70%;font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; padding-left: 5px; padding-top: 5px;\">_______________________________________</td>
+                    </tr>
+                    <tr>
+                        <td style=\"width: 30%; font-weight: normal; font-size: 13px; text-align: right; border: 1.5px solid rgb(39, 39, 39); border-right: none; border-bottom: none; border-top: none; padding-left: 5px; height:25px;\"><strong>Date:</strong></td>
+                        <td style=\"width: 70%; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; border-top: none; padding-left: 5px;\">_______________________________________</td>
+                    </tr>
+                    <tr>
+                        <td style=\"width: 30%; font-weight: normal; font-size: 13px; text-align: right; border: 1.5px solid rgb(39, 39, 39); border-right: none; border-top: none; padding-left: 5px; padding-bottom: 5px; height:25px;\"><strong>Signature:</strong> </td>
+                        <td style=\"width: 70%; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\">_______________________________________</td>
+                    </tr>
+                </table>
+                <br>
+                <table style='width: 750px;'>
+                    <tfoot>
+                        <tr>
+                        <td style='width: 100%; text-align: right; font-weight: bold; font-size: 11px;'>PL05 REV04 190524</td>
+                        </tr>
+                    </tfoot>
+                </table>  ";
+
+        Functions::printPDF($pdf, 'receipt-' . $transaction->id, false, true, 'P', 'A4');
+        dd($transaction);
     }
 
     function print_receipt(ManufactureProductTransactions $transaction)

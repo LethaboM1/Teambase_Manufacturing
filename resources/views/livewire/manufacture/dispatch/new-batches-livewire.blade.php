@@ -53,7 +53,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div class="tab-pane {{($tab=='loading'?'active':'')}}" id="loading" role="tabpanel" aria-labelledby="loading-tab">
-                            <div class="header-right mb-2">
+                            <div class="header-right mb-5">
                                 <h4>Loading Dispatches</h4>
                                 <form action="#" class="search nav-form">
                                     <div class="input-group">
@@ -100,7 +100,7 @@
                         </div>
 
                         <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
-                            <div class="header-right mb-2">
+                            <div class="header-right mb-5">
                                 <h4>Archive</h4>
                                 <form action="#" class="search nav-form">
                                     <div class="input-group">
