@@ -19,10 +19,10 @@
 					</form>
 
 					{{-- If Internal Job, allow manual entry of Details --}}
-					@if($internal_jobcard == 0)
-						<div class="row">
+					
+						{{-- <div class="row">
 							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-								<x-form.select name="customer_id" label="Customer" :list="$customer_list" />
+								
 							</div>
 							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 								<x-form.input name="site_number" label="Site Number" />
@@ -30,16 +30,21 @@
 						</div>
 						<div class="row">
 							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+								
 								<x-form.input name="contact_person" label="Contact Person" value={{$customer_contact}}/>
 							</div>
 							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 								<x-form.textarea name="delivery_address" label="Delivery Address" value={{$customer_address}}/>
 							</div>
-						</div>
-					@else
+						</div> --}}
 					<div class="row">
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+							@if($internal_jobcard == 0)
 								<x-form.input name="contractor" label="Contractor" />
+							@else
+							<x-form.select name="customer_id" label="Customer" :list="$customer_list" />
+							@endif
+							
 							</div>
 							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 								<x-form.input name="site_number" label="Site Number" />
@@ -53,7 +58,6 @@
 								<x-form.textarea name="delivery_address" label="Delivery Address" />
 							</div>
 						</div>
-					@endif
 
 					<div class="row">
 					<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
