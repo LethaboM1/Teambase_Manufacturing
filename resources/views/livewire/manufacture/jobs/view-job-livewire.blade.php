@@ -18,7 +18,7 @@
 								@if($jobcard['internal_jobcard'])								
 									<x-form.input name="jobcard.contractor" label="Contractor" />
 								@else
-									<x-form.select name="customer_id" label="Customer" :list="$customer_list" />
+									<x-form.select name="jobcard.customer_id" label="Customer" :list="$customer_list" />
 								@endif
 							@else
 								<label>Contractor</label>
