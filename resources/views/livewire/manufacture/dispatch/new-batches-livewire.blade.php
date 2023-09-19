@@ -68,19 +68,19 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="10%">Dispatch Number</th>
-                                        <th width="10%">Job Card</th>
+                                        <th width="8%">Dispatch Number</th>
+                                        <th width="8%">Job Card</th>
                                         <th width="15%">Contractor</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>
                                         <th width="10%">Status</th>
-                                        <th width="10%">Action</th>
+                                        <th width="12%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches->count()>0)
                                         @foreach($dispatches as $dispatch)
-                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" dispatchaction="new">
+                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" {{-- jobcard_list="{{$jobcard_list}}" delivery_zone_list="{{$delivery_zone_list}}" --}} dispatchaction="new" >
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -113,19 +113,19 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="10%">Dispatch Number</th>
-                                        <th width="10%">Job Card</th>
+                                        <th width="8%">Dispatch Number</th>
+                                        <th width="8%">Job Card</th>
                                         <th width="15%">Contractor</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>
                                         <th width="10%">Status</th>
-                                        <th width="10%">Action</th>
+                                        <th width="12%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches_archived->count()>0)
                                         @foreach($dispatches_archived as $dispatch)
-                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}" :dispatch="$dispatch" dispatchaction="view">
+                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}"  :dispatch="$dispatch" {{--jobcard_list="{{$jobcard_list}}" delivery_zone_list="{{$delivery_zone_list}}" --}} dispatchaction="view">
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>

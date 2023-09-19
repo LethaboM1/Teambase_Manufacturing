@@ -170,93 +170,152 @@ class DispatchController extends Controller
 
     function return_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
-        dd('out of time 2023-09-13');
-        //dd('Difference in weights will be returned', $request->toArray());        
+                
         $error = false;
 
-        $qty = $request->weight_in - $dispatch->weight_out;
+        // dd('weight out:'.$dispatch->weight_out.' weight back:'.$request->weight_in);
 
-        if ($qty < 0) {
+        $returnqty = $request->weight_in - $dispatch->weight_in;
+
+        if ($returnqty <= 0) {
             $error = true;
 
-            return back()->with('alertError', 'Cannot Complete Dispatch Return. Qty is less than Zero');
+            return back()->with('alertError', 'Cannot Complete Dispatch Return. Qty is less than or equal to Zero');
         }
 
         //Compare what was dispatched with what is being returned
         $product_qty = $dispatch->qty;
 
-        if ($product_qty < $qty) {
+        if ($product_qty < $returnqty) {
             $error = true;
-            return back()->with('alertError', "Too much product. Amount dispatched on this Dispatch was {$product_qty}");
+            return back()->with('alertError', "Too much product. Amount dispatched on this Dispatch was {$product_qty}. You are trying to return {$returnqty}");
         }
 
-
-        /* 
-
-        $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
-        unset($form_fields['job_id']);
-
-        ManufactureJobcardProductDispatches::insert($form_fields);
-
-        return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}"); */
-
-
+        $newqty = $product_qty - $returnqty;
+        
         if (!$error) {
             $form_fields = [
-                /*  "job_id" => $dispatch->,
-                "manufacture_jobcard_product_id" => $dispatch->,
-                "reference" => $dispatch->,                          
-                "plant_id" => $dispatch->,
-                "registration_number" => $dispatch->,                
-                'weight_in' => $request->weight_in,
-                'weight_in_datetime' => date("Y-m-d\TH:i"),
-                'weight_in_user_id' => auth()->user()->user_id,
-                'weight_out' => $request->weight_out,
-                'weight_out_datetime' => date("Y-m-d\TH:i"),
-                'weight_out_user_id' => auth()->user()->user_id,
-                'dispatch_temp' => ,
-                'delivery_zone' => ,
-                'qty' => $qty,
-                'status' => 'Dispatched',
-                'batch_id' => $dispatch->batch_id, */];
+                'qty' => $newqty];
 
-            $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
-            unset($form_fields['job_id']);
-
-            ManufactureJobcardProductDispatches::insert($form_fields);
-
-            //return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}");
-
-
+            if($newqty > 0){
+                $form_fields['status'] = 'Partial Returned';
+            }
+            elseif ($newqty == 0) {
+                $form_fields['status'] = 'Returned';
+            }
 
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
-            if ($product_qty == $qty) {
-                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
+            //If Qty due after Dispatch Return is > 0 then set Product unfilled again
+            if ($dispatch->jobcard_product()->qty_due > 0) {
+                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
+            }            
+
+            //Set job card as Open if filled <> 1
+            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+
+                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
             }
 
-            if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
-                //Adjust transaction if no recipe
-                $form_fields = [
-                    'product_id' => $dispatch->jobcard_product()->product_id,
-                    'type' => 'JDISP',
-                    'typed_id' => $dispatch->id,
-                    'qty' => -1 * ($qty),
-                    'comment' => 'Dispatched on ' . $dispatch->jobcard()->jobcard_number,
-                    'user_id' => auth()->user()->user_id,
-                    'registration_number' => $dispatch->plant()->reg_number,
-                    'status' => ' '
-                ];
-                ManufactureProductTransactions::insert($form_fields);
+            return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} has been returned. Job {$dispatch->jobcard()->jobcard_number} has been credited with {$returnqty} {$dispatch->jobcard_product()->product()->description}");
+        }
+    }
+
+    function transfer_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
+    {
+       
+        $error = false;
+        
+        $newjobcard = ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->first();
+        
+        //blank jobcard or jobcard with unrelated products
+        if ($request->job_id == 0) {
+            $error = true;
+
+            return back()->with('alertError', 'Please select a Jobcard to transfer to.');
+        } elseif (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->count() == 0){
+            $error = true;
+
+            return back()->with('alertError', 'Please select a Jobcard that contains matching product: "'.$dispatch->product()->description.'"');
+        }
+
+        //blank delivery zone
+        if ($request->delivery_zone == 0) {
+            $error = true;
+
+            return back()->with('alertError', 'Please select a valid Delivery Zone.');
+        }
+
+        
+        //Compare what was dispatched with what is being transfered
+
+        if($newjobcard->qty_due <= $dispatch->qty){
+            $filledqty = $newjobcard->qty_due;
+        } else {
+            $filledqty = $dispatch->qty;
+        }
+
+        // dd('due on new job:'.$newjobcard->qty_due.', transfer from old dispatch:'.$dispatch->qty. '. need to fill:'.$filledqty);
+
+        if (!$error) {
+            $form_fields = [
+                'qty' => 0,
+                'status' => 'Transferred'
+            ];
+
+            //set this->dispatch qty to zero
+            //credit this->jobcard with transfer qty
+            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+
+            //set this->jobcard status if required after qty credit
+            if ($dispatch->jobcard_product()->qty_due > 0) {
+                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
+            } 
+
+            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+                
+                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
+            }
+            
+            //Clone this->dispatch. Change JC, Delivery Zone based on this->request details
+            $form_fields = [                
+                "dispatch_number" => $dispatch->dispatch_number,
+                "reference" => $dispatch->reference,
+                "delivery_zone" => $request->delivery_zone,
+                "dispatch_temp" => $dispatch->dispatch_temp,
+                "comment" => $dispatch->comment,
+                "weight_in" => $dispatch->weight_in,
+                "weight_in_user_id" => auth()->user()->user_id,
+                "weight_in_datetime" => $dispatch->weight_in_datetime,
+                "weight_out" => $dispatch->weight_out,
+                "weight_out_user_id" => auth()->user()->user_id,
+                "weight_out_datetime" => date("Y-m-d\TH:i"),
+                "status" => 'Completed',
+                "plant_id" => $dispatch->plant_id,
+                "registration_number" => $dispatch->registration_number,
+                "manufacture_jobcard_product_id" => $newjobcard->id,
+                "batch_id" => '0',
+                "qty" => $filledqty,
+            ];
+        
+            $newdispatch_id = ManufactureJobcardProductDispatches::insertGetId($form_fields);
+
+            
+            //Adjust status on clone->dispatch->Jobcard if filled
+            if ($newjobcard->qty_due == 0) {
+                ManufactureJobcardProducts::where('id', $newjobcard->id)->update(['filled' => 1]);
+            } 
+
+            if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->count() == 0) {
+                
+                ManufactureJobcards::where('id', $request->job_id)->update(['status' => 'Completed']);
             }
 
-            //Close job card if all filled 
-            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() == 0) {
+            
 
-                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Completed']);
-            }
-
-            return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery");
+            //Print clone->dispatch
+            return back()->with(['alertMessage', "Jobcard {$dispatch->jobcard()->jobcard_number} has been transferred to Jobcard {$newjobcard->jobcard()->jobcard_number} on Dispatch No {$dispatch->dispatch_number}", 'print_dispatch' => $newdispatch_id]);
+            
         }
     }
 

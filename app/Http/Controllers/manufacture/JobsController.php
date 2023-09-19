@@ -28,8 +28,11 @@ class JobsController extends Controller
 
     function add_job(Request $request)
     {
+        dd($request);
         $form_fields = $request->validate([
-            'contractor' => 'nullable',
+            'internal_jobcard' => 'nullable',
+            'customer_id' => 'nullable',
+            'contractor' => 'nullable',            
             'site_number' => 'nullable',
             'contact_person' => 'nullable',
             'delivery_address' => 'nullable',
@@ -39,7 +42,10 @@ class JobsController extends Controller
 
 
         // dd($form_fields);
-        if ($form_fields['delivery'] && strlen($form_fields['delivery_address']) == 0) return back()->with('alertMessage', 'Please type in a delivery address if delivery is required');
+        //Check for valid Customer
+        if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] == 0) return back()->with('alertError', 'Please select a Customer for this External Jobcard.');
+        //Check for Address
+        if ($form_fields['delivery'] && strlen($form_fields['delivery_address']) == 0) return back()->with('alertError', 'Please type in a delivery address if delivery is required');
 
         $form_fields['status'] = 'Open';
         $form_fields['jobcard_number'] = Functions::get_doc_number('jobcard');

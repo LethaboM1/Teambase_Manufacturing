@@ -3,7 +3,7 @@
         <div class="col-lg-12 mb-3">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">Dispatches</h2>
+                    <h2 class="card-title">Goods Receiving</h2>
                 </header>
                 <div class="card-body">                   
                     <div class="dropdown open mb-2">
