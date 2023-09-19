@@ -29,7 +29,7 @@ class JobsController extends Controller
 
     function add_job(Request $request)
     {
-        dd($request);
+        // dd($request);
         $form_fields = $request->validate([
             'internal_jobcard' => 'nullable',
             'customer_id' => 'nullable',
