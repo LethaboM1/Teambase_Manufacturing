@@ -41,9 +41,9 @@
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							{{-- Rather used the one field in the if statement --}}
 							@if($internal_jobcard == 0)
-								<x-form.input name="contractor" label="Contractor" />
-							@else
 								<x-form.select name="customer_id" label="Customer" :list="$customer_list" />
+							@else
+								<x-form.input name="contractor" label="Contractor" />
 							@endif
 							
 							</div>

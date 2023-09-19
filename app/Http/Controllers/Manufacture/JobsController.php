@@ -29,7 +29,7 @@ class JobsController extends Controller
 
     function add_job(Request $request)
     {
-        // dd($request);
+        dd($request);
         $form_fields = $request->validate([
             'internal_jobcard' => 'nullable',
             'customer_id' => 'nullable',
@@ -41,7 +41,7 @@ class JobsController extends Controller
             'delivery' => 'nullable',
         ]);
 
-
+        if (!isset($form_fields['internal_jobcard'])) $form_fields['internal_jobcard'] = 0;
         // dd($form_fields);
         //Check for valid Customer
         if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] == 0) return back()->with('alertError', 'Please select a Customer for this External Jobcard.');
