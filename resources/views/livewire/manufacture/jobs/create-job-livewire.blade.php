@@ -46,28 +46,28 @@
 								<x-form.input name="contractor" label="Contractor" />
 							@endif
 							
-							</div>
-							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-								<x-form.input name="site_number" label="Site Number" />
-							</div>
 						</div>
-						<div class="row">
-							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-								<x-form.input name="contact_person" label="Contact Person" />
-							</div>
-							<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-								<x-form.textarea name="delivery_address" label="Delivery Address" />
-							</div>
+						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+							<x-form.input name="site_number" label="Site Number" />
 						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+							<x-form.input name="contact_person" label="Contact Person" />
+						</div>
+						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+							<x-form.textarea name="delivery_address" label="Delivery Address" />
+						</div>
+					</div>
 
 					<div class="row">
-					<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
+						<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
 							<x-form.textarea name="notes" label="Notes" />
 						</div>
 					</div>
 					<br>
 					<div class="row">
-					<form class="form-horizontal form-bordered" method="get">
+					{{-- <form class="form-horizontal form-bordered" method="get"> --}}
 						<div class="form-group row pb-4">
 							<div class="col-lg-6">
 								<div class="radio">
@@ -76,11 +76,11 @@
 								</div>
 							</div>
 						</div>
-					</form>
+					{{-- </form> --}}
 					</div>	
 				</div>
 				<footer class="card-footer text-end">
-					<button class="btn btn-primary">Create Job Card</button>
+					<button type='submit' class="btn btn-primary">Create Job Card</button>
 					<button type="reset" class="btn btn-default">Reset</button>
 				</footer>
 			</section>
