@@ -13,9 +13,14 @@ class ManufactureProductTransactions extends Model
         'created_at'  => 'date:Y-m-d',
     ];
 
+    function user()
+    {
+        return $this->hasOne(User::class, 'user_id', 'user_id')->first();
+    }
+
     function supplier()
     {
-        if ($this->type == 'REC') {
+        if ($this->type == 'REC' || $this->type == 'RET') {
             return $this->hasOne(ManufactureSuppliers::class, 'id', 'type_id')->first();
         }
     }

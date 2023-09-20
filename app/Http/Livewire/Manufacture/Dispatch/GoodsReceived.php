@@ -49,16 +49,22 @@ class GoodsReceived extends Component
 
     public function render()
     {
-        $archive = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Completed')
+        $archive = ManufactureProductTransactions::where(function ($query) {
+            $query->where('type', 'REC')
+                ->orWhere('type', 'RET');
+        })->where('status', 'Completed')
             ->when($this->search_receive_goods, function ($query, $term) {
                 $term = "%{$term}%";
                 $query->where('reference_number', 'LIKE', $term)
                     ->orWhere('registration_number', 'LIKE', $term);
             })
+            ->orderBy('id', 'DESC')
             ->paginate(15, ['*'], 'received');
 
 
-        $receiving = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Pending')
+        $receiving = ManufactureProductTransactions::where(function ($query) {
+            $query->where('type', 'REC');
+        })->where('status', 'Pending')
             ->when($this->search_receive_goods, function ($query, $term) {
                 $term = "%{$term}%";
                 $query->where('reference_number', 'LIKE', $term)

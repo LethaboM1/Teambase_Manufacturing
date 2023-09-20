@@ -2,7 +2,7 @@
     @if(strlen($label)>0)
     <label class="form-label col-form-label">{{$label}}</label>
     @endif
-    <input type="number" class="form-control form-control-sm @if(strlen($class)>0){{$class}}@endif" 
+    <input type="number" class="form-control @if(strlen($class)>0){{$class}}@endif" 
         @if(strlen($max)>0)
             max="{{ $max }}"
         @endif

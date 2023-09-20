@@ -2,12 +2,13 @@
 
 namespace App\Http\Livewire\Manufacture\Jobs;
 
-use App\Models\ManufactureJobcardProducts;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureJobcards;
 use App\Models\ManufactureProducts;
-use Livewire\WithPagination;
+use App\Models\ManufactureCustomers;
+use App\Models\ManufactureJobcardProducts;
 
 class ViewJobLivewire extends Component
 {
@@ -85,10 +86,25 @@ class ViewJobLivewire extends Component
 
     public function render()
     {
+        $customer_list = [];
+        $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))
+            ->get()
+            ->toArray();
+
+
+        if (count($customer_list) > 0) {
+
+            array_unshift($customer_list, ['value' => 0, 'name' => 'Select Customer']);
+        } else {
+            $customer_list = [];
+            array_unshift($jobcard_list, ['value' => 0, 'name' => 'No Customers found...']);
+        }
+
         $products = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->paginate(15);
 
         return view('livewire.manufacture.jobs.view-job-livewire', [
-            'products' => $products
+            'products' => $products,
+            'customer_list' => $customer_list
         ]);
     }
 }

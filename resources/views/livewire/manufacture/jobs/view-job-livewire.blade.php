@@ -15,7 +15,11 @@
 						</div>
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							@if($jobcard['status']!='Completed' && $jobcard['status']!='Canceled')
-								<x-form.input name="jobcard.contractor" label="Contractor" />
+								@if($jobcard['internal_jobcard'])								
+									<x-form.input name="jobcard.contractor" label="Contractor" />
+								@else
+									<x-form.select name="jobcard.customer_id" label="Customer" :list="$customer_list" />
+								@endif
 							@else
 								<label>Contractor</label>
 								<h5>{{$jobcard['contractor']}}</h5>

@@ -58,7 +58,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                       <div class="tab-pane {{($tab=='open'?'active':'')}}" id="open" role="tabpanel" aria-labelledby="open-tab">
-                        <div class="header-right">
+                        <div class="header-right mb-5">
                             <h4>Open</h4>
                             <form action="#" class="search nav-form">
                                 <div class="input-group">
@@ -91,7 +91,7 @@
 
                       </div>
                       <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
-                        <div class="header-right">
+                        <div class="header-right mb-5">
                             <h4>Archive</h4>
                             <form action="#" class="search nav-form">
                                 <div class="input-group">

@@ -13,7 +13,33 @@
                                 </a>
                         <div class="dropdown-menu" aria-labelledby="btnActions">
                             <a class="dropdown-item modal-basic" href="#receiveGoods" >Goods Received</a>
+                            <a class="dropdown-item modal-basic" href="#returnGoods" >Return to Supplier</a>
                         </div>
+                    </div>
+                    
+                    {{-- Return to Supplier --}}
+                    <div id='returnGoods' class='modal-block modal-block-lg mfp-hide'>
+                        <form method='post' action="{{url("dispatches/return-goods")}}" enctype='multipart/form-data'>
+                            @csrf
+                            <section class='card'>
+                                <header id='returnGoodsheader' class='card-header'><h2 class='card-title'>Return to Supplier</h2></header>
+                                    <div class='card-body'>
+                                        <div class='modal-wrapper'>
+                                            <div class='modal-text'>                                                            
+                                                <livewire:manufacture.dispatch.return-supplier-livewire />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <footer class='card-footer'>
+                                        <div class='row'>
+                                            <div class='col-md-12 text-right'>
+                                                <button type='submit' class='btn btn-primary'>Confirm</button>
+                                                <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                            </div>
+                                        </div>
+                                    </footer>
+                            </section>
+                        </form>
                     </div>
 
                     {{-- Good Received --}}
@@ -53,7 +79,7 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
                             <div class="tab-pane {{($tab=='receiving'?'active':'')}}" id="receiving" role="tabpanel" aria-labelledby="receiving-tab">
-                                <div class="header-right mb-2">
+                                <div class="header-right mb-5">
                                     <h4>Good Receiving</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
@@ -95,7 +121,7 @@
                             </div>
 
                             <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
-                                <div class="header-right mb-2">
+                                <div class="header-right mb-5">
                                     <h4>Archive</h4>
                                     <form action="#" class="search nav-form">
                                         <div class="input-group">
@@ -138,9 +164,14 @@
                             
                             </div>
                         </div>                      
-                        @if(Session::get('print_receipt'))
+                        {{-- @if(Session::get('print_receipt'))
                             <script>
                                 window.open('{{url("dispatches/received-goods/".Session::get('print_receipt')."/print")}}','_blank');
+                            </script>
+                        @endif                      --}}
+                        @if(Session::get('print_return'))
+                            <script>
+                                window.open('{{url("dispatches/return-goods/".Session::get('print_return')."/print")}}','_blank');
                             </script>
                         @endif
                 </div> 
