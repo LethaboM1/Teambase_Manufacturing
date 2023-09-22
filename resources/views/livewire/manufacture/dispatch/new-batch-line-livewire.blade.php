@@ -7,7 +7,7 @@
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->product()->description}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->qty}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>
-    <td>
+    <td style="width:100px">
         @if ($dispatchaction == "new")
             <a id="edit_btn_{{$dispatch->id}}" href="#editDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic" title="Process Loading Dispatch">
                 <i class="fas fa-edit"></i>
