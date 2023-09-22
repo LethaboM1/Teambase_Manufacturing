@@ -89,11 +89,12 @@ class Migrator
      * @param  \Illuminate\Contracts\Events\Dispatcher|null  $dispatcher
      * @return void
      */
-    public function __construct(MigrationRepositoryInterface $repository,
-                                Resolver $resolver,
-                                Filesystem $files,
-                                Dispatcher $dispatcher = null)
-    {
+    public function __construct(
+        MigrationRepositoryInterface $repository,
+        Resolver $resolver,
+        Filesystem $files,
+        Dispatcher $dispatcher = null
+    ) {
         $this->files = $files;
         $this->events = $dispatcher;
         $this->resolver = $resolver;
@@ -115,7 +116,8 @@ class Migrator
         $files = $this->getMigrationFiles($paths);
 
         $this->requireFiles($migrations = $this->pendingMigrations(
-            $files, $this->repository->getRan()
+            $files,
+            $this->repository->getRan()
         ));
 
         // Once we have all these migrations that are outstanding we are ready to run
@@ -136,9 +138,9 @@ class Migrator
     protected function pendingMigrations($files, $ran)
     {
         return Collection::make($files)
-                ->reject(function ($file) use ($ran) {
-                    return in_array($this->getMigrationName($file), $ran);
-                })->values()->all();
+            ->reject(function ($file) use ($ran) {
+                return in_array($this->getMigrationName($file), $ran);
+            })->values()->all();
     }
 
     /**
@@ -289,7 +291,7 @@ class Migrator
         foreach ($migrations as $migration) {
             $migration = (object) $migration;
 
-            if (! $file = Arr::get($files, $migration->migration)) {
+            if (!$file = Arr::get($files, $migration->migration)) {
                 $this->write(TwoColumnDetail::class, $migration->migration, '<fg=yellow;options=bold>Migration not found</>');
 
                 continue;
@@ -298,7 +300,8 @@ class Migrator
             $rolledBack[] = $file;
 
             $this->runDown(
-                $file, $migration,
+                $file,
+                $migration,
                 $options['pretend'] ?? false
             );
         }
@@ -353,7 +356,9 @@ class Migrator
         })->all();
 
         return $this->rollbackMigrations(
-            $migrations, $paths, compact('pretend')
+            $migrations,
+            $paths,
+            compact('pretend')
         );
     }
 
@@ -411,8 +416,8 @@ class Migrator
 
         $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
             && $migration->withinTransaction
-                    ? $connection->transaction($callback)
-                    : $callback();
+            ? $connection->transaction($callback)
+            : $callback();
     }
 
     /**
@@ -522,8 +527,8 @@ class Migrator
 
         if (is_object($migration)) {
             return method_exists($migration, '__construct')
-                    ? $this->files->getRequire($path)
-                    : clone $migration;
+                ? $this->files->getRequire($path)
+                : clone $migration;
         }
 
         return new $class;
@@ -549,7 +554,7 @@ class Migrator
     public function getMigrationFiles($paths)
     {
         return Collection::make($paths)->flatMap(function ($path) {
-            return str_ends_with($path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php');
+            return str_ends_with($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php');
         })->filter()->values()->keyBy(function ($file) {
             return $this->getMigrationName($file);
         })->sortBy(function ($file, $key) {
@@ -638,7 +643,7 @@ class Migrator
      */
     public function setConnection($name)
     {
-        if (! is_null($name)) {
+        if (!is_null($name)) {
             $this->resolver->setDefaultConnection($name);
         }
 
