@@ -4,6 +4,7 @@ namespace Illuminate\Contracts\Console;
 
 interface Kernel
 {
+
     /**
      * Bootstrap the application for artisan commands.
      *
