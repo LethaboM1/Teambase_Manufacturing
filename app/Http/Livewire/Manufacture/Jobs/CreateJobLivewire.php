@@ -31,13 +31,13 @@ class CreateJobLivewire extends Component
     {
         $customer = ManufactureCustomers::where('id', $value)->first();
         $this->contact_person = $customer['contact_name'];
-        $this->delivery_address = $customer['address'];        
+        $this->delivery_address = $customer['address'];
     }
 
     function updatedDelivery($value)
     {
         $this->delivery = $value;
-       //dd($this->delivery);
+        //dd($this->delivery);
     }
 
     public function render()
@@ -53,8 +53,8 @@ class CreateJobLivewire extends Component
             array_unshift($customer_list, ['value' => 0, 'name' => 'Select Customer']);
         } else {
             $customer_list = [];
-            array_unshift($jobcard_list, ['value' => 0, 'name' => 'No Customers found...']);
-        }       
+            array_unshift($customer_list, ['value' => 0, 'name' => 'No Customers found...']);
+        }
 
         return view('livewire.manufacture.jobs.create-job-livewire', [
             'internal_jobcard' => $this->internal_jobcard,
