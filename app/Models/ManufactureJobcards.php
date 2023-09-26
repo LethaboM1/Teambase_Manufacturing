@@ -23,6 +23,15 @@ class ManufactureJobcards extends Model
         return $this->products()->where('filled', 0)->count();
     }
 
+    function customer()
+    {
+        if ($this->customer_id > 0) {
+            return $this->hasOne(ManufactureCustomers::class, 'id', 'customer_id')->first();
+        } else {
+            return false;
+        }
+    }
+
     function products()
     {
         return $this->hasMany(ManufactureJobcardProducts::class, 'job_id', 'id');

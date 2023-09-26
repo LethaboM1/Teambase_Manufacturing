@@ -119,8 +119,9 @@
                                         <button type='submit'class='btn btn-primary'>Confirm</button>
                                         <button class='btn btn-default modal-dismiss'>Cancel</button>                           
                                     @else                                    
+                                        <a target="_blank" href="{{url("dispatches/print/{$dispatch->id}")}}" class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>
                                         <button class='btn btn-primary modal-dismiss'>Close</button>
-                                    
+
                                     @endif
                                     
                                 </div>

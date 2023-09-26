@@ -20,6 +20,7 @@ class ManufactureJobcardProducts extends Model
         return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id')->first();
     }
 
+
     function product()
     {
         return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();

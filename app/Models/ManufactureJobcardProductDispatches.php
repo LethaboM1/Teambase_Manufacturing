@@ -27,6 +27,17 @@ class ManufactureJobcardProductDispatches extends Model
         }
     }
 
+    function weigh_in_user()
+    {
+        return $this->hasOne(User::class, 'user_id', 'weight_in_user_id')->first();
+    }
+
+
+    function weigh_out_user()
+    {
+        return $this->hasOne(User::class, 'user_id', 'weight_out_user_id')->first();
+    }
+
     function driver()
     {
         return $this->hasOne(User::class, 'user_id', '')->first();
