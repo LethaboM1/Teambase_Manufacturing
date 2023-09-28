@@ -98,7 +98,7 @@ class AddDispatchModal extends Component
         array_unshift($manufacture_jobcard_products_list, ['value' => 0, 'name' => 'Select']);
 
         $plant_list = [];
-        if ($this->delivery) $plant_list = Plants::select('plant_id as value', DB::raw("concat(plant_number,' ',make,' ',model) as name"))->get()->toArray();
+        if ($this->delivery) $plant_list = Plants::select('plant_id as value', DB::raw("concat(plant_number,' ',make,' ',model) as name"))->orderBy('plant_number')->get()->toArray();
         array_unshift($plant_list, ['value' => 0, 'name' => 'Select']);
 
         $delivery_zone_list = [];
