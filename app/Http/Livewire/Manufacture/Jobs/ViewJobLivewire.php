@@ -93,7 +93,6 @@ class ViewJobLivewire extends Component
 
 
         if (count($customer_list) > 0) {
-
             array_unshift($customer_list, ['value' => 0, 'name' => 'Select Customer']);
         } else {
             $customer_list = [];
