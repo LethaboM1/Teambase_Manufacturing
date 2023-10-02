@@ -29,7 +29,7 @@ class JobsController extends Controller
 
     function add_job(Request $request)
     {
-        
+
         $form_fields = $request->validate([
             'internal_jobcard' => 'nullable',
             'customer_id' => 'nullable',
@@ -41,10 +41,11 @@ class JobsController extends Controller
             'delivery' => 'nullable',
         ]);
 
-        
+
 
         if (!isset($form_fields['internal_jobcard'])) $form_fields['internal_jobcard'] = 0;
-        
+        if (!isset($form_fields['customer_id'])) $form_fields['customer_id'] = 0;
+
         //Check for valid Customer
         if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] == 0) return back()->with('alertError', 'Please select a Customer for this External Jobcard.');
         //Check for Address
@@ -56,8 +57,8 @@ class JobsController extends Controller
         }
 
         $form_fields['status'] = 'Open';
-        $form_fields['jobcard_number'] = Functions::get_doc_number('jobcard');        
-        
+        $form_fields['jobcard_number'] = Functions::get_doc_number('jobcard');
+
         $job_id = ManufactureJobcards::insertGetId($form_fields);
         return redirect("job/{$job_id}");
     }
