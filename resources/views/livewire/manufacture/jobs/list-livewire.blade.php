@@ -72,7 +72,7 @@
                                 <tr>
                                     <th width="10%">Date</th>
                                     <th width="15%">Job Number</th>
-                                    <th width="15%">Contact Person</th>
+                                    <th width="15%">Customer/Contractor</th>
                                     <th width="45%">Contact Number</th>
                                     <th width="15%">Action</th>
                                 </tr>
