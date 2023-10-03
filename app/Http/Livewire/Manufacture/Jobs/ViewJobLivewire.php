@@ -99,7 +99,7 @@ class ViewJobLivewire extends Component
             array_unshift($customer_list, ['value' => 0, 'name' => 'No Customers found...']);
         }
 
-        $products = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->paginate(15);
+        $products = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->orderBy('code')->paginate(15);
 
         return view('livewire.manufacture.jobs.view-job-livewire', [
             'products' => $products,
