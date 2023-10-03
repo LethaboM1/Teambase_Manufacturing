@@ -43,7 +43,7 @@ class CreateJobLivewire extends Component
     public function render()
     {
         $customer_list = [];
-        $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))
+        $customer_list = ManufactureCustomers::select('id as value', DB::raw("name"))
             ->get()
             ->toArray();
 
