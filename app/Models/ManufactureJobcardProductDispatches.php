@@ -45,11 +45,15 @@ class ManufactureJobcardProductDispatches extends Model
 
     function jobcard()
     {
-        return $this->jobcard_product()->jobcard();
+        if ($this->jobcard_product() !== null) {
+            return $this->jobcard_product()->jobcard();
+        }
     }
 
     function product()
     {
-        return $this->jobcard_product()->product();
+        if ($this->jobcard_product() !== null) {
+            return $this->jobcard_product()->product();
+        }
     }
 }

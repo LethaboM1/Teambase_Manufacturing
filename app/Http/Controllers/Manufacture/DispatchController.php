@@ -35,6 +35,16 @@ class DispatchController extends Controller
 
         $error = false;
 
+        $form_fields = $request->validate([
+            "job_id" => "required|exists:manufacture_jobcards,id",
+            "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
+            "reference" => 'nullable',
+            'dispatch_temp' => 'required|gt:0',
+            'weight_in' => 'required:gt:0'
+        ]);
+
+        $jobcard = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
+
         $qty = $request->weight_out - $dispatch->weight_in;
         $dispatch_temperature = $request->dispatch_temp;
 
@@ -55,7 +65,7 @@ class DispatchController extends Controller
         assigned in fields as timestamp 2023-09-13
         */
 
-        $product_qty = $dispatch->jobcard_product()->qty_due;
+        $product_qty = $jobcard->qty_due;
 
         if ($product_qty < $qty) {
             $error = true;
@@ -64,6 +74,9 @@ class DispatchController extends Controller
 
         if (!$error) {
             $form_fields = [
+                // "job_id" => $form_fields['job_id'],
+                "manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'],
+                "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                 'weight_out' => $request->weight_out,
                 'weight_out_datetime' => date("Y-m-d\TH:i"),
                 'weight_out_user_id' => auth()->user()->user_id,
@@ -76,17 +89,17 @@ class DispatchController extends Controller
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
             if ($product_qty == $qty) {
-                ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 1]);
+                ManufactureJobcardProducts::where('id', $jobcard->id)->update(['filled' => 1]);
             }
 
-            if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
+            if ($jobcard->product()->has_recipe == 0) {
                 //Adjust transaction if no recipe
                 $form_fields = [
-                    'product_id' => $dispatch->jobcard_product()->product_id,
+                    'product_id' => $jobcard->product_id,
                     'type' => 'JDISP',
                     'type_id' => $dispatch->id,
                     'qty' => -1 * ($qty),
-                    'comment' => 'Dispatched on ' . $dispatch->jobcard()->jobcard_number,
+                    'comment' => 'Dispatched on ' . $jobcard->jobcard()->jobcard_number,
                     'user_id' => auth()->user()->user_id,
                     'registration_number' => $dispatch->plant()->reg_number,
                     'status' => ' '
@@ -95,9 +108,9 @@ class DispatchController extends Controller
             }
 
             //Close job card if all filled 
-            if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() == 0) {
+            if (ManufactureJobcardProducts::where('job_id', $jobcard->jobcard()->id)->where('filled', '0')->count() == 0) {
 
-                ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Completed']);
+                ManufactureJobcards::where('id', $jobcard->jobcard()->id)->update(['status' => 'Completed']);
             }
 
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);
@@ -108,9 +121,9 @@ class DispatchController extends Controller
     {
 
         $form_fields = $request->validate([
-            "job_id" => "required|exists:manufacture_jobcards,id",
-            "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
-            "reference" => 'nullable',
+            // "job_id" => "required|exists:manufacture_jobcards,id",
+            // "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
+            // "reference" => 'nullable',
             "weight_in" => 'required|gt:0',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
@@ -127,25 +140,25 @@ class DispatchController extends Controller
             $plant = "{$plant['plant_number']} {$plant['make']} {$plant['model']} {$plant['reg_number']}";
         }
 
-        $jobcard_product = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
-        if ($jobcard_product == null) return back()->with('alertError', 'Could not find job card.');
+        // $jobcard_product = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
+        // if ($jobcard_product == null) return back()->with('alertError', 'Could not find job card.');
 
         //Check batch is ready to dispatch on Manufacturing
-        $batch = ManufactureBatches::where('product_id', $jobcard_product->product_id)->where('status', 'Ready for dispatch')->first();
+        // $batch = ManufactureBatches::where('product_id', $jobcard_product->product_id)->where('status', 'Ready for dispatch')->first();
         //Check is dispathed Product is a Raw Product -> Has Recipe?
-        $has_recipe = ManufactureProducts::select(['has_recipe'])->where('id', $jobcard_product->product_id)->first();
+        // $has_recipe = ManufactureProducts::select(['has_recipe'])->where('id', $jobcard_product->product_id)->first();
 
         //No Ready batch and is not Raw Product
-        if ($batch == null && $has_recipe == '1') return back()->with('alertError', 'Could not find batch.');
+        // if ($batch == null && $has_recipe == '1') return back()->with('alertError', 'Could not find batch.');
         //No Ready batch but is Raw Product
-        elseif ($batch == null && $has_recipe == '0') $form_fields['batch_id'] = '0';
+        // elseif ($batch == null && $has_recipe == '0') $form_fields['batch_id'] = '0';
         //Has ready batch and is not Raw Product
-        elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;
+        // elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;
 
         $form_fields['status'] = 'Loading';
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
         $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
-        $form_fields['delivery_zone'] = $request->delivery_zone;
+        // $form_fields['delivery_zone'] = $request->delivery_zone;
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
         unset($form_fields['job_id']);

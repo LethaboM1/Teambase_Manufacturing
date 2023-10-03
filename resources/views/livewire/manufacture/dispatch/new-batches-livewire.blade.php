@@ -94,9 +94,7 @@
                                         </tr>
                                     @endif
                             </table>          
-                            {{$dispatches->links()}}
-                                
-
+                            {{$dispatches->links()}}                                
                         </div>
 
                         <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
