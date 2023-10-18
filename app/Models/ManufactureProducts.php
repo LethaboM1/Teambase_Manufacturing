@@ -32,4 +32,16 @@ class ManufactureProducts extends Model
 
         return $qty;
     }
+
+    function getBatchQtyAttribute()
+    {
+        $debit = ManufactureBatches::where('product_id', $this->id)->sum('qty');
+        $credit = ManufactureJobcardProductDispatches::where('product_id', $this->id)->sum('qty');
+        $debit = (!is_numeric($debit) ? 0 : $debit);
+        $credit = (!is_numeric($credit) ? 0 : $credit);
+
+        $qty = $debit - $credit;
+
+        return $qty;
+    }
 }
