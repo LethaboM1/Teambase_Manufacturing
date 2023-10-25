@@ -56,4 +56,18 @@ class ManufactureJobcardProductDispatches extends Model
             return $this->jobcard_product()->product();
         }
     }
+
+    function customer()
+    {
+        if ($this->customer_id !== null) {
+            return $this->hasOne(ManufactureCustomers::class, 'id', 'customer_id')->first();
+        }
+    }
+
+    function customer_product()
+    {
+        if ($this->product_id !== null) {
+            return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+        }
+    }
 }

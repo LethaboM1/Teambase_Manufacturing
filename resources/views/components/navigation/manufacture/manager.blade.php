@@ -58,7 +58,7 @@
         </a>
         <ul class="nav nav-children">
         <li><a class="nav-link" href="{{url('batches/create')}}">Create New Batch</a></li>
-        <li><a class="nav-link" href="{{url('batches')}}">Open Batchs</a></li>
+        <li><a class="nav-link" href="{{url('batches')}}">Batches</a></li>
         </ul>
       </li>
       <li class="nav-parent">

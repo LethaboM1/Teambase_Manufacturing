@@ -1,15 +1,40 @@
 
 <div class="row">                                    
-    @if($dispatch->plant_id>0)
+    
+        <form class="form-horizontal form-bordered" method="get">
+            <div class="form-group row pb-4" style="margin-bottom: 15px;">
+                <div class="col-lg-6">
+                    <div class="radio">
+                        <label><input type="radio" name="customer_dispatch" value=0 checked="" wire:model="customer_dispatch">&nbsp&nbspJobcard Transfer</label>&nbsp
+                        <label><input type="radio" name="customer_dispatch" value=1 wire:model="customer_dispatch">&nbsp&nbspCustomer Transfer</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="col-md-6">
-            <x-form.select name="job_id" label="New Job card" :list="$jobcard_list" />
+            {{-- @if ($dispatch->customer_id == '0') 
+                <x-form.select name="job_id" label="New Job card" :list="$jobcard_list" />
+            @else
+                <x-form.select name="customer_id" label="New Customer" :list="$customer_list" />
+            @endif --}}
+            @if($customer_dispatch == 1)
+                <x-form.select name="customer_id" label="Customer" :list="$customer_list" />
+            @else
+                <x-form.select name="job_id" label="Job card" :list="$jobcard_list" />
+            @endif
         </div>
         
         <div class="col-md-6">
-            <x-form.select name="delivery_zone" label="New Delivery Zone" :list="$delivery_zone_list"/>
+            @if($delivery || $customer_dispatch == 1)
+                <x-form.select name="delivery_zone" label="New Delivery Zone" :list="$delivery_zone_list"/>  
+            @endif            
         </div>
 
         <hr>
+    
+    @if($dispatch->plant_id>0)
+        
         
         <div class="col-md-6">
             <label>Plant</label><br><h4>{{$dispatch->plant()->plant_number}}</h4>
@@ -34,7 +59,12 @@
         </div> 
         <div class="col-md-6">
             <label>Product</label><br>
-            <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4>
+            {{-- <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4> --}}
+            @if ($dispatch->customer_id == '0')            
+                <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4>
+            @else
+                <h4>{{($dispatch->customer_product()!==null?$dispatch->customer_product()->description:"")}}</h4>    
+            @endif
         </div>
 
         <hr>                                        

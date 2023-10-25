@@ -70,10 +70,10 @@
                         <table width="100%" class="table table-hover table-responsive-md mb-0">
                             <thead>
                                 <tr>
-                                    <th width="10%">Date</th>
+                                    <th width="15%">Date</th>
                                     <th width="15%">Job Number</th>
-                                    <th width="15%">Customer/Contractor</th>
-                                    <th width="45%">Contact Number</th>
+                                    <th width="40%">Customer/Contractor</th>
+                                    <th width="15%">Contact Number</th>
                                     <th width="15%">Action</th>
                                 </tr>
                             </thead>
@@ -103,10 +103,10 @@
                         <table width="100%" class="table table-hover table-responsive-md mb-0">
                             <thead>
                                 <tr>
-                                    <th width="10%">Date</th>
+                                    <th width="15%">Date</th>
                                     <th width="15%">Job Number</th>
-                                    <th width="15%">Contact Person</th>
-                                    <th width="45%">Contact Number</th>
+                                    <th width="40%">Contact Person</th>
+                                    <th width="15%">Contact Number</th>
                                     <th width="15%">Action</th>
                                 </tr>
                             </thead>

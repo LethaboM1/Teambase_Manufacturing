@@ -86,7 +86,7 @@
             <form method='post' action="{{url("dispatches/transfer/{$dispatch->id}")}}" enctype='multipart/form-data'>
                 @csrf
                 <section class='card'>
-                    <header id='transferDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Transfer on Dispatch No. {{$dispatch->dispatch_number}} to Another Jobcard</h2></header>
+                    <header id='transferDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Transfer on Dispatch No. {{$dispatch->dispatch_number}} </h2></header>
                         <div class='card-body'>                        
                             
                             <div class='modal-wrapper'>

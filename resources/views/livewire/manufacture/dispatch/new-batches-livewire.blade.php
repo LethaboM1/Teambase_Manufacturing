@@ -21,7 +21,7 @@
                         <form method='post' enctype='multipart/form-data'>
                             @csrf
                             <section class='card'>
-                                <header id='addDispatchheader' class='card-header'><h2 class='card-title'></h2></header>
+                                <header id='addDispatchheader' class='card-header'><h2 class='card-title'>Begin New Dispatch.</h2></header>                                
                                     <div class='card-body'>
                                         <div class='modal-wrapper'>
                                             <div class='modal-text'>

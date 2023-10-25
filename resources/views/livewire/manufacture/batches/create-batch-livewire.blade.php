@@ -21,7 +21,7 @@
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
 							<label class="col-form-label" for="formGroupExampleInput">Quantity</label>
-							<input type="text" name="qty" placeholder=""
+							<input type="number" name="qty" placeholder=""
 								class="form-control">
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">

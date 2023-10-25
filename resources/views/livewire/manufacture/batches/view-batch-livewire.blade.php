@@ -19,7 +19,9 @@
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
 							<label class="col-form-label" for="formGroupExampleInput">Quantity</label>
-							<h4>{{$batch->qty}}</h4>
+							{{-- <h4>{{$batch->qty}}</h4> new QTY changes on View 2023-10-19 --}}
+							<input wire:model.lazy="qty" type="number" name="qty" placeholder=""
+								class="form-control" value="{{$qty}}">
 						</div>
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
 							<label class="col-form-label" for="formGroupExampleInput">Unit</label>
@@ -55,7 +57,8 @@
 							<tbody>
 								@if(!empty($recipe))
 									@foreach($recipe as $product)
-										<livewire:manufacture.batches.recipe.item key="{{$product['id']}}" :product="$product" :qtyselected="$batch->qty" >
+										{{-- <livewire:manufacture.batches.recipe.item key="{{$product['id']}}" :product="$product" :qtyselected="$batch->qty" > new QTY changes on View 2023-10-19 --}}
+										<livewire:manufacture.batches.recipe.item key="{{$product['id']}}" :product="$product" :qtyselected="$qty" >
 									@endforeach
 								@else
 										<tr>

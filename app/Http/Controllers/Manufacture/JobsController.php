@@ -32,7 +32,7 @@ class JobsController extends Controller
 
         $form_fields = $request->validate([
             'internal_jobcard' => 'nullable',
-            'customer_id' => 'nullable',
+            // 'customer_id' => 'nullable', Internal Jobs only 2023-10-19
             'contractor' => 'nullable',
             'site_number' => 'nullable',
             'contact_person' => 'nullable',
@@ -43,18 +43,20 @@ class JobsController extends Controller
 
 
 
-        if (!isset($form_fields['internal_jobcard'])) $form_fields['internal_jobcard'] = 0;
-        if (!isset($form_fields['customer_id'])) $form_fields['customer_id'] = 0;
+        /* if (!isset($form_fields['internal_jobcard'])) $form_fields['internal_jobcard'] = 0;
+        if (!isset($form_fields['customer_id'])) $form_fields['customer_id'] = 0;  Internal Jobs only 2023-10-19 */
+        $form_fields['internal_jobcard'] = 1;
 
-        //Check for valid Customer
-        if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] == 0) return back()->with('alertError', 'Please select a Customer for this External Jobcard.');
+        /* //Check for valid Customer
+        if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] == 0) return back()->with('alertError', 'Please select a Customer for this External Jobcard.'); Internal Jobs only 2023-10-19 */
+        
         //Check for Address
         if ($form_fields['delivery'] && strlen($form_fields['delivery_address']) == 0) return back()->with('alertError', 'Please type in a delivery address if delivery is required');
 
-        if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] > 0) {
+        /* if ($form_fields['internal_jobcard'] == 0 && $form_fields['customer_id'] > 0) {
             $customer = ManufactureCustomers::where('id', $form_fields['customer_id'])->first();
             $form_fields['contractor'] = $customer['name'];
-        }
+        } Internal Jobs only 2023-10-19 */
 
         $form_fields['status'] = 'Open';
         $form_fields['jobcard_number'] = Functions::get_doc_number('jobcard');

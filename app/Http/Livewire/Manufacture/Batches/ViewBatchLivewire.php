@@ -15,7 +15,7 @@ class ViewBatchLivewire extends Component
 {
     use WithPagination;
 
-    public $batch, $batch_product, $recipe, $status_list, $status, $notes, $saved = 0;
+    public $batch, $batch_product, $recipe, $status_list, $status, $notes, $saved = 0, $qty;
 
     function mount($batch)
     {
@@ -24,6 +24,7 @@ class ViewBatchLivewire extends Component
         $this->notes = $this->batch->notes;
         $this->status = $this->batch->status;
         $this->status_list = SelectLists::batch_status_list;
+        $this->qty = $this->batch->qty;
     }
 
     function updatedNotes()
@@ -36,12 +37,18 @@ class ViewBatchLivewire extends Component
         ManufactureBatches::where('id', $this->batch->id)->update(['status' => $this->status]);
     }
 
+    function updatedQty()
+    {
+        ManufactureBatches::where('id', $this->batch->id)->update(['qty' => $this->qty]);
+    }
+
     public function render()
     {
         $this->recipe = ManufactureProductRecipe::where('product_id', $this->batch->product_id)->get();
         $this->batch_product = ManufactureProducts::select(DB::raw("concat(code,' - ',description) as name, unit_measure "))->where('id', $this->batch->product_id)->first();
         return view('livewire.manufacture.batches.view-batch-livewire', [
-            'recipe' => $this->recipe
+            'recipe' => $this->recipe,
+            'qty' => $this->qty
         ]);
     }
 }

@@ -6,30 +6,40 @@
         <div class="col-md-6">
             <label>Reg No.</label><br><h4>{{$dispatch->plant()->reg_number}}</h4>                                                
         </div>
-        <div class="col-md-6">
-            <label>Delivery Zone</label><br>
-            <h4>{{$dispatch->delivery_zone}}</h4>
-        </div>
-        <div class="col-md-6">
-            <x-form.number wire=0 name="weight_in" label="Weight In" value={{$weight_in}}/>
-        </div> 
-                                                                                    
-        <div class="col-md-6">
-            <label>Product</label><br>
-            <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4>
-        </div>
     @else
         <div class="col-md-6">
             <b>Vehicle</b>&nbsp;{{$dispatch->registration_number}}
         </div>
-    @endif        
+        <div class="col-md-6">
+            <label></label><br><h4></h4><br>                                                
+        </div>
+    @endif 
+
+    <div class="col-md-6">
+        <label>Delivery Zone</label><br>
+        <h4>{{$dispatch->delivery_zone}}</h4>
+    </div>
+    <div class="col-md-6">
+        <x-form.number wire=0 name="weight_in" label="Weight In" value={{$weight_in}}/>
+    </div> 
+                                                                                
+    <div class="col-md-6">
+        <label>Product</label><br>
+        {{-- @dd($dispatch->customer_id) --}}
+        @if ($dispatch->customer_id == '0')            
+            <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4>
+        @else
+            <h4>{{($dispatch->customer_product()!==null?$dispatch->customer_product()->description:"")}}</h4>    
+        @endif
+    </div>
+           
         {{-- <div class="col-md-6">
             <x-form.datetime wire=0 name="weight_in_datetime" label="Date/Time" value={{$weight_in_datetime}}/>
         </div> 
         Dates added on post now 2023-09-14
         --}}
 
-        <hr>
+    <hr>
         
         {{-- <div class="col-md-6">                                            
             <label>Weight Out Date time</label><br>
