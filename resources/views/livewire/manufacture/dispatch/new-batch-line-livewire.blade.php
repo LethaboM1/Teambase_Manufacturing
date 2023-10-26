@@ -2,9 +2,9 @@
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->created_at}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->dispatch_number}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->jobcard_number:"")}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->contractor:"")}}</td>
+    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->contractor:$dispatch->customer()->name)}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->plant()!==null?"{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}":$dispatch->registration_number)}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</td>
+    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->product()!==null?$dispatch->product()->description:$dispatch->customer_product()->description)}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->qty}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>
     <td style="width:100px">
