@@ -70,7 +70,7 @@
                                         <th width="10%">Date</th>
                                         <th width="8%">Dispatch Number</th>
                                         <th width="12%">Job Card</th>
-                                        <th width="15%">Contractor</th>
+                                        <th width="15%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>
@@ -113,7 +113,7 @@
                                         <th width="10%">Date</th>
                                         <th width="8%">Dispatch Number</th>
                                         <th width="8%">Job Card</th>
-                                        <th width="15%">Contractor</th>
+                                        <th width="15%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>
