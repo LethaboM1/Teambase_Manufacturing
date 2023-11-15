@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 class ListLivewire extends Component
 {
     use WithPagination;
+    protected $paginationTheme = ['bootstrap'];
     public $tab, $search, $search_arc;
 
     function mount()

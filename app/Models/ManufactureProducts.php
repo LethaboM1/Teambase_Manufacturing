@@ -19,6 +19,11 @@ class ManufactureProducts extends Model
         return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');
     }
 
+    function batches()
+    {
+        return $this->hasMany(ManufactureBatches::class, 'product_id', 'id');
+    }
+
 
     function recipes()
     {
@@ -27,10 +32,13 @@ class ManufactureProducts extends Model
 
     function getQtyAttribute()
     {
+        $qty_batch = $this->batches()->sum('qty');
         $qty = $this->transactions()->sum('qty');
+
+        $qty_batch = (!is_numeric($qty_batch) ? 0 : $qty_batch);
         $qty = (!is_numeric($qty) ? 0 : $qty);
 
-        return $qty;
+        return ($qty + $qty_batch);
     }
 
     function getBatchQtyAttribute()

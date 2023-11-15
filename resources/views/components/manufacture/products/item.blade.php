@@ -60,8 +60,7 @@
             </section>
         </div>
         <!-- Modal Edit Product End -->
-
-            @if(!$item->has_recipe)
+            {{-- @if(!$item->has_recipe) --}}
                 
                 <!-- Modal adjust stock -->
                 <a class="mb-1 mt-1 mr-1 modal-basic" href="#modaladjust_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Adjust Stock"><i class="fas fa-chart-simple"></i></a>
@@ -140,7 +139,7 @@
                     </section>
                 </div>
                 <!-- Modal adjust Product End -->
-            @endif
+            {{-- @endif --}}
         @endif
         <!-- Modal adjust stock End -->
         
