@@ -13,7 +13,7 @@ class GoodsReceived extends Component
 
     protected $listeners = [
         'refreshNewDispatch'
-    ];
+    ], $paginationTheme = 'bootstrap';
 
     function mount()
     {
