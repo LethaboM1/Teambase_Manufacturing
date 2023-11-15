@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Manufacture\Dispatch;
 
+use App\Http\Controllers\Functions;
 use Livewire\Component;
 use App\Models\ManufactureBatches;
 use Illuminate\Support\Facades\DB;
@@ -214,6 +215,7 @@ class NewBatchOutModal extends Component
 
             //Insert new line             
             // ManufactureJobcardProductDispatches::insert($form_fields);
+            $form_fields['qty'] = Functions::negate($form_fields['qty']);
             ManufactureProductTransactions::insert($form_fields);
 
             //Get Qty Due and mark as Filled if required
