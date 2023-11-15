@@ -47,9 +47,6 @@ class BatchesController extends Controller
 
         if ($recipe->count() == 0)  return back()->with('alertError', 'No recipe for this product. Create your recipe first.');
 
-
-
-
         // foreach ($recipe as $item) {
         //     $qty = ($item->qty * $form_fields['qty']);            
         //     ManufactureProductTransactions::insert([
@@ -62,8 +59,6 @@ class BatchesController extends Controller
         // }
 
         $batch_id = ManufactureBatches::insertGetId($form_fields);
-
-
 
         foreach ($recipe as $item) {
             $qty = ($item->qty * $form_fields['qty']);
