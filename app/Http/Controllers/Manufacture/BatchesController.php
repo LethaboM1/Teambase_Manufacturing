@@ -45,24 +45,34 @@ class BatchesController extends Controller
 
         if ($recipe->count() == 0)  return back()->with('alertError', 'No recipe for this product. Create your recipe first.');
 
+
+
+
         // foreach ($recipe as $item) {
-        //     $qty = ($item->qty * $form_fields['qty']);
-        //     $product = ManufactureProducts::where('id', $item->product_add_id)->first();
-        //     if ($product->qty < $qty) return back()->with('alertError', "You dont have enough \"{$product->code} {$product->description}\" to create this batch.");
+        //     $qty = ($item->qty * $form_fields['qty']);            
+        //     ManufactureProductTransactions::insert([
+        //         'product_id' => $item->product_add_id,
+        //         'type' => 'BAT',
+        //         'qty' => $qty,
+        //         'user_id' => auth()->user()->user_id,
+        //         'status' => ''
+        //     ]);
         // }
 
         $batch_id = ManufactureBatches::insertGetId($form_fields);
 
-        // foreach ($recipe as $item) {
-        //     $qty = ($item->qty * $form_fields['qty']);
 
-        //     ManufactureProductTransactions::insert([
-        //         'product_id' => $item->product_add_id,
-        //         'qty' => Functions::negate($qty),
-        //         'type' => 'BAT',
-        //         'type_id' => $batch_id
-        //     ]);
-        // }
+
+        foreach ($recipe as $item) {
+            $qty = ($item->qty * $form_fields['qty']);
+
+            ManufactureProductTransactions::insert([
+                'product_id' => $item->product_add_id,
+                'qty' => Functions::negate($qty),
+                'type' => 'BAT',
+                'type_id' => $batch_id
+            ]);
+        }
 
         return redirect("batch/{$batch_id}");
     }

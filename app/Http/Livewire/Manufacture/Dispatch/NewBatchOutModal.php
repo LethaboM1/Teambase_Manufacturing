@@ -57,6 +57,7 @@ class NewBatchOutModal extends Component
         if ($value > 0) {
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
+            // Manufact
         }
     }
 
@@ -140,7 +141,6 @@ class NewBatchOutModal extends Component
         if ($manufacture_jobcard_product) {
             //dd($jobcard);
             $product_qty = $manufacture_jobcard_product->qty_due;
-
             //dd('id:'.$manufacture_jobcard_product_id.'due:'.$product_qty);
 
             if ($product_qty > 0) {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Functions;
 use App\Models\ManufactureProductTransactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,14 +29,21 @@ class ManufactureJobcardProducts extends Model
 
     function dispatches()
     {
+        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); //2023-11-09 Moved to Transactions Table
+        // return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
+    }
+
+    function transactions()
+    {
         //return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); 2023-11-09 Moved to Transactions Table
         return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
-    }   
+    }
 
     function getQtyFilledAttribute()
     {
-        $qty =  $this->dispatches()->sum('qty');
+        $qty =  $this->transactions()->sum('qty');
         if (!is_numeric($qty)) $qty = 0;
+        $qty = Functions::negate($qty);
         return round($qty, 3);
     }
 
