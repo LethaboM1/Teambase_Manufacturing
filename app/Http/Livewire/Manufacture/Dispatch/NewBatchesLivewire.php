@@ -16,7 +16,7 @@ class NewBatchesLivewire extends Component
 
     protected $listeners = [
         'refreshNewDispatch'
-    ];
+    ], $paginationTheme = 'bootstrap';
 
     function mount()
     {
