@@ -8,10 +8,13 @@
         @endif
         " 
         name="{{$name}}" 
-        value="{{$value}}" 
+        value="{{$value}}"
+        @if($disabled)
+            disabled="{{$disabled}}" 
+        @endif
         @if($wire) 
             wire:model.debounce.500="{{$name}}"
-        @endif
+        @endif        
         >
 
         {{-- @error($name)

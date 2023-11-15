@@ -28,13 +28,13 @@ class ManufactureJobcardProducts extends Model
 
     function dispatches()
     {
-        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get();
-    }
+        //return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); 2023-11-09 Moved to Transactions Table
+        return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
+    }   
 
     function getQtyFilledAttribute()
     {
         $qty =  $this->dispatches()->sum('qty');
-        // dd($qty);
         if (!is_numeric($qty)) $qty = 0;
         return round($qty, 3);
     }

@@ -14,7 +14,10 @@
         @endif
 
         name="{{$name}}" 
-        value="{{$value}}" 
+        value="{{$value}}"
+        @if($disabled)
+            disabled="{{$disabled}}" 
+        @endif
         @if($wire) 
             wire:model="{{$name}}"
         @endif

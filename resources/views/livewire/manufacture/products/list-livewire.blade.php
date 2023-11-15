@@ -22,12 +22,16 @@
                                 <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
                                     <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="old('unit_measure')" :list="$unit_measure_list" />
                                 </div>
+                                <br>
                                 <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                     {{-- <div class="checkbox-custom checkbox-default">
                                         <input id="checkbox1" name="has_recipe" type="checkbox" value="1">
                                         <label for="checkbox1">Requires recipe</label>
                                     </div> --}}
                                     <x-form.checkbox wire=0 name="has_recipe" label="Has a recipe?" :toggle="old('has_recipe')" :value="1" />
+                                </div>
+                                <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">                                    
+                                    <x-form.checkbox wire=0 name="weighed_product" label="Product Weighed when Sold" :toggle="old('weighed_product')" :value="1" />
                                 </div>
                             </div>
                         </div>

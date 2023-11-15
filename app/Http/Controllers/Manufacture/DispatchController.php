@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Manufacture;
 use App\Models\Plants;
 use Illuminate\Http\Request;
 use App\Models\ManufactureBatches;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Functions;
 use App\Models\ManufactureJobcards;
 use App\Models\ManufactureProducts;
 use App\Http\Controllers\Controller;
 use App\Models\ManufactureCustomers;
 use function PHPSTORM_META\elementType;
-use App\Models\ManufactureJobcardProducts;
 
+use App\Models\ManufactureJobcardProducts;
 use App\Models\ManufactureProductTransactions;
 use App\Models\ManufactureJobcardProductDispatches;
 
@@ -33,46 +34,108 @@ class DispatchController extends Controller
 
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
-
+        
         $error = false; 
         
-        //dd($request);
+        // dd($request);
+        /* $extra_items = [];
+        $extra_items = ManufactureProductTransactions::select('id', 'dispatch_group_id', 'weight_in_datetime', 'product_id',
+            DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_jobcard_product_dispatches.product_id) as description'),
+            DB::raw('(select unit_measure from manufacture_products where manufacture_products.id= manufacture_jobcard_product_dispatches.product_id) as unit_measure'), 'qty')                
+            ->where('dispatch_group_id', $dispatch->id)
+            ->get()
+            ->toArray(); */
 
         if($request->customer_dispatch == 0){
-            $form_fields = $request->validate([
-                "job_id" => "required|exists:manufacture_jobcards,id",
-                "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
-                "delivery_zone" => "required",            
-                "reference" => 'nullable',
-                'dispatch_temp' => 'required|gt:0',
-                'weight_in' => 'required:gt:0'
-            ]);
+            //check non-weight or weight
+            
+            
+            if($dispatch->weight_in == '0'){
+                $form_fields = $request->validate([
+                    "job_id" => "required|exists:manufacture_jobcards,id",
+                    //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
+                    "delivery_zone" => "required",            
+                    "reference" => 'nullable',                    
+                    //'qty' => 'required:gt:0' Moved to Lines 2023-11-14
+                ]);
 
-            $jobcard = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
-            $product_qty = $jobcard->qty_due;
+                
+            } else {
+                $form_fields = $request->validate([
+                    "job_id" => "required|exists:manufacture_jobcards,id",
+                    //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
+                    "delivery_zone" => "required",            
+                    "reference" => 'nullable',
+                    'dispatch_temp' => 'required|gt:-1',
+                    'weight_in' => 'required:gt:0'
+                ]);
+
+               
+            }
+
+            //Get Jobcard(s) on this Dispatch and Check if AllFilled=True to Close.
+            // $manufacture_jobcard_product_id = ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->first();
+            
+            $jobcards = ManufactureJobcards::where('id', $form_fields['job_id'])->get();            
+            foreach ($jobcards as $jobcard){
+
+                //Close job card if all filled
+                
+                if (ManufactureJobcardProducts::where('job_id', $jobcard->id)->where('filled', '0')->count() == 0) {
+
+                    ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Completed']);
+                }
+
+            }
+            //***** $jobcard = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();            
+            
+            /*$product_qty = $jobcard->qty_due; */ //Moved to Lines 2023-11-14 
+            
+
+            
 
         } elseif ($request->customer_dispatch == 1){
-            $form_fields = $request->validate([
-                "customer_id" => "required|exists:manufacture_customers,id",
-                "product_id" => "required|exists:manufacture_products,id",            
-                "delivery_zone" => "required",
-                "reference" => 'nullable',
-                'dispatch_temp' => 'required|gt:0',
-                'weight_in' => 'required:gt:0'
-            ]);
-            $product_qty = $request->weight_out - $dispatch->weight_in;
+            //check non-weight or weight
+            if($dispatch->weight_in == '0'){
+                $form_fields = $request->validate([
+                    "customer_id" => "required|exists:manufacture_customers,id",
+                    //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
+                    "delivery_zone" => "required",
+                    "reference" => 'nullable',
+                    //'qty' => 'required:gt:0' Moved to Lines 2023-11-14
+                ]);
+                //$product_qty = $request->qty; Moved to Lines 2023-11-14
+            } else {
+                $form_fields = $request->validate([
+                    "customer_id" => "required|exists:manufacture_customers,id",
+                    //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
+                    "delivery_zone" => "required",
+                    "reference" => 'nullable',
+                    'dispatch_temp' => 'required|gt:-1',
+                    //'weight_in' => 'required:gt:0' Moved to Lines 2023-11-14
+                ]);
+                // $product_qty = $request->weight_out - $dispatch->weight_in; Moved to Lines 2023-11-14
+            }
+            
+            
 
         }
 
-        $qty = $request->weight_out - $dispatch->weight_in;
-        $dispatch_temperature = $request->dispatch_temp;
+        if($dispatch->weight_in == '0'){
+            //$qty = $request->qty; Moved to Lines 2023-11-14
+            $dispatch_temperature = '0';
+        } else {
+            //$qty = $request->weight_out - $dispatch->weight_in; Moved To Lines 2023-11-14
+            $dispatch_temperature = $request->dispatch_temp;
+        }
+        
 
-        if ($qty <= 0) {
+        /* if ($qty <= 0) {
             $error = true;
             return back()->with('alertError', 'Cannot Complete Dispatch. Qty is Zero');
-        }
+        } */ //Moved to Lines 2023-11-14
 
-        if ($dispatch_temperature <= 0 || $dispatch_temperature == '') {
+        if ($dispatch_temperature < 0 || $dispatch_temperature == '') {
             $error = true;
             return back()->with('alertError', 'Cannot Complete Dispatch. Dispatch Temperature cannot be blank.');
         }
@@ -84,55 +147,90 @@ class DispatchController extends Controller
         assigned in fields as timestamp 2023-09-13
         */
 
-       
-        if ($product_qty < $qty) {
+      // dd($product_qty.' '.$qty);
+        /* if ($product_qty < $qty) {
             $error = true;
             return back()->with('alertError', "Too much product. Due amount on this job card is {$product_qty}");
-        }
+        } */ //Moved to Lines 2023-11-14
        
-
+        //dd($request);
         if (!$error) {
             
             if($request->customer_dispatch == 0){
-                $form_fields = [
-                    // "job_id" => $form_fields['job_id'],
-                    "manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'],
-                    "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
-                    "delivery_zone" => $form_fields['delivery_zone'],
-                    'weight_out' => $request->weight_out,
-                    'weight_out_datetime' => date("Y-m-d\TH:i"),
-                    'weight_out_user_id' => auth()->user()->user_id,
-                    'qty' => $qty,
-                    'status' => 'Dispatched'
-                ];
+                if($dispatch->weight_in == '0'){
+                    $form_fields = [
+                        // "job_id" => $form_fields['job_id'],
+                        //"manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'], Moved to Lines 2023-11-14
+                        "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
+                        "delivery_zone" => $form_fields['delivery_zone'],
+                        'weight_out' => '0',
+                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_user_id' => auth()->user()->user_id,
+                        //'qty' => $request->qty, Moved to Lines 2023-11-14
+                        'status' => 'Dispatched'
+                    ];
+                } else {
+                    $form_fields = [
+                        // "job_id" => $form_fields['job_id'],
+                        //"manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'], Moved to Lines 2023-11-14
+                        "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
+                        "delivery_zone" => $form_fields['delivery_zone'],
+                        'weight_out' => $request->weight_out,
+                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_user_id' => auth()->user()->user_id,
+                        //'qty' => $qty, Moved to Lines 2023-11-14
+                        'status' => 'Dispatched'
+                    ];
+                }
+                
             } elseif ($request->customer_dispatch == 1){
-                $form_fields = [
-                    // "job_id" => $form_fields['job_id'],
-                    "customer_id" => $form_fields['customer_id'],
-                    "product_id" => $form_fields['product_id'],
-                    "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
-                    "delivery_zone" => $form_fields['delivery_zone'],
-                    'weight_out' => $request->weight_out,
-                    'weight_out_datetime' => date("Y-m-d\TH:i"),
-                    'weight_out_user_id' => auth()->user()->user_id,
-                    'qty' => $qty,
-                    'status' => 'Dispatched'
-                ];
+                if($dispatch->weight_in == '0'){
+                    $form_fields = [
+                        // "job_id" => $form_fields['job_id'],
+                        "customer_id" => $form_fields['customer_id'],
+                        //"product_id" => $form_fields['product_id'], Moved to Lines 2023-11-14
+                        "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
+                        "delivery_zone" => $form_fields['delivery_zone'],
+                        'weight_out' => '0',
+                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_user_id' => auth()->user()->user_id,
+                        //'qty' => $request->qty, Moved to Lines 2023-11-14
+                        'status' => 'Dispatched'
+                    ];
+                } else {
+                    $form_fields = [
+                        // "job_id" => $form_fields['job_id'],
+                        "customer_id" => $form_fields['customer_id'],
+                        //"product_id" => $form_fields['product_id'], Moved to Lines 2023-11-14
+                        "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
+                        "delivery_zone" => $form_fields['delivery_zone'],
+                        'weight_out' => $request->weight_out,
+                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_user_id' => auth()->user()->user_id,
+                        //'qty' => $qty, Moved to Lines 2023-11-14
+                        'status' => 'Dispatched'
+                    ];
+                }
+                
             }
             
             $form_fields['dispatch_temp'] = $dispatch_temperature;
 
-
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+
+            $form_fields = ['status' => 'Dispatched'];
+            ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
+
+
 
             //dd($jobcard);
 
-            if($request->customer_dispatch == 0){
-                if ($product_qty == $qty) {
+            //if($request->customer_dispatch == 0){
+                /* if ($product_qty == $qty) {
                     ManufactureJobcardProducts::where('id', $jobcard->id)->update(['filled' => 1]);
-                }
+                } */ //Moved to Lines 2023-11-15
 
-                if ($jobcard->product()->has_recipe == 0) {
+                /* if ($jobcard->product()->has_recipe == 0) {
                     //Adjust transaction if no recipe
                     $form_fields = [
                         'product_id' => $jobcard->product_id,
@@ -153,40 +251,181 @@ class DispatchController extends Controller
                     }
 
                     ManufactureProductTransactions::insert($form_fields);
-                }
+                } */ //Moved to Lines 2023-11-15
 
-                //Close job card if all filled 
+                /* //Close job card if all filled 
                 if (ManufactureJobcardProducts::where('job_id', $jobcard->jobcard()->id)->where('filled', '0')->count() == 0) {
 
                     ManufactureJobcards::where('id', $jobcard->jobcard()->id)->update(['status' => 'Completed']);
-                }
-            } elseif($request->customer_dispatch == 1){
-                $product = ManufactureProducts::where('id', $form_fields['product_id'])->first();
-                //dd($form_fields['product_id']);
-                $customer = ManufactureCustomers::where('id', $form_fields['customer_id'])->first();
-                if ($product->has_recipe == 0) {
-                    //Adjust transaction if no recipe
-                    $form_fields = [
-                        'product_id' => $form_fields['product_id'],
-                        'type' => 'CDISP',
-                        'type_id' => $dispatch->id,
-                        'qty' => -1 * ($qty),
-                        'comment' => 'Dispatched for ' . $customer->name,
-                        'user_id' => auth()->user()->user_id,
-                        //'registration_number' => $dispatch->plant()->reg_number,
-                        //'registration_number' => $dispatch->registration_number,
-                        'status' => ' '
-                    ];
+                } */
+            //}
 
-                    if (isset($dispatch->plant()->reg_number)){
-                        $form_fields['registration_number'] = $dispatch->plant()->reg_number;
-                    } else {
-                        $form_fields['registration_number'] = $dispatch->registration_number;
-                    }
+            // } elseif($request->customer_dispatch == 1){
+            //     $product = ManufactureProducts::where('id', $form_fields['product_id'])->first();
+            //     $customer = ManufactureCustomers::where('id', $form_fields['customer_id'])->first();
+            //     if ($product->has_recipe == 0) {
+            //         //Adjust transaction if no recipe
+            //         $form_fields = [
+            //             'product_id' => $form_fields['product_id'],
+            //             'type' => 'CDISP',
+            //             'type_id' => $dispatch->id,
+            //             'qty' => -1 * ($qty),
+            //             'comment' => 'Dispatched for ' . $customer->name,
+            //             'user_id' => auth()->user()->user_id,
+            //             //'registration_number' => $dispatch->plant()->reg_number,
+            //             //'registration_number' => $dispatch->registration_number,
+            //             'status' => ' '
+            //         ];
 
-                    ManufactureProductTransactions::insert($form_fields);
-                }
-            }
+            //         if (isset($dispatch->plant()->reg_number)){
+            //             $form_fields['registration_number'] = $dispatch->plant()->reg_number;
+            //         } else {
+            //             $form_fields['registration_number'] = $dispatch->registration_number;
+            //         }
+
+            //         ManufactureProductTransactions::insert($form_fields);
+            //     }
+            // } //Moved to Lines 2023-11-15
+
+            //Update Extra Items Lines IsCustomer? IsJobcard ProductTransaction? Status?
+            // $extra_items = [];
+            // $extra_items = ManufactureJobcardProductDispatches::select('id', 'dispatch_group_id', 'weight_in_datetime as the_date', 'manufacture_jobcard_product_dispatches.product_id as product_id',
+            //     DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_jobcard_product_dispatches.product_id) as description'),
+            //     DB::raw('(select unit_measure from manufacture_products where manufacture_products.id= manufacture_jobcard_product_dispatches.product_id) as unit_measure'), 'qty')                
+            //     ->where('dispatch_group_id', $dispatch->id)
+            //     ->get()
+            //     ->toArray();
+
+            //     foreach ($extra_items as $extra_item) {
+            //         //dd($extra_item);
+            //         //Update Dispatches
+            //         $job_extra_line_item = ManufactureJobcardProducts::where('job_id', $jobcard->job_id)->where('product_id', $extra_item['product_id'])->first();
+
+            //         $form_fields = [];
+            //         if ($request->customer_dispatch == 1) {
+            //             if($dispatch->weight_in == '0'){
+            //                 $form_fields = [
+            //                     "customer_id" => $request->customer_id,                            
+            //                     "reference" => $request->reference,
+            //                     "delivery_zone" => $request->delivery_zone,                            
+            //                     'weight_out' => '0',
+            //                     'weight_out_datetime' => date("Y-m-d\TH:i"),
+            //                     'weight_out_user_id' => auth()->user()->user_id,                            
+            //                     'status' => 'Dispatched'
+            //                 ];
+            //             } else {
+            //                 $form_fields = [
+            //                     "customer_id" => $request->customer_id,                            
+            //                     "reference" => $request->reference,
+            //                     "delivery_zone" => $request->delivery_zone,
+            //                     'weight_out' => $request->weight_out,
+            //                     'weight_out_datetime' => date("Y-m-d\TH:i"),                            
+            //                     'weight_out_user_id' => auth()->user()->user_id,                            
+            //                     'status' => 'Dispatched'
+            //                 ];
+            //             }
+                        
+
+            //         } else {
+            //             //Get Jobcard Line item (if any) for this extra line
+            //             //dd('Job ID:'.$jobcard->job_id.' Product ID:'.$extra_item['product_id']);
+                        
+
+            //             if($dispatch->weight_in == '0'){
+            //                 $form_fields = [                                                        
+            //                     "reference" => $request->reference,                                
+            //                     "delivery_zone" => $request->delivery_zone,
+            //                     'weight_out' => '0',
+            //                     'weight_out_datetime' => date("Y-m-d\TH:i"),                            
+            //                     'weight_out_user_id' => auth()->user()->user_id,                                
+            //                     'status' => 'Dispatched'
+            //                 ];                            
+            //             } else {
+            //                 $form_fields = [                                                        
+            //                     "reference" => $request->reference,
+            //                     "delivery_zone" => $request->delivery_zone,
+            //                     'weight_out' => $request->weight_out,
+            //                     'weight_out_datetime' => date("Y-m-d\TH:i"),                            
+            //                     'weight_out_user_id' => auth()->user()->user_id,                                                            
+            //                     'status' => 'Dispatched'
+            //                 ];
+            //             }
+            //             if(isset($job_extra_line_item)){
+            //                 $form_fields['manufacture_jobcard_product_id'] = $job_extra_line_item->id;
+            //             }
+
+            //         }                    
+
+            //         ManufactureJobcardProductDispatches::where('id', $extra_item['id'])->update($form_fields);
+
+            //         if($request->customer_dispatch == 0){                      
+                                                
+            //             if(isset($job_extra_line_item)){
+            //                 $product_qty = $job_extra_line_item->qty_due;
+            //                 if ($product_qty == $extra_item['qty']) {                                
+            //                     ManufactureJobcardProducts::where('id', $job_extra_line_item->id)->update(['filled' => 1]);
+            //                 }
+
+            //             }
+            //             $product = ManufactureProducts::where('id', $extra_item['product_id'])->first();
+
+            //             if ($jobcard->has_recipe == 0) {
+            //                 //Adjust transaction if no recipe
+            //                 $form_fields = [
+            //                     'product_id' => $extra_item['product_id'],
+            //                     'type' => 'JDISP',
+            //                     'type_id' => $extra_item['id'],
+            //                     'qty' => -1 * ($extra_item['qty']),
+            //                     'comment' => 'Dispatched on ' . $jobcard->jobcard()->jobcard_number,
+            //                     'user_id' => auth()->user()->user_id,
+            //                     //'registration_number' => $dispatch->plant()->reg_number,
+            //                     // 'registration_number' => $dispatch->registration_number,
+            //                     'status' => ' '
+            //                 ];
+
+            //                 if (isset($dispatch->plant()->reg_number)){
+            //                     $form_fields['registration_number'] = $dispatch->plant()->reg_number;
+            //                 } else {
+            //                     $form_fields['registration_number'] = $dispatch->registration_number;
+            //                 }
+
+            //                 ManufactureProductTransactions::insert($form_fields);
+            //             }
+
+            //             //Close job card if all filled 
+            //             if (ManufactureJobcardProducts::where('job_id', $jobcard->jobcard()->id)->where('filled', '0')->count() == 0) {
+
+            //                 ManufactureJobcards::where('id', $jobcard->jobcard()->id)->update(['status' => 'Completed']);
+            //             }
+
+            //         } elseif($request->customer_dispatch == 1){
+            //             $product = ManufactureProducts::where('id', $extra_item['product_id'])->first();
+            //             //dd($form_fields['product_id']);
+            //             $customer = ManufactureCustomers::where('id', $request->customer_id)->first();
+            //             if ($product->has_recipe == 0) {
+            //                 //Adjust transaction if no recipe
+            //                 $form_fields = [
+            //                     'product_id' => $extra_item['product_id'],
+            //                     'type' => 'CDISP',
+            //                     'type_id' => $extra_item['id'],
+            //                     'qty' => -1 * ($extra_item['qty']),
+            //                     'comment' => 'Dispatched for ' . $customer->name,
+            //                     'user_id' => auth()->user()->user_id,                                
+            //                     'status' => ' '
+            //                 ];
+        
+            //                 if (isset($dispatch->plant()->reg_number)){
+            //                     $form_fields['registration_number'] = $dispatch->plant()->reg_number;
+            //                 } else {
+            //                     $form_fields['registration_number'] = $dispatch->registration_number;
+            //                 }
+        
+            //                 ManufactureProductTransactions::insert($form_fields);
+            //             }
+            //         }                        
+                    
+                    
+            //     } //Moved to Lines 2023-11-15
 
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);
         }
@@ -194,15 +433,11 @@ class DispatchController extends Controller
 
     function add_dispatch(Request $request)
     {
-
-        $form_fields = $request->validate([
-            // "job_id" => "required|exists:manufacture_jobcards,id",
-            // "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id",
-            // "reference" => 'nullable',
-            "weight_in" => 'required|gt:0',
+        $form_fields = $request->validate([            
+            "weight_in" => 'required_if:weighed_dispatch,1|gt:0',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
-        ]);
+        ]);        
 
         if (!isset($form_fields['registration_number']) && $form_fields['plant_id'] == 0) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
 
@@ -213,27 +448,14 @@ class DispatchController extends Controller
             if ($plant == null) return back()->with('alertError', 'Plant not found.');
             $plant = $plant->toArray();
             $plant = "{$plant['plant_number']} {$plant['make']} {$plant['model']} {$plant['reg_number']}";
-        }
-
-        // $jobcard_product = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
-        // if ($jobcard_product == null) return back()->with('alertError', 'Could not find job card.');
-
-        //Check batch is ready to dispatch on Manufacturing
-        // $batch = ManufactureBatches::where('product_id', $jobcard_product->product_id)->where('status', 'Ready for dispatch')->first();
-        //Check is dispathed Product is a Raw Product -> Has Recipe?
-        // $has_recipe = ManufactureProducts::select(['has_recipe'])->where('id', $jobcard_product->product_id)->first();
-
-        //No Ready batch and is not Raw Product
-        // if ($batch == null && $has_recipe == '1') return back()->with('alertError', 'Could not find batch.');
-        //No Ready batch but is Raw Product
-        // elseif ($batch == null && $has_recipe == '0') $form_fields['batch_id'] = '0';
-        //Has ready batch and is not Raw Product
-        // elseif ($batch !== null) $form_fields['batch_id'] = $batch->id;
+        }        
 
         $form_fields['status'] = 'Loading';
+        if ($request->weighed_dispatch == '0'||$request->weighed_dispatch == null) {
+            $form_fields['weight_in'] = '0';
+        }
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
-        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
-        // $form_fields['delivery_zone'] = $request->delivery_zone;
+        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");        
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
         unset($form_fields['job_id']);
@@ -259,311 +481,311 @@ class DispatchController extends Controller
     function return_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
 
-        $error = false;
+        // $error = false;
 
-        //dd('weight out:'.$dispatch->weight_out.' weight back:'.$request->weight_in);
+        // //dd('weight out:'.$dispatch->weight_out.' weight back:'.$request->weight_in);
 
-        $returnqty = $request->weight_in - $dispatch->weight_in;
+        // $returnqty = $request->weight_in - $dispatch->weight_in;
 
-        if ($returnqty <= 0) {
-            $error = true;
+        // if ($returnqty <= 0) {
+        //     $error = true;
 
-            return back()->with('alertError', 'Cannot Complete Dispatch Return. Qty is less than or equal to Zero');
-        }
+        //     return back()->with('alertError', 'Cannot Complete Dispatch Return. Qty is less than or equal to Zero');
+        // }
 
-        //Compare what was dispatched with what is being returned
-        $product_qty = $dispatch->qty;
+        // //Compare what was dispatched with what is being returned
+        // $product_qty = $dispatch->qty;
 
-        if ($product_qty < $returnqty) {
-            $error = true;
-            return back()->with('alertError', "Too much product. Amount dispatched on this Dispatch was {$product_qty}. You are trying to return {$returnqty}");
-        }
+        // if ($product_qty < $returnqty) {
+        //     $error = true;
+        //     return back()->with('alertError', "Too much product. Amount dispatched on this Dispatch was {$product_qty}. You are trying to return {$returnqty}");
+        // }
 
-        $newqty = $product_qty - $returnqty;
+        // $newqty = $product_qty - $returnqty;
 
-        if (!$error) {
-            $form_fields = [
-                'qty' => $newqty
-            ];
+        // if (!$error) {
+        //     $form_fields = [
+        //         'qty' => $newqty
+        //     ];
 
-            if ($newqty > 0) {
-                $form_fields['status'] = 'Partial Returned';
-            } elseif ($newqty == 0) {
-                $form_fields['status'] = 'Returned';
-            }
+        //     if ($newqty > 0) {
+        //         $form_fields['status'] = 'Partial Returned';
+        //     } elseif ($newqty == 0) {
+        //         $form_fields['status'] = 'Returned';
+        //     }
 
-            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+        //     ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
-            //If Jobcard Dispatch
+        //     //If Jobcard Dispatch
             
-            if ($dispatch->customer_id == '0'){
-                //If Qty due after Dispatch Return is > 0 then set Product unfilled again
-                if ($dispatch->jobcard_product()->qty_due > 0) {
-                    ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
-                }
+        //     if ($dispatch->customer_id == '0'){
+        //         //If Qty due after Dispatch Return is > 0 then set Product unfilled again
+        //         if ($dispatch->jobcard_product()->qty_due > 0) {
+        //             ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
+        //         }
 
-                //Set job card as Open if filled <> 1
-                if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+        //         //Set job card as Open if filled <> 1
+        //         if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
 
-                    ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
-                }
+        //             ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
+        //         }
 
-                //Returned Raw Product Transaction
-                if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
-                    //Adjust transaction if no recipe
-                    $form_fields = [
-                        'product_id' => $dispatch->jobcard_product()->product()->id,
-                        // 'type' => 'CRETRN',
-                        'type_id' => $dispatch->id,
-                        'qty' => $returnqty,
-                        // 'comment' => 'Returned for ' . $dispatch->customer()->name,
-                        'user_id' => auth()->user()->user_id,
-                        //'registration_number' => $dispatch->plant()->reg_number,
-                        //'registration_number' => $dispatch->registration_number,
-                        'status' => ' '
-                    ];
+        //         //Returned Raw Product Transaction
+        //         if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
+        //             //Adjust transaction if no recipe
+        //             $form_fields = [
+        //                 'product_id' => $dispatch->jobcard_product()->product()->id,
+        //                 // 'type' => 'CRETRN',
+        //                 'type_id' => $dispatch->id,
+        //                 'qty' => $returnqty,
+        //                 // 'comment' => 'Returned for ' . $dispatch->customer()->name,
+        //                 'user_id' => auth()->user()->user_id,
+        //                 //'registration_number' => $dispatch->plant()->reg_number,
+        //                 //'registration_number' => $dispatch->registration_number,
+        //                 'status' => ' '
+        //             ];
 
-                    if (isset($dispatch->plant()->reg_number)){
-                        $form_fields['registration_number'] = $dispatch->plant()->reg_number;
-                    } else {
-                        $form_fields['registration_number'] = $dispatch->registration_number;
-                    }
+        //             if (isset($dispatch->plant()->reg_number)){
+        //                 $form_fields['registration_number'] = $dispatch->plant()->reg_number;
+        //             } else {
+        //                 $form_fields['registration_number'] = $dispatch->registration_number;
+        //             }
                     
-                    //Jobcard Raw Material Return
-                    $form_fields['comment'] = 'Returned for ' . $dispatch->jobcard()->jobcard_number;
-                    $form_fields['type'] = 'JRETRN';                    
+        //             //Jobcard Raw Material Return
+        //             $form_fields['comment'] = 'Returned for ' . $dispatch->jobcard()->jobcard_number;
+        //             $form_fields['type'] = 'JRETRN';                    
 
-                    ManufactureProductTransactions::insert($form_fields);
-                }
-            }
-            else {
-                //Returned Raw Product Transaction
-                if ($dispatch->customer_product()->has_recipe == 0) {
-                    //Adjust transaction if no recipe
-                    $form_fields = [
-                        'product_id' => $dispatch->customer_product()->id,
-                        // 'type' => 'CRETRN',
-                        'type_id' => $dispatch->id,
-                        'qty' => $returnqty,
-                        // 'comment' => 'Returned for ' . $dispatch->customer()->name,
-                        'user_id' => auth()->user()->user_id,
-                        //'registration_number' => $dispatch->plant()->reg_number,
-                        //'registration_number' => $dispatch->registration_number,
-                        'status' => ' '
-                    ];
+        //             ManufactureProductTransactions::insert($form_fields);
+        //         }
+        //     }
+        //     else {
+        //         //Returned Raw Product Transaction
+        //         if ($dispatch->customer_product()->has_recipe == 0) {
+        //             //Adjust transaction if no recipe
+        //             $form_fields = [
+        //                 'product_id' => $dispatch->customer_product()->id,
+        //                 // 'type' => 'CRETRN',
+        //                 'type_id' => $dispatch->id,
+        //                 'qty' => $returnqty,
+        //                 // 'comment' => 'Returned for ' . $dispatch->customer()->name,
+        //                 'user_id' => auth()->user()->user_id,
+        //                 //'registration_number' => $dispatch->plant()->reg_number,
+        //                 //'registration_number' => $dispatch->registration_number,
+        //                 'status' => ' '
+        //             ];
 
-                    if (isset($dispatch->plant()->reg_number)){
-                        $form_fields['registration_number'] = $dispatch->plant()->reg_number;
-                    } else {
-                        $form_fields['registration_number'] = $dispatch->registration_number;
-                    }
+        //             if (isset($dispatch->plant()->reg_number)){
+        //                 $form_fields['registration_number'] = $dispatch->plant()->reg_number;
+        //             } else {
+        //                 $form_fields['registration_number'] = $dispatch->registration_number;
+        //             }
                     
-                    //Customer Raw Material Return
-                    $form_fields['comment'] = 'Returned for ' . $dispatch->customer()->name;
-                    $form_fields['type'] = 'CRETRN';                    
+        //             //Customer Raw Material Return
+        //             $form_fields['comment'] = 'Returned for ' . $dispatch->customer()->name;
+        //             $form_fields['type'] = 'CRETRN';                    
 
-                    ManufactureProductTransactions::insert($form_fields);
-                }
-            }
+        //             ManufactureProductTransactions::insert($form_fields);
+        //         }
+        //     }
 
-            if ($dispatch->customer_id == '0'){
-                return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} has been returned. Job {$dispatch->jobcard()->jobcard_number} has been credited with {$returnqty} {$dispatch->jobcard_product()->product()->description}");
-            } else {
-                return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} has been returned. {$returnqty} {$dispatch->customer_product()->description} has been credited.");
-            }
+        //     if ($dispatch->customer_id == '0'){
+        //         return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} has been returned. Job {$dispatch->jobcard()->jobcard_number} has been credited with {$returnqty} {$dispatch->jobcard_product()->product()->description}");
+        //     } else {
+        //         return back()->with('alertMessage', "Dispatch No. {$dispatch->dispatch_number} has been returned. {$returnqty} {$dispatch->customer_product()->description} has been credited.");
+        //     }
             
-        }
+        // }
     }
 
     function transfer_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
 
-        $error = false;
+        // $error = false;
 
-        //dd($request);
+        // //dd($request);
 
-        if ($request->job_id !== null) {
-            //Jobcard Transfer
-            if ($dispatch->customer_id == '0'){
-                $newjobcard = ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->first();
+        // if ($request->job_id !== null) {
+        //     //Jobcard Transfer
+        //     if ($dispatch->customer_id == '0'){
+        //         $newjobcard = ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->first();
                 
-            } else {
-                $newjobcard = ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->customer_product()->id)->first();
-            }
+        //     } else {
+        //         $newjobcard = ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->customer_product()->id)->first();
+        //     }
 
-            //dd($newjobcard);
+        //     //dd($newjobcard);
             
 
-            //blank jobcard or jobcard with unrelated products
-            if ($request->job_id == 0) {
-                $error = true;
+        //     //blank jobcard or jobcard with unrelated products
+        //     if ($request->job_id == 0) {
+        //         $error = true;
 
-                return back()->with('alertError', 'Please select a Jobcard to transfer to.');
-            } else {
-                if($dispatch->customer_id == '0'){
-                    if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->count() == 0) {
-                        $error = true;
+        //         return back()->with('alertError', 'Please select a Jobcard to transfer to.');
+        //     } else {
+        //         if($dispatch->customer_id == '0'){
+        //             if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->product()->id)->count() == 0) {
+        //                 $error = true;
         
-                        return back()->with('alertError', 'Please select a Jobcard that contains matching product: "' . $dispatch->product()->description . '"');
-                    }
-                } else {
-                    if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->customer_product()->id)->count() == 0) {
-                        $error = true;
+        //                 return back()->with('alertError', 'Please select a Jobcard that contains matching product: "' . $dispatch->product()->description . '"');
+        //             }
+        //         } else {
+        //             if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->where('product_id', $dispatch->customer_product()->id)->count() == 0) {
+        //                 $error = true;
         
-                        return back()->with('alertError', 'Please select a Jobcard that contains matching product: "' . $dispatch->customer_product()->description . '"');
-                    }
-                }
-            }
+        //                 return back()->with('alertError', 'Please select a Jobcard that contains matching product: "' . $dispatch->customer_product()->description . '"');
+        //             }
+        //         }
+        //     }
             
-            //Compare what was dispatched with what is being transfered
+        //     //Compare what was dispatched with what is being transfered
 
-            if ($newjobcard->qty_due <= $dispatch->qty) {
-                $filledqty = $newjobcard->qty_due;
-            } else {
-                $filledqty = $dispatch->qty;
-        }
-        } else {
-            //Customer Transfer            
-            $newcustomer = ManufactureCustomers::where('id', $request->customer_id)->first();
-            $filledqty = $dispatch->qty;
+        //     if ($newjobcard->qty_due <= $dispatch->qty) {
+        //         $filledqty = $newjobcard->qty_due;
+        //     } else {
+        //         $filledqty = $dispatch->qty;
+        // }
+        // } else {
+        //     //Customer Transfer            
+        //     $newcustomer = ManufactureCustomers::where('id', $request->customer_id)->first();
+        //     $filledqty = $dispatch->qty;
             
-        }
+        // }
 
-        //blank delivery zone
-        if ($request->delivery_zone == 0) {
-            $error = true;
+        // //blank delivery zone
+        // if ($request->delivery_zone == 0) {
+        //     $error = true;
 
-            return back()->with('alertError', 'Please select a valid Delivery Zone.');
-        }
+        //     return back()->with('alertError', 'Please select a valid Delivery Zone.');
+        // }
 
 
         
 
-        // dd('due on new job:'.$newjobcard->qty_due.', transfer from old dispatch:'.$dispatch->qty. '. need to fill:'.$filledqty);
+        // // dd('due on new job:'.$newjobcard->qty_due.', transfer from old dispatch:'.$dispatch->qty. '. need to fill:'.$filledqty);
 
-        if (!$error) {
-            $form_fields = [
-                'qty' => 0,
-                'status' => 'Transferred'
-            ];
+        // if (!$error) {
+        //     $form_fields = [
+        //         'qty' => 0,
+        //         'status' => 'Transferred'
+        //     ];
 
-            //set this->dispatch qty to zero
-            //credit this->jobcard with transfer qty
-            ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
+        //     //set this->dispatch qty to zero
+        //     //credit this->jobcard with transfer qty
+        //     ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
-            if ($dispatch->customer_id == '0') {
-                //set this->jobcard status if required after qty credit
-                if ($dispatch->jobcard_product()->qty_due > 0) {
-                    ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
-                }
+        //     if ($dispatch->customer_id == '0') {
+        //         //set this->jobcard status if required after qty credit
+        //         if ($dispatch->jobcard_product()->qty_due > 0) {
+        //             ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
+        //         }
 
-                if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+        //         if (ManufactureJobcardProducts::where('job_id', $dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
 
-                    ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
-                }
-            }
+        //             ManufactureJobcards::where('id', $dispatch->jobcard()->id)->update(['status' => 'Open']);
+        //         }
+        //     }
             
             
             
 
-            //Clone this->dispatch. Change JC, Delivery Zone based on this->request details
-            $form_fields = [
-                "dispatch_number" => $dispatch->dispatch_number,
-                "reference" => $dispatch->reference,
-                "delivery_zone" => $request->delivery_zone,
-                "dispatch_temp" => $dispatch->dispatch_temp,
-                "comment" => $dispatch->comment,
-                "weight_in" => $dispatch->weight_in,
-                "weight_in_user_id" => auth()->user()->user_id,
-                "weight_in_datetime" => $dispatch->weight_in_datetime,
-                "weight_out" => $dispatch->weight_out,
-                "weight_out_user_id" => auth()->user()->user_id,
-                "weight_out_datetime" => date("Y-m-d\TH:i"),
-                "status" => 'Dispatched',
-                "plant_id" => $dispatch->plant_id,
-                "registration_number" => $dispatch->registration_number,
-                // "manufacture_jobcard_product_id" => $newjobcard->id,
-                "batch_id" => '0',
-                "qty" => $filledqty,
-            ];
+        //     //Clone this->dispatch. Change JC, Delivery Zone based on this->request details
+        //     $form_fields = [
+        //         "dispatch_number" => $dispatch->dispatch_number,
+        //         "reference" => $dispatch->reference,
+        //         "delivery_zone" => $request->delivery_zone,
+        //         "dispatch_temp" => $dispatch->dispatch_temp,
+        //         "comment" => $dispatch->comment,
+        //         "weight_in" => $dispatch->weight_in,
+        //         "weight_in_user_id" => auth()->user()->user_id,
+        //         "weight_in_datetime" => $dispatch->weight_in_datetime,
+        //         "weight_out" => $dispatch->weight_out,
+        //         "weight_out_user_id" => auth()->user()->user_id,
+        //         "weight_out_datetime" => date("Y-m-d\TH:i"),
+        //         "status" => 'Dispatched',
+        //         "plant_id" => $dispatch->plant_id,
+        //         "registration_number" => $dispatch->registration_number,
+        //         // "manufacture_jobcard_product_id" => $newjobcard->id,
+        //         "batch_id" => '0',
+        //         "qty" => $filledqty,
+        //     ];
 
             
-            if($request->job_id !== null){
-                //Jobcard Dispatch               
-                $form_fields['manufacture_jobcard_product_id'] = $newjobcard->id;
+        //     if($request->job_id !== null){
+        //         //Jobcard Dispatch               
+        //         $form_fields['manufacture_jobcard_product_id'] = $newjobcard->id;
                 
-                $form_fields['product_id'] = $dispatch->product_id;
-                $form_fields['customer_id'] = 0;
+        //         $form_fields['product_id'] = $dispatch->product_id;
+        //         $form_fields['customer_id'] = 0;
 
-            } else {
-                //Customer Dispatch
-                if($dispatch->customer_id == '0'){
-                        //dd('jp:'.$dispatch->jobcard_product()->product()->id);
-                        $form_fields['product_id'] =$dispatch->jobcard_product()->product()->id;} else {
-                        //dd('pi:'.$dispatch->jobcard_product()->id);
-                        $form_fields['product_id'] = $dispatch->product_id;}
-                //$form_fields['product_id'] = $dispatch->product_id;
-                $form_fields['customer_id'] = $request->customer_id;
-            }         
+        //     } else {
+        //         //Customer Dispatch
+        //         if($dispatch->customer_id == '0'){
+        //                 //dd('jp:'.$dispatch->jobcard_product()->product()->id);
+        //                 $form_fields['product_id'] =$dispatch->jobcard_product()->product()->id;} else {
+        //                 //dd('pi:'.$dispatch->jobcard_product()->id);
+        //                 $form_fields['product_id'] = $dispatch->product_id;}
+        //         //$form_fields['product_id'] = $dispatch->product_id;
+        //         $form_fields['customer_id'] = $request->customer_id;
+        //     }         
             
-            //dd($form_fields);
-            $newdispatch_id = ManufactureJobcardProductDispatches::insertGetId($form_fields);
+        //     //dd($form_fields);
+        //     $newdispatch_id = ManufactureJobcardProductDispatches::insertGetId($form_fields);
 
-            if($request->job_id !== null){
-                //Adjust status on clone->dispatch->Jobcard if filled
-                if ($newjobcard->qty_due == 0) {
-                    ManufactureJobcardProducts::where('id', $newjobcard->id)->update(['filled' => 1]);
-                }
+        //     if($request->job_id !== null){
+        //         //Adjust status on clone->dispatch->Jobcard if filled
+        //         /* if ($newjobcard->qty_due == 0) {
+        //             ManufactureJobcardProducts::where('id', $newjobcard->id)->update(['filled' => 1]);
+        //         } */ //Moved to Lines 2023-11-14
 
-                if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->count() == 0) {
+        //         if (ManufactureJobcardProducts::where('job_id', $request->job_id)->where('filled', '0')->count() == 0) {
 
-                    ManufactureJobcards::where('id', $request->job_id)->update(['status' => 'Completed']);
-                }
-            }
+        //             ManufactureJobcards::where('id', $request->job_id)->update(['status' => 'Completed']);
+        //         }
+        //     }
 
-            //Adjust Raw Product Transactions
-            $form_fields = [];
-            if ($dispatch->customer_id == '0'){
-                if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
+        //     //Adjust Raw Product Transactions
+        //     $form_fields = [];
+        //     if ($dispatch->customer_id == '0'){
+        //         if ($dispatch->jobcard_product()->product()->has_recipe == 0) {
                     
-                    //Jobcard Raw Material Return
-                    if($request->job_id !== null){
-                            $form_fields['comment'] = 'Dispatched on ' . $newjobcard->jobcard()->jobcard_number;
-                            $form_fields['type'] = 'JDISP';}
-                         else {
-                            $form_fields['comment'] = 'Dispatched for ' . $newcustomer->name;
-                            $form_fields['type'] = 'CDISP';
-                        } 
-                    $form_fields['type_id'] = $newdispatch_id;                                        
+        //             //Jobcard Raw Material Return
+        //             if($request->job_id !== null){
+        //                     $form_fields['comment'] = 'Dispatched on ' . $newjobcard->jobcard()->jobcard_number;
+        //                     $form_fields['type'] = 'JDISP';}
+        //                  else {
+        //                     $form_fields['comment'] = 'Dispatched for ' . $newcustomer->name;
+        //                     $form_fields['type'] = 'CDISP';
+        //                 } 
+        //             $form_fields['type_id'] = $newdispatch_id;                                        
     
-                    ManufactureProductTransactions::where('type_id', $dispatch->id)->update($form_fields);
-                } 
-            } else {                
-                if ($dispatch->customer_product()->has_recipe == 0) {
+        //             ManufactureProductTransactions::where('type_id', $dispatch->id)->update($form_fields);
+        //         } 
+        //     } else {                
+        //         if ($dispatch->customer_product()->has_recipe == 0) {
                     
-                    //Jobcard Raw Material Return
-                    if($request->job_id !== null){
-                        $form_fields['comment'] = 'Dispatched on ' . $newjobcard->jobcard()->jobcard_number;
-                        $form_fields['type'] = 'JDISP';}
-                     else {
-                        $form_fields['comment'] = 'Dispatched for ' . $newcustomer->name;
-                        $form_fields['type'] = 'CDISP';
-                    }
+        //             //Jobcard Raw Material Return
+        //             if($request->job_id !== null){
+        //                 $form_fields['comment'] = 'Dispatched on ' . $newjobcard->jobcard()->jobcard_number;
+        //                 $form_fields['type'] = 'JDISP';}
+        //              else {
+        //                 $form_fields['comment'] = 'Dispatched for ' . $newcustomer->name;
+        //                 $form_fields['type'] = 'CDISP';
+        //             }
 
-                    $form_fields['type_id'] = $newdispatch_id;
+        //             $form_fields['type_id'] = $newdispatch_id;
                                        
     
-                    ManufactureProductTransactions::where('type_id', $dispatch->id)->update($form_fields);
-                }                 
-            }
+        //             ManufactureProductTransactions::where('type_id', $dispatch->id)->update($form_fields);
+        //         }                 
+        //     }
 
 
 
-            //Print clone->dispatch
-            //return back()->with(['alertMessage', "Jobcard {$dispatch->jobcard()->jobcard_number} has been transferred to Jobcard {$newjobcard->jobcard()->jobcard_number} on Dispatch No {$dispatch->dispatch_number}", 'print_dispatch' => $newdispatch_id]);
+        //     //Print clone->dispatch
+        //     //return back()->with(['alertMessage', "Jobcard {$dispatch->jobcard()->jobcard_number} has been transferred to Jobcard {$newjobcard->jobcard()->jobcard_number} on Dispatch No {$dispatch->dispatch_number}", 'print_dispatch' => $newdispatch_id]);
             
-            return back()->with(['alertMessage', "Dispatch No {$dispatch->dispatch_number} has been transferred.", 'print_dispatch' => $newdispatch_id]);
-        }
+        //     return back()->with(['alertMessage', "Dispatch No {$dispatch->dispatch_number} has been transferred.", 'print_dispatch' => $newdispatch_id]);
+        // }
     }
 
     function receiving_goods(Request $request)
@@ -642,6 +864,15 @@ class DispatchController extends Controller
     function print_dispatch(ManufactureJobcardProductDispatches $dispatch)
     {
         //dd($dispatch);
+        $dispatch_lines = [];
+        $dispatch_lines = ManufactureProductTransactions::select(
+            DB::raw('(select code from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as code'),
+            DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as description'),
+            'qty')            
+            ->where('dispatch_id', $dispatch->id)
+            ->get()
+            ->toArray();
+
         $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
                     <tr>
                         <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Dispatch Note</th>
@@ -703,22 +934,33 @@ class DispatchController extends Controller
                             <th style=\"width: 10%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Qty</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>";
-                        if($dispatch->customer_id == '0'){
-                            //Jobcard Dispatch - references to batches
-                            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product()->code}</td>
-                            <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product()->description}</td>";
-                        }
-                        else {
-                            //Jobcard Dispatch - references to products
-                            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->customer_product()->code}</td>
-                            <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->customer_product()->description}</td>";
-                        }    
-                            
-                        $pdf .="<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->qty}</td>
-                        </tr>
-                    </tbody>
+                    <tbody>";
+                        
+                                                    
+                            /* if($dispatch->customer_id == '0'){
+                                //Jobcard Dispatch - references to batches
+                                $pdf .= "<tr><td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product()->code}</td>
+                                <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product()->description}</td>";
+                            }
+                            else {
+                                //Jobcard Dispatch - references to products
+                                $pdf .= "<tr><td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->customer_product()->code}</td>
+                                <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->customer_product()->description}</td>";
+                            }    
+                                
+                            $pdf .="<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->qty}</td>
+                        </tr>"; */
+                            //Multiple Lines if they exist from Transactions 2023-11-15
+                            foreach ($dispatch_lines as $dispatch_line){
+                                $pdf .= "<tr>";
+                                    $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['code']}</td>
+                                    <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['description']}</td>";                                                                    
+                                    $pdf .="<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['qty']}</td>";
+                                $pdf .= "</tr>";    
+                            }
+                        
+                        
+                    $pdf .="</tbody>
                 </table>
                 <br><br>
                 <table style=\"width: 750px; border-collapse: collapse; table-layout: fixed;\">

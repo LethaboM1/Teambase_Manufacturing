@@ -48,9 +48,12 @@ class ProductsController extends Controller
             'opening_balance' => 'nullable',
             'unit_measure' => 'required',
             'has_recipe' => 'nullable',
+            'weighed_product' => 'nullable',
         ]);
 
         $form_fields['has_recipe'] = (isset($form_fields['has_recipe']) ? 1 : 0);
+
+        $form_fields['weighed_product'] = (isset($form_fields['weighed_product']) ? 1 : 0);
 
         $opening_balance = (is_numeric($form_fields['opening_balance']) && $form_fields['opening_balance'] > 0) ?  $form_fields['opening_balance'] : 0;
 
@@ -81,10 +84,12 @@ class ProductsController extends Controller
             'unit_measure' => 'required',
             'lab_test' => 'required',
             'has_recipe' => 'nullable',
+            'weighed_product' => 'nullable',
         ]);
 
         $form_fields['has_recipe'] = (isset($form_fields['has_recipe']) ? 1 : 0);
 
+        $form_fields['weighed_product'] = (isset($form_fields['weighed_product']) ? 1 : 0);
 
         ManufactureProducts::where('id', $form_fields['id'])->update($form_fields);
 

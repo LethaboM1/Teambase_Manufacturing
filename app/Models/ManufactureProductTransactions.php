@@ -29,4 +29,22 @@ class ManufactureProductTransactions extends Model
     {
         return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
     }
+
+    function jobcard_product()
+    {
+            return $this->hasOne(ManufactureJobcardProducts::class, 'id', 'manufacture_jobcard_product_id')->first();
+    }
+
+    function jobcard_id()
+    {        
+        if ($this->jobcard_product() !== null) {           
+            $job_id = $this->jobcard_product()->jobcard()->id;            
+            return $job_id;
+        }
+    }
+
+    function customer_product()
+    {
+            return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+    }
 }

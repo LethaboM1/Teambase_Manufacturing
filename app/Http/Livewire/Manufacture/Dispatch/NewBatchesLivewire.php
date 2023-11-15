@@ -60,29 +60,23 @@ class NewBatchesLivewire extends Component
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
                     ->orWhere('reference', 'like', $term)
-                    /* ->orWhereIn('manufacture_jobcard_product_id', ManufactureJobcardProducts::select(['id'])
-                            ->whereIn('jobcard_id', ManufactureJobcards::select(['id'])
-                                                ->where('jobcard_number', 'like', $term))) */
                     ->orWhere('haulier_code', 'like', $term);
             })->paginate(15, ['*'], 'loading');
 
-        $product_transactions = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Pending')
+        /* $product_transactions = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Pending')
             ->when($this->search_receive_goods, function ($query, $term) {
                 $term = "%{$term}%";
                 $query->where('reference_number', 'LIKE', $term)
                     ->orWhere('registration_number', 'LIKE', $term);
             })
-            ->paginate(15, ['*'], 'received');
+            ->paginate(15, ['*'], 'received'); */ //Moved to Receiving List
 
         $dispatches_archived = ManufactureJobcardProductDispatches::where('status', '!=', 'Loading')
             ->when($this->search_arc, function ($query, $term) {
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term)
-                    /* ->orWhere('manufacture_jobcard_product_id', ManufactureJobcardProducts::select(['id'])
-                                            ->whereIn('jobcard_id', ManufactureJobcards::select(['id'])
-                                                ->whereIn('jobcard_number', 'like', $term))) */
+                    ->orWhere('reference', 'like', $term)                    
                     ->orWhere('haulier_code', 'like', $term);
             })->paginate(15, ['*'], 'archived');
 
@@ -90,7 +84,7 @@ class NewBatchesLivewire extends Component
         return view('livewire.manufacture.dispatch.new-batches-livewire', [
             'dispatches' => $dispatches,
             'dispatches_archived' => $dispatches_archived,
-            'product_transactions' => $product_transactions
+            /* 'product_transactions' => $product_transactions */ //Moved to Receiving List
         ]);
     }
 }

@@ -22,25 +22,25 @@ class ManufactureBatches extends Model
 
     function dispatches()
     {
-        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'batch_id', 'id')->get();
+        //return $this->hasMany(ManufactureJobcardProductDispatches::class, 'batch_id', 'id')->get(); Obsolete 2023-11-10
     }
 
     function getQtyDispatchedAttribute()
     {
-        return $this->dispatches()->sum('qty');
+        //return $this->dispatches()->sum('qty'); Obsolete 2023-11-10
     }
 
     function getQtyLeftAttribute()
     {
-        $dispatched = $this->getQtyDispatchedAttribute();
+        /* $dispatched = $this->getQtyDispatchedAttribute();
         $left = $this->qty - $dispatched;
-        return $left;
+        return $left; */ //Obsolete 2023-11-10
     }
 
     function scopeDueProduct($query)
     {
-        $dispatched = $this->getQtyDispatchedAttribute();
+        /* $dispatched = $this->getQtyDispatchedAttribute();
         $left = $this->qty - $dispatched;
-        $query->whereRaw("{$left} > 0");
+        $query->whereRaw("{$left} > 0"); */ //Obsolete 2023-11-10
     }
 }

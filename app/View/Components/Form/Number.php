@@ -9,6 +9,7 @@ class Number extends Component
     public $label,
         $name,
         $value,
+        $disabled,
         $wire,
         $max,
         $min,
@@ -20,10 +21,11 @@ class Number extends Component
      *
      * @return void
      */
-    public function __construct($name, $label = '', $wire = true, $max = '', $min = '', $step = '', $value = '', $class = '')
+    public function __construct($name, $label = '', $wire = true, $max = '', $min = '', $step = '', $value = '', $class = '', $disabled = false)
     {
         $this->name = $name;
         $this->label = $label;
+        $this->disabled = $disabled;
         $this->wire = $wire;
         $this->value = $value;
         $this->max = $max;
