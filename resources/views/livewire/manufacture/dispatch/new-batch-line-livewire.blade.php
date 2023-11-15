@@ -7,7 +7,7 @@
         @if($dispatch->jobcard()!==null)        
             <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->contractor}}</td>
         @else
-            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->customer()->name}}</td>    
+            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->customer()!== null ? $dispatch->customer()->name:'None'}}</td>    
         @endif        
     @else
         <td onclick="$('#edit_btn_{{$dispatch->id}}').click()"></td>

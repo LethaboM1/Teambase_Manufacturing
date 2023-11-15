@@ -196,12 +196,12 @@
             <h4>{{$dispatch->reference}}</h4>
         </div>
         <div class="col-md-6">                                          
-            @if($customer_dispatch == 1)
+            @if($customer_dispatch == 1 || $dispatch->customer()!==null)
                 <label>Customer</label><br>
                 <h4>{{$dispatch->customer()->name}}</h4>                
             @else
                 <label>Job No.</label><br>
-                <h4>{{$dispatch->jobcard()->jobcard_number}}</h4>
+                <h4>{{$dispatch->jobcard()!== null? $dispatch->jobcard()->jobcard_number:'None'}}</h4>
             @endif
             
         </div>
