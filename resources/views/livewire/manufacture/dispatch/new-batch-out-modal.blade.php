@@ -201,7 +201,7 @@
                 <h4>{{$dispatch->customer()->name}}</h4>                
             @else
                 <label>Job No.</label><br>
-                <h4>{{$dispatch->jobcard()->jobcard_number}}</h4>
+                <h4>{{$dispatch->jobcard()!== null? $dispatch->jobcard()->jobcard_number:'None'}}</h4>
             @endif
             
         </div>
