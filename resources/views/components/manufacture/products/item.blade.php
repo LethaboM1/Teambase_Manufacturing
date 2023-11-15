@@ -38,6 +38,9 @@
                                     </div>
                                     <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                         <x-form.checkbox wire=0 name="has_recipe" label="Has recipe?" value=1 :toggle="$item->has_recipe" />
+                                    </div>                                    
+                                    <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">                                    
+                                        <x-form.checkbox wire=0 name="weighed_product" label="Product Weighed when Sold" :toggle="$item->weighed_product" :value="1" />
                                     </div>
                                 </div>
                                 @if($item->has_recipe)
