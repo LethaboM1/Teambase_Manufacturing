@@ -21,7 +21,7 @@
                         <form method='post' enctype='multipart/form-data'>
                             @csrf
                             <section class='card'>
-                                <header id='addDispatchheader' class='card-header'><h2 class='card-title'></h2></header>
+                                <header id='addDispatchheader' class='card-header'><h2 class='card-title'>Begin New Dispatch.</h2></header>                                
                                     <div class='card-body'>
                                         <div class='modal-wrapper'>
                                             <div class='modal-text'>
@@ -70,7 +70,7 @@
                                         <th width="10%">Date</th>
                                         <th width="8%">Dispatch Number</th>
                                         <th width="12%">Job Card</th>
-                                        <th width="15%">Contractor</th>
+                                        <th width="15%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>
@@ -113,7 +113,7 @@
                                         <th width="10%">Date</th>
                                         <th width="8%">Dispatch Number</th>
                                         <th width="8%">Job Card</th>
-                                        <th width="15%">Contractor</th>
+                                        <th width="15%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         <th width="15%">Product</th>
                                         <th width="5%">Qty</th>

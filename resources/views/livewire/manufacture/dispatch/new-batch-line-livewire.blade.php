@@ -2,9 +2,27 @@
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->created_at}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->dispatch_number}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->jobcard_number:"")}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->contractor:"")}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->plant()!==null?"{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}":$dispatch->registration_number)}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</td>
+    @if($dispatch->status!=="Loading")
+        @if($dispatch->jobcard()!==null)
+            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->contractor}}</td>
+        @else
+            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->customer()->name}}</td>    
+        @endif        
+    @else
+        <td onclick="$('#edit_btn_{{$dispatch->id}}').click()"></td>
+    @endif    
+    {{-- <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->contractor:"")}}</td> --}}
+    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->plant()!==null?"{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}":$dispatch->registration_number)}}</td>    
+    @if($dispatch->status!=="Loading")
+        @if($dispatch->jobcard()!==null)
+            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->product()->description}}</td>
+        @else
+            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->customer_product()->description}}</td>    
+        @endif        
+    @else
+        <td onclick="$('#edit_btn_{{$dispatch->id}}').click()"></td>
+    @endif
+    {{-- <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</td> --}}
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->qty}}</td>
     <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>
     <td style="width:100px">
@@ -86,7 +104,7 @@
             <form method='post' action="{{url("dispatches/transfer/{$dispatch->id}")}}" enctype='multipart/form-data'>
                 @csrf
                 <section class='card'>
-                    <header id='transferDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Transfer on Dispatch No. {{$dispatch->dispatch_number}} to Another Jobcard</h2></header>
+                    <header id='transferDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Transfer on Dispatch No. {{$dispatch->dispatch_number}} </h2></header>
                         <div class='card-body'>                        
                             
                             <div class='modal-wrapper'>

@@ -45,7 +45,7 @@ class AddDispatchModal extends Component
         if ($value > 0) {
             // $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
-            dd($this->delivery);
+            //dd($this->delivery);
         }
     }
 

@@ -7,7 +7,7 @@
 					<h2 class="card-title">Add New Job Card</h2>
 				</header>
 				<div class="card-body">
-					<form class="form-horizontal form-bordered" method="get">
+					{{-- <form class="form-horizontal form-bordered" method="get">
 						<div class="form-group row pb-4">
 							<div class="col-lg-6">
 								<div class="radio">
@@ -16,7 +16,7 @@
 								</div>
 							</div>
 						</div>
-					</form>
+					</form> Only Internal Jobs 2023-10-19 --}}
 
 					{{-- If Internal Job, allow manual entry of Details --}}
 					
@@ -40,12 +40,12 @@
 					<div class="row">
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							{{-- Rather used the one field in the if statement --}}
-							@if($internal_jobcard == 0)
+							{{-- @if($internal_jobcard == 0)
 								<x-form.select name="customer_id" label="Customer" :list="$customer_list" />
 							@else
 								<x-form.input name="contractor" label="Contractor" />
-							@endif
-							
+							@endif Only Internal Jobs 2023-10-19 --}}
+							<x-form.input name="contractor" label="Contractor" />
 						</div>
 						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
 							<x-form.input name="site_number" label="Site Number" />
