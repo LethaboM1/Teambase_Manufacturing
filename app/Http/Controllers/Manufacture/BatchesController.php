@@ -69,6 +69,7 @@ class BatchesController extends Controller
             ManufactureProductTransactions::insert([
                 'product_id' => $item->product_add_id,
                 'qty' => Functions::negate($qty),
+                'user_id' => auth()->user()->user_id,
                 'type' => 'BAT',
                 'type_id' => $batch_id
             ]);
