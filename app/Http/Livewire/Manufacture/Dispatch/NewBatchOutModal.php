@@ -22,7 +22,7 @@ class NewBatchOutModal extends Component
     public $jobcard, $delivery, $delivery_zone, $reference, $manufacture_jobcard_product_id;
     public $customer_dispatch, $customer_id, $product_id;
     public $add_extra_item_show, $extra_product_id, $extra_product_unit_measure, $extraproduct, $extra_product_qty, $extra_product_weight_in_date, $extra_item_message, $extra_item_error;
-    
+
     public $listeners = ['removeExtraItem', 'addExtraItem'];
 
 
@@ -34,36 +34,35 @@ class NewBatchOutModal extends Component
         $this->dispatch_temp = 0;
         $this->qty = 0;
         $this->job_id = 0;
-        if ($dispatch->customer_id == '0'){
+        if ($dispatch->customer_id == '0') {
             $this->customer_dispatch = 0;
         } else {
             $this->customer_dispatch = 1;
-        }       
-        
+        }
+
 
         //for returns
         $this->weight_in_datetime = date("Y-m-d\TH:i");
         $this->weight_in = 0;
-        $this->dispatchaction = $dispatchaction;        
+        $this->dispatchaction = $dispatchaction;
         $this->add_extra_item_show = 0;
         $this->extra_product_qty = '0';
         $this->extra_item_error = false;
         $this->extra_item_message = '';
-        
     }
 
     function updatedJobId($value)
     {
         if ($value > 0) {
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
-            $this->delivery = $this->jobcard->delivery;            
+            $this->delivery = $this->jobcard->delivery;
         }
     }
 
 
     function updatedExtraProductQty()
     {
-        $this->extra_item_error = false;        
+        $this->extra_item_error = false;
     }
 
     function updatedWeightOut($value)
@@ -71,48 +70,47 @@ class NewBatchOutModal extends Component
         if ($value < $this->dispatch->weight_in) return;
         $this->qty = $value - $this->dispatch->weight_in;
         $this->extra_product_qty = $this->qty;
-        
     }
 
-    function updatedDispatchTemp($value){
+    function updatedDispatchTemp($value)
+    {
         if ($value < 0) return;
-        $this->dispatch_temp = $value;     
+        $this->dispatch_temp = $value;
     }
 
     function updatedCustomerDispatch($value)
-    {        
-        $this->customer_dispatch = $value;        
+    {
+        $this->customer_dispatch = $value;
     }
 
     function updatedCustomerProductId($value)
-    {        
-        $this->product_id = $value;        
+    {
+        $this->product_id = $value;
     }
 
     function updatedExtraProductId($extra_product_id)
-    {        
-        $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->get()->toArray();        
-        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];        
+    {
+        $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->get()->toArray();
+        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
         $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
-    }  
-    
+    }
+
     function updatedManufactureJobcardProductId($value)
-    {        
-        $jobcard = ManufactureJobcardProducts::where('id', $value)->first();                    
-        $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->get()->toArray();        
+    {
+        $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
+        $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->get()->toArray();
         $this->extra_product_id = $jobcard->product_id;
-        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];        
+        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
         $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
-        
     }
 
     function AddExtraItemShow()
-    {        
-        
-        if($this->add_extra_item_show == '0'){
+    {
+
+        if ($this->add_extra_item_show == '0') {
             //Show the Insert Line
-            $this->add_extra_item_show = '1'; 
-        }else{
+            $this->add_extra_item_show = '1';
+        } else {
             //Hide the Insert Line            
             $this->add_extra_item_show = '0';
             // Clear the Inputs
@@ -122,62 +120,58 @@ class NewBatchOutModal extends Component
             $this->extra_product_weight_in_date = '';
             //Set error to blank
             $this->extra_item_message = '';
-        }        
-        
+        }
     }
 
     function removeExtraItem($extra_item_id)
-    {                   
-        
+    {
+
         //ManufactureJobcardProductDispatches::where('id', $extra_item_id)->delete();
-        
-        $extra_item = ManufactureProductTransactions::where('id', $extra_item_id)->first();                
+
+        $extra_item = ManufactureProductTransactions::where('id', $extra_item_id)->first();
         $manufacture_jobcard_product_id = $extra_item->manufacture_jobcard_product_id;
-        
+
         //Delete Extra Item
         ManufactureProductTransactions::where('id', $extra_item_id)->delete();
 
         $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->first();
-        if($manufacture_jobcard_product){
+        if ($manufacture_jobcard_product) {
             //dd($jobcard);
             $product_qty = $manufacture_jobcard_product->qty_due;
 
             //dd('id:'.$manufacture_jobcard_product_id.'due:'.$product_qty);
-            
+
             if ($product_qty > 0) {
                 ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->update(['filled' => 0]);
             }
-            
+
             /* if (ManufactureJobcardProducts::where('job_id', $jobcard->id)->where('filled', '0')->count() == 0) {
 
                 ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Completed']);
             } */
-        
         }
+    }
 
-        
-    } 
-    
     function AddExtraItem($dispatch_id)
-    {                   
+    {
         $this->extra_item_error = false;
-        $this->extra_item_message = ''; 
+        $this->extra_item_message = '';
 
         $form_fields = [
-            "dispatch_id" => $dispatch_id,            
+            "dispatch_id" => $dispatch_id,
             "reference_number" => $this->reference,
-            "weight_in" => $this->dispatch->weight_in,            
+            "weight_in" => $this->dispatch->weight_in,
             "registration_number" => $this->dispatch->registration_number,
             "status" => "Loading",
             "weight_out_user" => auth()->user()->user_id,
-            "weight_out_datetime" => date("Y-m-d\TH:i"),                        
+            "weight_out_datetime" => date("Y-m-d\TH:i"),
             "weight_in_user" => auth()->user()->user_id,
             "weight_in_datetime" => date("Y-m-d\TH:i"),
             "dispatch_temp" => $this->dispatch_temp,
             "user_id" => auth()->user()->user_id,
-        ];        
+        ];
 
-        if($this->dispatch->weight_in==0){
+        if ($this->dispatch->weight_in == 0) {
             $form_fields['qty'] = $this->extra_product_qty;
             $form_fields['product_id'] = $this->extra_product_id;
             $form_fields['weight_out'] = $this->dispatch->weight_in;
@@ -185,56 +179,55 @@ class NewBatchOutModal extends Component
             //$form_fields['qty'] = $this->qty;
             $form_fields['qty'] = $this->extra_product_qty;
             $form_fields['weight_out'] = $this->weight_out;
-            $form_fields['product_id'] = $this->extra_product_id;            
+            $form_fields['product_id'] = $this->extra_product_id;
         }
-        
+
         //dd($form_fields);
 
-        
 
-        if($form_fields['product_id'] == ''){
+
+        if ($form_fields['product_id'] == '') {
             $this->extra_item_error = true;
-            $this->extra_item_message = 'Please check Product is valid.'; 
+            $this->extra_item_message = 'Please check Product is valid.';
         }
-        
-        if($form_fields['qty'] <= '0'){
+
+        if ($form_fields['qty'] <= '0') {
             $this->extra_item_error = true;
             $this->extra_item_message = 'Please check Qty is not less than or equal to 0.';
         }
 
-        $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();            
+        $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();
         //dd($jobcard->qty_due);
 
-        if($manufacture_jobcard_product){
+        if ($manufacture_jobcard_product) {
             $product_qty = $manufacture_jobcard_product->qty_due;
-            if($form_fields['qty'] > $product_qty){
+            if ($form_fields['qty'] > $product_qty) {
                 $this->extra_item_error = true;
-                $this->extra_item_message = 'Qty is not allowed to be more than Qty allocated on Job for this Product.';
+                $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product. Qty left on job card is {$product_qty}";
             } else {
                 $form_fields['manufacture_jobcard_product_id'] = $this->manufacture_jobcard_product_id;
-            }            
+            }
         }
 
         //dd($this->extra_item_error);
-        if ($this->extra_item_error == false){
-            
+        if ($this->extra_item_error == false) {
+
             //Insert new line             
             // ManufactureJobcardProductDispatches::insert($form_fields);
             ManufactureProductTransactions::insert($form_fields);
 
             //Get Qty Due and mark as Filled if required
-            if($manufacture_jobcard_product){
+            if ($manufacture_jobcard_product) {
                 $product_qty = $manufacture_jobcard_product->qty_due;
-            
+
                 if ($product_qty == 0) {
                     ManufactureJobcardProducts::where('id', $manufacture_jobcard_product->id)->update(['filled' => 1]);
                 }
-                
+
                 /* if (ManufactureJobcardProducts::where('job_id', $jobcard->id)->where('filled', '0')->count() == 0) {
 
                     ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Completed']);
                 } */
-            
             }
 
             // Clear Extra Item Line after add
@@ -247,8 +240,6 @@ class NewBatchOutModal extends Component
             $this->extra_item_error = false;
             $this->extra_item_message = '';
         }
-
-        
     }
 
     public function render()
@@ -281,15 +272,23 @@ class NewBatchOutModal extends Component
 
 
         array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
-        
-        if($this->dispatch->weight_in>0){$weighed_dispatch = true;}else{$weighed_dispatch = false;}
+
+        if ($this->dispatch->weight_in > 0) {
+            $weighed_dispatch = true;
+        } else {
+            $weighed_dispatch = false;
+        }
 
         $weighed_products = ManufactureProducts::select('id as product_id')->where('weighed_product', 1)->get()->toArray();
-               
-        $only_one_weighed = ManufactureProductTransactions::where('dispatch_id', $this->dispatch->id)
-        ->whereIn('product_id', $weighed_products)->get()->count();
 
-        if($only_one_weighed>0){$only_one_weighed = true;}else{$only_one_weighed = false;}
+        $only_one_weighed = ManufactureProductTransactions::where('dispatch_id', $this->dispatch->id)
+            ->whereIn('product_id', $weighed_products)->get()->count();
+
+        if ($only_one_weighed > 0) {
+            $only_one_weighed = true;
+        } else {
+            $only_one_weighed = false;
+        }
 
         $manufacture_jobcard_products_list = [];
 
@@ -299,53 +298,50 @@ class NewBatchOutModal extends Component
             }else{
                 $raw_products = ManufactureProducts::select('id as product_id')->where('has_recipe', 0)->where('weighed_product', 0)->get()->toArray();
             } */ //Temp disabled 2023-11-14
-            
-            
+
+
             $batches = ManufactureBatches::select('product_id', 'id', 'qty')->where('status', 'Ready for dispatch')->get()->filter(function ($batch) {
                 return $batch->qty_left > 0;
-            });            
+            });
 
             foreach ($batches as $item) $batch[] = $item->product_id;
             if (!isset($batch)) $batch = [];
-            
 
-            
+
+
             //if($this->dispatch->id == '5'){dd('weighed_dispatch:'.$weighed_dispatch.' Only one weighed:'.$only_one_weighed);}
-            if(($weighed_dispatch==1&&$only_one_weighed==1)||($weighed_dispatch==0||$only_one_weighed==1)){
+            if (($weighed_dispatch == 1 && $only_one_weighed == 1) || ($weighed_dispatch == 0 || $only_one_weighed == 1)) {
                 //Weighed Dispatch with NO weighed items yet
                 $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
-                ->where('manufacture_jobcard_products.job_id', $this->job_id)
-                ->where('manufacture_jobcard_products.filled', 0)                
-                ->where('manufacture_products.weighed_product', 0)                
-                /* ->where(function ($query) use ($raw_products, $batch) {
+                    ->where('manufacture_jobcard_products.job_id', $this->job_id)
+                    ->where('manufacture_jobcard_products.filled', 0)
+                    ->where('manufacture_products.weighed_product', 0)
+                    /* ->where(function ($query) use ($raw_products, $batch) {
                     $query->orWhereIn('manufacture_jobcard_products.product_id', $raw_products);                
                 }) */
-                ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
-                ->orderBy('name','asc')
-                ->get()
-                ->toArray();
-                
+                    ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
+                    ->orderBy('name', 'asc')
+                    ->get()
+                    ->toArray();
             } else {
                 $manufacture_jobcard_products_list = ManufactureJobcardProducts::select('manufacture_jobcard_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
-                ->where('manufacture_jobcard_products.job_id', $this->job_id)
-                ->where('manufacture_jobcard_products.filled', 0)                                                       
-                /* ->where(function ($query) use ($raw_products, $batch) {
+                    ->where('manufacture_jobcard_products.job_id', $this->job_id)
+                    ->where('manufacture_jobcard_products.filled', 0)
+                    /* ->where(function ($query) use ($raw_products, $batch) {
                     $query->orWhereIn('manufacture_jobcard_products.product_id', $raw_products);
                 }) */
-                ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
-                ->orderBy('name','asc')
-                ->get()
-                ->toArray();
+                    ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
+                    ->orderBy('name', 'asc')
+                    ->get()
+                    ->toArray();
             }
-               
-            
         }
-        
+
 
         array_unshift($manufacture_jobcard_products_list, ['value' => 0, 'name' => 'Select']);
 
         //List of Delivery Zones
-        $delivery_zone_list = SelectLists::zones_select; 
+        $delivery_zone_list = SelectLists::zones_select;
         array_unshift($delivery_zone_list, ['value' => 0, 'name' => 'Select']);
 
         //List Cash Customers for External Collection / Delivery
@@ -365,39 +361,44 @@ class NewBatchOutModal extends Component
 
         $products_list = [];
         //if($this->dispatch->id == '5'){dd('weighed:'.$weighed_dispatch_1.' only_one:'.$only_one_weighed_1);}
-        if(($weighed_dispatch==0||$only_one_weighed==1)){
+        if (($weighed_dispatch == 0 || $only_one_weighed == 1)) {
             $products_list = ManufactureProducts::select('manufacture_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
-            ->where('manufacture_products.weighed_product', '0')
-            ->orderBy('name','asc')
-            ->get()
-            ->toArray();
-            
-            
+                ->where('manufacture_products.weighed_product', '0')
+                ->orderBy('name', 'asc')
+                ->get()
+                ->toArray();
         } else {
-            $products_list = ManufactureProducts::select('manufacture_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))                        
-            ->orderBy('name','asc')
-            ->get()
-            ->toArray();
-            
+            $products_list = ManufactureProducts::select('manufacture_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
+                ->orderBy('name', 'asc')
+                ->get()
+                ->toArray();
         }
 
         array_unshift($products_list, ['value' => 0, 'name' => 'Select']);
-        
+
         // Items in Extra Items Table / Array
         $extra_items = [];
-        
+
         //We may have Lines but they could not allocated to Customer or Jobcard yet
         //$extra_items = ManufactureJobcardProductDispatches::select('id', 'dispatch_group_id', 'weight_in_datetime as the_date',
-        $extra_items = ManufactureProductTransactions::select('id', 'dispatch_id', 'weight_in_datetime as the_date', 'weight_out',
-        DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_description'),
-        DB::raw('(select unit_measure from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_unit'), 'qty as the_qty')            
-        ->where('dispatch_id', $this->dispatch->id)
-        ->get()
-        ->toArray();
+        $extra_items = ManufactureProductTransactions::select(
+            'id',
+            'dispatch_id',
+            'weight_in_datetime as the_date',
+            'weight_out',
+            DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_description'),
+            DB::raw('(select unit_measure from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_unit'),
+            'qty as the_qty'
+        )
+            ->where('dispatch_id', $this->dispatch->id)
+            ->get()
+            ->toArray();
 
         //Set weight if Line exists already
-        if($this->dispatch->weight_in>0&&count($extra_items)>0){$this->weight_out =$extra_items[0]['weight_out'];}
-        
+        if ($this->dispatch->weight_in > 0 && count($extra_items) > 0) {
+            $this->weight_out = $extra_items[0]['weight_out'];
+        }
+
 
         return view('livewire.manufacture.dispatch.new-batch-out-modal', [
             'delivery_zone_list' => $delivery_zone_list,
