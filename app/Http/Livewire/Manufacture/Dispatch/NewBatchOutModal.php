@@ -46,7 +46,7 @@ class NewBatchOutModal extends Component
         $this->weight_in = 0;
         $this->dispatchaction = $dispatchaction;
         $this->add_extra_item_show = 0;
-        $this->extra_product_qty = '0';
+        $this->extra_product_qty = 0;
         $this->extra_item_error = false;
         $this->extra_item_message = '';
     }
@@ -116,9 +116,10 @@ class NewBatchOutModal extends Component
             // Clear the Inputs
             $this->extra_product_id = '';
             $this->extra_product_unit_measure = '';
-            $this->extra_product_qty = '0';
+            $this->extra_product_qty = 0;
             $this->extra_product_weight_in_date = '';
             //Set error to blank
+            $this->manufacture_jobcard_product_id = 0;
             $this->extra_item_message = '';
         }
     }
@@ -171,13 +172,12 @@ class NewBatchOutModal extends Component
             "user_id" => auth()->user()->user_id,
         ];
 
+        $form_fields['qty'] = $this->extra_product_qty;
+
         if ($this->dispatch->weight_in == 0) {
-            $form_fields['qty'] = $this->extra_product_qty;
             $form_fields['product_id'] = $this->extra_product_id;
             $form_fields['weight_out'] = $this->dispatch->weight_in;
         } else {
-            //$form_fields['qty'] = $this->qty;
-            $form_fields['qty'] = $this->extra_product_qty;
             $form_fields['weight_out'] = $this->weight_out;
             $form_fields['product_id'] = $this->extra_product_id;
         }
@@ -233,7 +233,7 @@ class NewBatchOutModal extends Component
             // Clear Extra Item Line after add
             $this->extra_product_id = '';
             $this->extra_product_unit_measure = '';
-            $this->extra_product_qty = '0';
+            $this->extra_product_qty = 0;
             $this->extra_product_weight_in_date = '';
             $this->add_extra_item_show = '0';
             //Set error to blank
