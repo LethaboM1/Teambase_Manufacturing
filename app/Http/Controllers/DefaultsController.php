@@ -7,14 +7,26 @@ use Illuminate\Http\Request;
 class DefaultsController
 {
     const unit_measure = [
-        ['value' => 'each', 'name' => 'Each'],
-        ['value' => 'kg', 'name' => 'Kg'],
-        ['value' => 'ton', 'name' => 'Tons'],
-        ['value' => 'bag', 'name' => 'Bag'],
-        ['value' => 'liter', 'name' => 'Liters'],
-        ['value' => '5l', 'name' => '5L'],
-        ['value' => '20l', 'name' => '20L'],
-        ['value' => '200l', 'name' => '200L Drum'],
+        ['value' => 'each', 'name' => 'Each', 'weighed' => 0],
+        ['value' => 'kg', 'name' => 'Kg', 'weighed' => 0],
+        ['value' => 'ton', 'name' => 'Tons', 'weighed' => 1],
+        ['value' => 'bag', 'name' => 'Bag', 'weighed' => 0],
+        ['value' => 'liter', 'name' => 'Liters', 'weighed' => 0],
+        ['value' => '5l', 'name' => '5L', 'weighed' => 0],
+        ['value' => '20l', 'name' => '20L', 'weighed' => 0],
+        ['value' => '200l', 'name' => '200L Drum', 'weighed' => 0],
+
+    ];
+
+    const unit_measure_weighed = [
+        'each' => 0,
+        'kg' => 0,
+        'ton' => 1,
+        'bag' => 0,
+        'liter' => 0,
+        '5l' => 0,
+        '20l' => 0,
+        '200l' => 0,
 
     ];
 
