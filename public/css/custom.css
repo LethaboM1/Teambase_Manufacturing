@@ -120,3 +120,9 @@
 .pointer {
   cursor: pointer;
 }
+
+.page-link {
+  background-color: #282d36;
+  border: #282d36;
+  color: gray;
+}
