@@ -37,6 +37,8 @@ class BatchesController extends Controller
             'qty' => 'required|gt:0'
         ]);
 
+        $product = ManufactureProducts::where('id', $form_fields['product_id'])->first();
+
         $form_fields['status'] = 'Open';
         $form_fields['batch_number'] = Functions::get_doc_number('batch');
         if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Coul dnot generate batch number.');
@@ -71,7 +73,8 @@ class BatchesController extends Controller
                 'qty' => Functions::negate($qty),
                 'user_id' => auth()->user()->user_id,
                 'type' => 'BAT',
-                'type_id' => $batch_id
+                'type_id' => $batch_id,
+                'comment' => "Used to manufacture {$product['code']} {$product['description']}"
             ]);
         }
 
