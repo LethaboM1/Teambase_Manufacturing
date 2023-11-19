@@ -159,6 +159,8 @@ class AddDispatchAdditionalModal extends Component
 
         $form_fields['registration_number'] = $this->registration_number;
 
+        if ($form_fields['plant_id'] > 0 && $this->delivery_zone == 0) return back()->with('alertError', 'For a delivery you must choose a delivery zone.');
+
         if ($form_fields['registration_number'] == '' && $form_fields['plant_id'] == 0) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
 
         if (isset($form_fields['registration_number'])) {
