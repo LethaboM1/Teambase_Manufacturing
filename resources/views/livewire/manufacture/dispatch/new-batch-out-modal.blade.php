@@ -60,13 +60,13 @@
             @endif
             {{-- <x-form.select name="job_id" label="Job card" :list="$jobcard_list" /> --}}
         </div>
-        {{-- <div class="col-md-6">           
+        <div class="col-md-6">           
             @if($customer_dispatch == 1)
                 <x-form.select name="product_id" label="Product" :list="$products_list" />
             @else
                 <x-form.select name="manufacture_jobcard_product_id" label="Product" :list="$manufacture_jobcard_products_list" />
             @endif            
-        </div> --}} {{-- Moved Into Line Items 2023-11-10 --}}
+        </div> {{-- Moved Into Line Items 2023-11-10 --}}
         <div class="col-md-6">
             <x-form.select name="delivery_zone" label="Delivery Zone" :list="$delivery_zone_list"/>
         </div>
@@ -142,9 +142,9 @@
                         <tr>   
                             <td><x-form.input name="extra_product_weight_in_date" value="{{$extra_product_weight_in_date}}" wire=0 disabled=1/></td>
                             @if($customer_dispatch == 1)
-                                <td><x-form.select name="extra_product_id" :list="$products_list" /></td>
+                                <td><x-form.select name="extra_product_id" :list="$products_list_unweighed" /></td>
                             @else
-                                <td><x-form.select name="manufacture_jobcard_product_id" :list="$manufacture_jobcard_products_list" /></td>                                
+                                <td><x-form.select name="manufacture_jobcard_product_id" :list="$manufacture_jobcard_products_list_unweighed" /></td>                                
                             @endif                            
                             <td><x-form.input name="extra_product_unit_measure" value="{{$extra_product_unit_measure}}" wire=0 disabled=1/></td>
                             @if($dispatch->weight_in>0&&$only_one_weighed==0)
