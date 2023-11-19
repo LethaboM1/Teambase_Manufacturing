@@ -12,10 +12,15 @@
                                     Actions
                                 </a>
                         <div class="dropdown-menu" aria-labelledby="btnActions">
-                            <a class="dropdown-item modal-basic" href="#addDispatch" >Collection / Dispatch</a>                            
+                            <a class="dropdown-item modal-basic" href="#addDispatch" >Weigh In</a> 
+                            <a class="dropdown-item modal-basic" href="#addDispatchAdditional">Dispatch</a>                                    
                         </div>
                     </div>
 
+                    {{-- Collection / Dispatch --}}
+                    <div id='addDispatchAdditional' class='modal-block modal-block-lg mfp-hide'>
+                        <livewire:manufacture.dispatch.add-dispatch-additional-modal />
+                    </div>
                     {{-- Collection / Dispatch --}}
                     <div id='addDispatch' class='modal-block modal-block-lg mfp-hide'>
                         <form method='post' enctype='multipart/form-data'>

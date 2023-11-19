@@ -59,8 +59,8 @@ class NewBatchesLivewire extends Component
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term)
-                    ->orWhere('haulier_code', 'like', $term);
+                    ->orWhere('reference', 'like', $term);
+                // ->orWhere('haulier_code', 'like', $term);
             })->paginate(15, ['*'], 'loading');
 
         /* $product_transactions = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Pending')
@@ -76,9 +76,11 @@ class NewBatchesLivewire extends Component
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term)                    
-                    ->orWhere('haulier_code', 'like', $term);
-            })->paginate(15, ['*'], 'archived');
+                    ->orWhere('reference', 'like', $term);
+                // ->orWhere('haulier_code', 'like', $term);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(15, ['*'], 'archived');
 
 
         return view('livewire.manufacture.dispatch.new-batches-livewire', [

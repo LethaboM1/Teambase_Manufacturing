@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 class AddDispatchModal extends Component
 {
     public
-        
-        $delivery,        
+
+        $delivery,
         $weight_in,
         $weight_in_datetime,
         $weight_out,
@@ -20,49 +20,38 @@ class AddDispatchModal extends Component
         $registration_number,
         $batch_id,
         $qty,
-        $delivery_zone,
-        $weighed_dispatch;
+        $delivery_zone;
 
     function mount()
     {
-        
+
         $this->delivery = 0;
-        $this->weighed_dispatch = 0;
         $this->weight_in_datetime = date("Y-m-d\TH:i");
     }
 
-    function updatedJobId($value)
-    {
-        if ($value > 0) {            
-            $this->delivery = $this->jobcard->delivery;            
-        }
-    }
+    // function updatedJobId($value)
+    // {
+    //     if ($value > 0) {
+    //         $this->delivery = $this->jobcard->delivery;
+    //     }
+    // }
 
     function updatedDelivery($value)
     {
         $this->delivery = $value;
     }
 
-    function updatedWeighedDispatch($value)
-    {
-        $this->weighed_dispatch = $value;
-    }
-
-    function boot()
-    {
-    }
-
     public function render()
     {
-      
+
         $plant_list = [];
         if ($this->delivery) $plant_list = Plants::select('plant_id as value', DB::raw("concat(plant_number,' ',make,' ',model) as name"))->orderBy('plant_number')->get()->toArray();
         array_unshift($plant_list, ['value' => 0, 'name' => 'Select']);
-        
 
-        return view('livewire.manufacture.dispatch.add-dispatch-modal', [            
+
+        return view('livewire.manufacture.dispatch.add-dispatch-modal', [
             'plant_list' => $plant_list,
-            'weighed_dispatch' => $this->weighed_dispatch            
+            // 'weighed_dispatch' => $this->weighed_dispatch
         ]);
     }
 }

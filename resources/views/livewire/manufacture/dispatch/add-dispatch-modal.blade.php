@@ -1,19 +1,19 @@
 <div class="row">
     
     {{-- Determine of this is a weighed delivery / collection --}}
-    <div class="col-md-10" style="margin-top: 30px;">
+    {{-- <div class="col-md-10" style="margin-top: 30px;">
         <x-form.checkbox name="weighed_dispatch" label="Collecting / Delivery vehicle has been Weighed In." value=1 />
-    </div>
+    </div> --}}
 
-    @if($weighed_dispatch)
+    {{-- @if($weighed_dispatch) --}}
         <div class="col-md-6">
             <x-form.number name="weight_in" label="Weight In" step="0.001"/>
         </div>
-    @else
+    {{-- @else
         <div class="col-md-6">
             <x-form.hidden name="weighed_dispatch" value={{$weighed_dispatch}}/>
         </div>
-    @endif
+    @endif --}}
 
 
     <div class="col-md-10" style="margin-top: 30px;">
