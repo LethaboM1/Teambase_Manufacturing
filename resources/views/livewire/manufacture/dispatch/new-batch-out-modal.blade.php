@@ -57,8 +57,7 @@
                 <x-form.select name="customer_id" label="Customer" :list="$customer_list" />
             @else
                 <x-form.select name="job_id" label="Job card" :list="$jobcard_list" />
-            @endif
-            {{-- <x-form.select name="job_id" label="Job card" :list="$jobcard_list" /> --}}
+            @endif            
         </div>
         <div class="col-md-6">           
             @if($customer_dispatch == 1)
@@ -66,7 +65,7 @@
             @else
                 <x-form.select name="manufacture_jobcard_product_id" label="Product" :list="$manufacture_jobcard_products_list" />
             @endif            
-        </div> {{-- Moved Into Line Items 2023-11-10 --}}
+        </div> 
         <div class="col-md-6">
             <x-form.select name="delivery_zone" label="Delivery Zone" :list="$delivery_zone_list"/>
         </div>
@@ -76,35 +75,12 @@
             </div>
             <div class="col-md-4">
                 <x-form.number name="dispatch_temp" label="Dispatched Temperature" step="0.01" value={{$dispatch_temp}}/>
-            </div>
-        {{-- @else             
-            <div class="col-md-4">
-                <x-form.number wire=0 name="qty" label="Qty Out" step="0.01" value={{$qty}}/>                            
-            </div>
-            <div class="col-md-4">            
-            </div> --}} {{-- Moved into Line Items 2023-11-10 --}}
+            </div>        
         @endif
-
-        {{-- Line Items to be added to this Dispatch in addition to main item if weighed  --}}
-
-        {{-- <div class='col-md-4'>           
-            <br>
-            @if ($extra_items_show == '0')
-                <a wire:click="ExtraItemsShow" style="margin-top: 16px; width:100%" class="btn btn-primary btn-sm" title="Show additional Non-Weighed Items on this Dispatch.">
-                    Show Additional Items&nbsp&nbsp                
-                        <i class="fas fa-chevron-right"></i>
-                </a>
-            @else
-                <a wire:click="ExtraItemsShow" style="margin-top: 16px; width:100%" class="btn btn-primary btn-sm" title="Hide additional Non-Weighed Items on this Dispatch.">
-                    Hide Additional Items&nbsp&nbsp
-                        <i class="fas fa-chevron-left"></i>                                    
-                </a>
-            @endif            
-        </div> --}} {{-- Obsolete 2023-11-10 --}}
+        
         <div class='col-md-10'><br></div>
                
         <hr>
-        {{-- Line Items 2023-11-10 --}}
         <form class="form-horizontal form-bordered" method="get">
             <table width="100%" class="table table-hover table-responsive-md mb-0">
                 <thead>
@@ -144,14 +120,10 @@
                             @if($customer_dispatch == 1)
                                 <td><x-form.select name="extra_product_id" :list="$products_list_unweighed" /></td>
                             @else
-                                <td><x-form.select name="manufacture_jobcard_product_id" :list="$manufacture_jobcard_products_list_unweighed" /></td>                                
+                                <td><x-form.select name="extra_manufacture_jobcard_product_id" :list="$manufacture_jobcard_products_list_unweighed" /></td>                                
                             @endif                            
-                            <td><x-form.input name="extra_product_unit_measure" value="{{$extra_product_unit_measure}}" wire=0 disabled=1/></td>
-                            @if($dispatch->weight_in>0&&$only_one_weighed==0)
-                                <td><x-form.number wire=0 value="{{$weight_out - $dispatch->weight_in}}" name="qty" step="0.001" disabled=1/></td>
-                            @else
-                                <td><x-form.number wire:model="extra_product_qty" value="{{$extra_product_qty}}" name="extra_product_qty" step="0.001" /></td>
-                            @endif
+                            <td><x-form.input name="extra_product_unit_measure" value="{{$extra_product_unit_measure}}" wire=0 disabled=1/></td>                            
+                            <td><x-form.number wire:model="extra_product_qty" value="{{$extra_product_qty}}" name="extra_product_qty" step="0.001" /></td>                           
                             <td>
                                 <a wire:click="AddExtraItem('{{$dispatch->id}}')" class="btn btn-primary btn-sm" title="Add Item">
                                     <i class="fas fa-plus"></i>                    

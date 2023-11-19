@@ -424,7 +424,7 @@ class DispatchController extends Controller
     function add_dispatch(Request $request)
     {
         $form_fields = $request->validate([
-            "weight_in" => 'required_if:weighed_dispatch,1|gt:0',
+            "weight_in" => 'gt:0',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
         ]);
@@ -441,9 +441,7 @@ class DispatchController extends Controller
         }
 
         $form_fields['status'] = 'Loading';
-        if ($request->weighed_dispatch == '0' || $request->weighed_dispatch == null) {
-            $form_fields['weight_in'] = '0';
-        }
+
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
         $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
 

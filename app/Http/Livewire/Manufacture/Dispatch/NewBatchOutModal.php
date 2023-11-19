@@ -20,7 +20,7 @@ use function PHPUnit\Framework\isTrue;
 class NewBatchOutModal extends Component
 {
     public $dispatch, $weight_out_datetime, $weight_out, $dispatch_temp, $dispatchaction, $qty, $job_id, $weight_in_datetime, $weight_in;
-    public $jobcard, $delivery, $delivery_zone, $reference, $manufacture_jobcard_product_id;
+    public $jobcard, $delivery, $delivery_zone, $reference, $manufacture_jobcard_product_id, $extra_manufacture_jobcard_product_id;
     public $customer_dispatch, $customer_id, $product_id;
     public $add_extra_item_show, $extra_product_id, $extra_product_unit_measure, $extraproduct, $extra_product_qty, $extra_product_weight_in_date, $extra_item_message, $extra_item_error;
 
@@ -31,10 +31,16 @@ class NewBatchOutModal extends Component
     {
         $this->dispatch = $dispatch;
         $this->weight_out_datetime = date("Y-m-d\TH:i");
-        $this->weight_out = 0;
-        $this->dispatch_temp = 0;
-        $this->qty = 0;
-        $this->job_id = 0;
+        $this->weight_out = $dispatch->weight_out;
+        $this->manufacture_jobcard_product_id = $dispatch->manufacture_jobcard_product_id;
+        $this->product_id = $dispatch->product_id;
+        $this->dispatch_temp = $dispatch->dispatch_temp;
+        $this->delivery_zone = $dispatch->delivery_zone;
+        $this->qty = $dispatch->qty;
+        $this->reference = $dispatch->reference;
+        $this->job_id = $this->dispatch->job_id;
+        $this->customer_id = $this->dispatch->customer_id;
+
         if ($dispatch->customer_id == '0') {
             $this->customer_dispatch = 0;
         } else {
@@ -55,12 +61,31 @@ class NewBatchOutModal extends Component
     function updatedJobId($value)
     {
         if ($value > 0) {
-            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update(['job_id' => $value]);
-            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update(['customer_id' => 0]);
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'job_id' => $value,
+                'customer_id' => 0,
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);
+
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
             // Manufact
         }
+    }
+
+    function updatedReference($value)
+    {
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'reference' => $value
+        ]);
+    }
+
+    function updatedDeliveryZone($value)
+    {
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'delivery_zone' => $value
+        ]);
     }
 
 
@@ -73,20 +98,29 @@ class NewBatchOutModal extends Component
     {
         if ($value < $this->dispatch->weight_in) return;
         $this->qty = $value - $this->dispatch->weight_in;
-        $this->extra_product_qty = $this->qty;
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'weight_out' => $value,
+            'qty' => $this->qty
+        ]);
     }
 
     function updatedDispatchTemp($value)
     {
         if ($value < 0) return;
         $this->dispatch_temp = $value;
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'dispatch_temp' => $value
+        ]);
     }
+
 
     function updatedCustomerDispatch($value)
     {
         $this->customer_dispatch = $value;
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update(['customer_id' => $value]);
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update(['job_id' => 0]);
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'customer_id' => 0,
+            'job_id' => 0
+        ]);
     }
 
     // function updatedCustomerProductId($value)
@@ -101,13 +135,32 @@ class NewBatchOutModal extends Component
         $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
     }
 
-    function updatedManufactureJobcardProductId($value)
+    function updatedExtraManufactureJobcardProductId($value)
     {
         $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
         $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->get()->toArray();
         $this->extra_product_id = $jobcard->product_id;
         $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
         $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
+    }
+
+    function updatedManufactureJobcardProductId($value)
+    {
+        if ($value > 0) {
+            $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
+
+            $this->product_id = $jobcard->product_id;
+
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'manufacture_jobcard_product_id' => $value,
+                'product_id' => $this->product_id
+            ]);
+        } else {
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);
+        }
     }
 
     function AddExtraItemShow()
