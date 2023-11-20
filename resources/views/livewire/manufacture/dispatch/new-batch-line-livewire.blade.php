@@ -44,35 +44,8 @@
                 </a>
             @endif --}}
         @endif             
-         <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>           
-            <form method='post' action="{{url("dispatches/out/{$dispatch->id}")}}" enctype='multipart/form-data'>
-                @csrf
-                <section class='card'>
-                    <header id='editDispatch_{{$dispatch->id}}header' class='card-header'><h2 class='card-title'>Dispatch No. {{$dispatch->dispatch_number}}</h2></header>
-                        <div class='card-body'>
-                            <div class='modal-wrapper'>
-                                <div class='modal-text'>
-                                    <livewire:manufacture.dispatch.new-batch-out-modal :dispatch="$dispatch" :dispatchaction="$dispatchaction">                                      
-                                </div>
-                            </div>
-                        </div>
-                        <footer class='card-footer'>
-                            <div class='row'>
-                                <div class='col-md-12 text-right'>
-                                    @if ($dispatchaction == "new")
-                                        <button type='submit'class='btn btn-primary'>Confirm</button>
-                                        <button class='btn btn-default modal-dismiss'>Cancel</button>                           
-                                    @else                                    
-                                        <a target="_blank" href="{{url("dispatches/print/{$dispatch->id}")}}" class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>
-                                        <button class='btn btn-primary modal-dismiss'>Close</button>
-
-                                    @endif
-                                    
-                                </div>
-                            </div>
-                        </footer>
-                </section>
-            </form>
+         <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>                       
+            <livewire:manufacture.dispatch.new-batch-out-modal :dispatch="$dispatch" :dispatchaction="$dispatchaction">
         </div>
         
         <div id='returnDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>           

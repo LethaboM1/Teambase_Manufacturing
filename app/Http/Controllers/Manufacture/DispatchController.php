@@ -32,6 +32,15 @@ class DispatchController extends Controller
         return view('manufacture.dispatch.goods-received');
     }
 
+    function delete_dispatch(ManufactureJobcardProductDispatches $dispatch)
+    {
+        if ($dispatch !== null) {
+            $dispatch->delete();
+        }
+
+        return back()->with('alertMessage', 'Dispatch deleted!');
+    }
+
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
 
