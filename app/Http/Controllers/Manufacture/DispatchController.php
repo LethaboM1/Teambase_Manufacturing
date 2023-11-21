@@ -950,6 +950,14 @@ class DispatchController extends Controller
                             $pdf .="<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->qty}</td>
                         </tr>"; */
         //Multiple Lines if they exist from Transactions 2023-11-15
+        if ($dispatch->product_id > 0 && $dispatch->qty > 0) {
+            $pdf .= "<tr>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product_()->code}</td>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product_()->description}</td>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->qty}</td>
+                    </tr>";
+        }
+
         foreach ($dispatch_lines as $dispatch_line) {
             $pdf .= "<tr>";
             $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['code']}</td>

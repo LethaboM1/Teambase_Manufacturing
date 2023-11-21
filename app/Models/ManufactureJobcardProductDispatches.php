@@ -16,7 +16,7 @@ class ManufactureJobcardProductDispatches extends Model
     ];
 
     function jobcard_product()
-    {        
+    {
         //return $this->hasOne(ManufactureJobcardProducts::class, 'id', 'manufacture_jobcard_product_id')->first(); Moved to Transactions 2023-11-10
     }
 
@@ -45,12 +45,12 @@ class ManufactureJobcardProductDispatches extends Model
 
     function jobcard()
     {
-        if ($this->transactions() !== null) {             
-            if ($this->transactions()->jobcard_id() !== null) {                
+        if ($this->transactions() !== null) {
+            if ($this->transactions()->jobcard_id() !== null) {
                 $jobcard = ManufactureJobcards::where('id', $this->transactions()->jobcard_id())->first();
                 return $jobcard;
             }
-        } 
+        }
 
         /* if ($this->jobcard_product() !== null) {
             return $this->jobcard_product();
@@ -62,7 +62,7 @@ class ManufactureJobcardProductDispatches extends Model
         if ($this->transactions() !== null) {
             return $this->transactions()->jobcard_product();
         }
-        
+
         /* if ($this->jobcard_product() !== null) {
             return $this->jobcard_product()->product();
         } */
@@ -75,6 +75,13 @@ class ManufactureJobcardProductDispatches extends Model
         }
     }
 
+    function product_()
+    {
+        if ($this->product_id !== null) {
+            return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+        }
+    }
+
     function customer_product()
     {
         if ($this->transactions() !== null) {
@@ -83,12 +90,11 @@ class ManufactureJobcardProductDispatches extends Model
         /*  if ($this->product_id !== null) {
             return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
         } */ //Obsolete 2023-11-15
-    } 
+    }
 
     function transactions()
     {
-        
+
         return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->first();
-        
     }
 }
