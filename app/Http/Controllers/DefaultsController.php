@@ -8,7 +8,7 @@ class DefaultsController
 {
     const unit_measure = [
         ['value' => 'each', 'name' => 'Each', 'weighed' => 0],
-        ['value' => 'kg', 'name' => 'Kg', 'weighed' => 0],
+        ['value' => 'kg', 'name' => 'Kg', 'weighed' => 1],
         ['value' => 'ton', 'name' => 'Tons', 'weighed' => 1],
         ['value' => 'bag', 'name' => 'Bag', 'weighed' => 0],
         ['value' => 'liter', 'name' => 'Liters', 'weighed' => 0],
@@ -20,7 +20,7 @@ class DefaultsController
 
     const unit_measure_weighed = [
         'each' => 0,
-        'kg' => 0,
+        'kg' => 1,
         'ton' => 1,
         'bag' => 0,
         'liter' => 0,

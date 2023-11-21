@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ManufactureProducts;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,24 @@ use Spipu\Html2Pdf\Exception\ExceptionFormatter;
 
 class Functions extends Controller
 {
+
+    static function fix_weighed_items()
+    {
+        $items = ManufactureProducts::where('has_recipe', 0)->get();
+
+        foreach ($items as $item) {
+            if (DefaultsController::unit_measure_weighed[$item['unit_measure']]) {
+                if ($item['weighed_product'] == 0) {
+                    ManufactureProducts::where('id', $item['id'])->update(['weighed_product' => 1]);
+                }
+            } else {
+                if ($item['weighed_product'] == 1) {
+                    ManufactureProducts::where('id', $item['id'])->update(['weighed_product' => 0]);
+                }
+            }
+        }
+    }
+
     static function negate($number)
     {
         if ($number > 0) {

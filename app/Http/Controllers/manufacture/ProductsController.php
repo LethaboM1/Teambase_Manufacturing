@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manufacture;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\DefaultsController;
 use App\Models\ManufactureProductRecipe;
 use App\Models\ManufactureProducts;
 use App\Models\ManufactureProductTransactions;
@@ -48,12 +49,12 @@ class ProductsController extends Controller
             'opening_balance' => 'nullable',
             'unit_measure' => 'required',
             'has_recipe' => 'nullable',
-            'weighed_product' => 'nullable',
+            // 'weighed_product' => 'nullable',
         ]);
 
         $form_fields['has_recipe'] = (isset($form_fields['has_recipe']) ? 1 : 0);
 
-        $form_fields['weighed_product'] = (isset($form_fields['weighed_product']) ? 1 : 0);
+        $form_fields['weighed_product'] = DefaultsController::unit_measure_weighed[$form_fields['unit_measure']]; //(isset($form_fields['weighed_product']) ? 1 : 0);
 
         $opening_balance = (is_numeric($form_fields['opening_balance']) && $form_fields['opening_balance'] > 0) ?  $form_fields['opening_balance'] : 0;
 
