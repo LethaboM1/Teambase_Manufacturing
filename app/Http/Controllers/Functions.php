@@ -18,18 +18,21 @@ class Functions extends Controller
     static function fix_weighed_items()
     {
         $items = ManufactureProducts::where('has_recipe', 0)->get();
-
+        $log = '';
         foreach ($items as $item) {
             if (DefaultsController::unit_measure_weighed[$item['unit_measure']]) {
                 if ($item['weighed_product'] == 0) {
                     ManufactureProducts::where('id', $item['id'])->update(['weighed_product' => 1]);
+                    $log .= "{$item['code']} set to weighed product. ";
                 }
             } else {
                 if ($item['weighed_product'] == 1) {
                     ManufactureProducts::where('id', $item['id'])->update(['weighed_product' => 0]);
+                    $log .= "{$item['code']} set to unweighed product. ";
                 }
             }
         }
+        return $log;
     }
 
     static function negate($number)

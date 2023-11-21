@@ -50,6 +50,14 @@
                     <h2 class="card-title">Products</h2>
                 </header>
                 <div class="card-body">
+                    <button  type="button" class="btn btn-primary" wire:click="fix_items"><i class="fa fa-gear"></i>&nbsp;Fix Weighed Items</button><br><br>
+                    @if (Session::get('alertMessage'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    
+                        <strong>Success</strong> {{Session::get('alertMessage')}}
+                    </div>                        
+                    @endif
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                         <li class="nav-item {{($tab=='all'?'active':'')}}" role="presentation">

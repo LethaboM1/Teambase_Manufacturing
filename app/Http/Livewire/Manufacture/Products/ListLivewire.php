@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Manufacture\Products;
 
 use App\Http\Controllers\DefaultsController;
+use App\Http\Controllers\Functions;
 use App\Models\ManufactureProducts;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -18,6 +19,17 @@ class ListLivewire extends Component
     {
         $this->unit_measure_list = DefaultsController::unit_measure;
         $this->tab = 'all';
+    }
+
+    function fix_items()
+    {
+        $message = Functions::fix_weighed_items();
+
+        if (strlen($message) > 0) {
+            session()->flash('alertMessage', $message);
+        } else {
+            session()->flash('alertMessage', 'Nothing to fix.');
+        }
     }
 
     function updatingSearch()
