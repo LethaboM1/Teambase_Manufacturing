@@ -160,7 +160,7 @@ class AddDispatchAdditionalModal extends Component
         $form_fields['product_id'] = 0;
         $form_fields['manufacture_jobcard_product_id'] = 0;
         $form_fields['qty'] = 0;
-        $form_fields['delivery_zone'] = $this->delivery_zone;
+        $form_fields['delivery_zone'] = ($this->delivery_zone == null ? 0 : $this->delivery_zone);
 
         $form_fields['registration_number'] = $this->registration_number;
 
