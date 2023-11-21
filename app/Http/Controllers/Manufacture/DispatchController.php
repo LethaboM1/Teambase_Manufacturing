@@ -35,6 +35,7 @@ class DispatchController extends Controller
     function delete_dispatch(ManufactureJobcardProductDispatches $dispatch)
     {
         if ($dispatch !== null) {
+            ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->delete();
             $dispatch->delete();
         }
 
