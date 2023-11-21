@@ -74,6 +74,18 @@ class NewBatchOutModal extends Component
         }
     }
 
+    function updatedCustomerId($value)
+    {
+        if ($value > 0) {
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'job_id' => 0,
+                'customer_id' => $value,
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);
+        }
+    }
+
     function updatedReference($value)
     {
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
@@ -116,7 +128,7 @@ class NewBatchOutModal extends Component
 
     function updatedCustomerDispatch($value)
     {
-        $this->customer_dispatch = $value;
+
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
             'customer_id' => 0,
             'job_id' => 0
@@ -142,6 +154,15 @@ class NewBatchOutModal extends Component
         $this->extra_product_id = $jobcard->product_id;
         $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
         $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
+    }
+
+    function updatedProductId($value)
+    {
+        $this->manufacture_jobcard_product_id = 0;
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'manufacture_jobcard_product_id' => 0,
+            'product_id' => $value
+        ]);
     }
 
     function updatedManufactureJobcardProductId($value)
@@ -232,13 +253,13 @@ class NewBatchOutModal extends Component
 
         $form_fields['qty'] = $this->extra_product_qty;
 
-        if ($this->dispatch->weight_in == 0) {
-            $form_fields['product_id'] = $this->extra_product_id;
-            $form_fields['weight_out'] = $this->dispatch->weight_in;
-        } else {
-            $form_fields['weight_out'] = $this->weight_out;
-            $form_fields['product_id'] = $this->extra_product_id;
-        }
+
+        $form_fields['product_id'] = $this->extra_product_id;
+        $form_fields['weight_out'] = $this->dispatch->weight_in;
+        // } else {
+        //     $form_fields['weight_out'] = $this->weight_out;
+        //     $form_fields['product_id'] = $this->extra_product_id;
+        // }
 
         //dd($form_fields);
 
@@ -443,9 +464,9 @@ class NewBatchOutModal extends Component
             ->toArray();
 
         //Set weight if Line exists already
-        if ($this->dispatch->weight_in > 0 && count($extra_items) > 0) {
-            $this->weight_out = $extra_items[0]['weight_out'];
-        }
+        // if ($this->dispatch->weight_in > 0 && count($extra_items) > 0) {
+        //     $this->weight_out = $extra_items[0]['weight_out'];
+        // }
 
 
         return view('livewire.manufacture.dispatch.new-batch-out-modal', [
