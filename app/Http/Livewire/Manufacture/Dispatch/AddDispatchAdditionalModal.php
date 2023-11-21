@@ -63,7 +63,11 @@ class AddDispatchAdditionalModal extends Component
 
     function updatedDelivery($value)
     {
-        $this->delivery = $value;
+        if ($value) {
+            $this->registration_number = '';
+        } else {
+            $this->plant_id = 0;
+        }
     }
 
     function removeExtraItem($key)

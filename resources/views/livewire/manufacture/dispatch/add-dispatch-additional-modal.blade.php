@@ -157,7 +157,7 @@
                 Livewire.on('closeDispatch', function ($key) {
                     Livewire.emit('refreshNewDispatch');
                     $('#cancel_dispatch').click();                    
-                    $('#edit_btn_' + $key).click();
+                    window.open('{{url("dispatches/print/")}} + $key','_blank'); //$('#edit_btn_' + $key).click();
                    
                 })
             });
