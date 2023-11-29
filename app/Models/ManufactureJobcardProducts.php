@@ -33,6 +33,12 @@ class ManufactureJobcardProducts extends Model
         // return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
     }
 
+    function weighed_transactions()
+    {
+        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); //2023-11-09 Moved to Transactions Table
+        //return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
+    }
+
     function transactions()
     {
         //return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); 2023-11-09 Moved to Transactions Table
