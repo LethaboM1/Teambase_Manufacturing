@@ -14,6 +14,14 @@ class ManufactureProducts extends Model
         'created_at'  => 'datetime:Y-m-d',
     ];
 
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        $term = "%" . $searchTerm . "%";
+        return $query->where('code', 'like', $term)
+            ->orWhere('description', 'like', $term);
+    }
+
     function transactions()
     {
         return $this->hasMany(ManufactureProductTransactions::class, 'product_id', 'id');

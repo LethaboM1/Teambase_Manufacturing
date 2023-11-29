@@ -45,12 +45,13 @@ class ManufactureJobcardProductDispatches extends Model
 
     function jobcard()
     {
-        if ($this->transactions() !== null) {
-            if ($this->transactions()->jobcard_id() !== null) {
-                $jobcard = ManufactureJobcards::where('id', $this->transactions()->jobcard_id())->first();
-                return $jobcard;
-            }
-        }
+        return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id')->first();
+        // if ($this->transactions() !== null) {
+        //     if ($this->transactions()->jobcard_id() !== null) {
+        //         $jobcard = ManufactureJobcards::where('id', $this->transactions()->jobcard_id())->first();
+        //         return $jobcard;
+        //     }
+        // }
 
         /* if ($this->jobcard_product() !== null) {
             return $this->jobcard_product();
@@ -59,9 +60,11 @@ class ManufactureJobcardProductDispatches extends Model
 
     function product()
     {
-        if ($this->transactions() !== null) {
-            return $this->transactions()->jobcard_product();
-        }
+        // if ($this->transactions() !== null) {
+        //     return $this->transactions()->jobcard_product();
+        // }
+
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();;
 
         /* if ($this->jobcard_product() !== null) {
             return $this->jobcard_product()->product();

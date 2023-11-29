@@ -16,6 +16,15 @@ class ManufactureJobcardProducts extends Model
         'created_at'  => 'datetime:Y-m-d',
     ];
 
+
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        $term = "%" . $searchTerm . "%";
+        return $query->whereIn('job_id', ManufactureJobcards::select('id as job_id')->search($term))
+            ->whereIn('product_id', ManufactureProducts::select('id as product_id')->search($term));
+    }
+
     function jobcard()
     {
         return $this->hasOne(ManufactureJobcards::class, 'id', 'job_id')->first();
@@ -48,13 +57,19 @@ class ManufactureJobcardProducts extends Model
     function getQtyFilledAttribute()
     {
         $qty =  $this->transactions()->sum('qty');
+        $qty_dispatch =  $this->dispatches()->sum('qty');
+
         if (!is_numeric($qty)) $qty = 0;
+        if (!is_numeric($qty_dispatch)) $qty_dispatch = 0;
+
         $qty = Functions::negate($qty);
+        $qty = $qty + $qty_dispatch;
         return round($qty, 3);
     }
 
     function getQtyDueAttribute()
     {
-        return round($this->qty - $this->getQtyFilledAttribute(), 3);
+        $qty = round($this->qty - $this->getQtyFilledAttribute(), 3);
+        return $qty;
     }
 }

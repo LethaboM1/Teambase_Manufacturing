@@ -14,5 +14,11 @@ class ManufactureCustomers extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
-    
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        $term = "%" . $searchTerm . "%";
+        return $query->where('name', 'like', $term)
+            ->orWhere('account_number', 'like', $term);
+    }
 }

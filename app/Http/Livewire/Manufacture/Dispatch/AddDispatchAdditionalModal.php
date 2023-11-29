@@ -35,6 +35,31 @@ class AddDispatchAdditionalModal extends Component
 
     public $extra_items = [], $extra_product_id, $extra_product_unit_measure, $extra_product_qty, $extra_product_weight_in_date, $manufacture_jobcard_product_id;
 
+    protected $listeners = ['emitSet'];
+
+    function emitSet($var, $value)
+    {
+        switch ($var) {
+            case 'plant_id':
+                $this->plant_id = $value;
+                break;
+
+
+            case 'customer_id':
+                $this->customer_id = $value;
+                break;
+
+
+            case 'job_id':
+                $this->job_id = $value;
+                break;
+
+            case 'manufacture_jobcard_product_id':
+                $this->manufacture_jobcard_product_id = $value;
+                break;
+        }
+    }
+
     function mount()
     {
 
@@ -154,8 +179,8 @@ class AddDispatchAdditionalModal extends Component
     function dispatch()
     {
         $form_fields['plant_id'] = $this->plant_id;
-        $form_fields['job_id'] = $this->job_id;
-        $form_fields['customer_id'] = $this->customer_id;
+        $form_fields['job_id'] = ($this->job_id == null ? 0 : $this->job_id);
+        $form_fields['customer_id'] = ($this->customer_id == null ? 0 : $this->customer_id);
         $form_fields['reference'] = $this->reference;
         $form_fields['product_id'] = 0;
         $form_fields['manufacture_jobcard_product_id'] = 0;

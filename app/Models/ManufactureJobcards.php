@@ -16,6 +16,18 @@ class ManufactureJobcards extends Model
         'created_at'  => 'datetime:Y-m-d',
     ];
 
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        $term = "%" . $searchTerm . "%";
+        return $query->where('jobcard_number', 'like', $term)
+            ->orWhere('contractor', 'like', $term)
+            ->orWhere('site_number', 'like', $term)
+            ->orWhere('contact_person', 'like', $term)
+            ->orWhereRaw('REPLACE(contact_number," ","") like "' . str_replace(' ', '', $term) . '"')
+            ->orWhereIn('customer_id', ManufactureCustomers::select('id as customer_id')->search($term));
+    }
+
     function getUnfilledProductsAttribute()
     {
         $qty = $this->products()->where('filled', 0)->count();

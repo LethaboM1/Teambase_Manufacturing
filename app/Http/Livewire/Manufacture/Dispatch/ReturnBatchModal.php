@@ -21,12 +21,13 @@ class ReturnBatchModal extends Component
     {
         $jobcard_list = [];
         if ($this->dispatch->jobcard() !== null) {
-            $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
-                ->where('status', 'Open')
-                ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
-                ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
-                ->get()
-                ->toArray();
+
+            // $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
+            //     ->where('status', 'Open')
+            //     ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
+            //     ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
+            //     ->get()
+            //     ->toArray();
         }
 
         if (count($jobcard_list) > 0) {

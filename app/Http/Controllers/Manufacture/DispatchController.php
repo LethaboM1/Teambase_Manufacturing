@@ -59,8 +59,7 @@ class DispatchController extends Controller
         if ($request->customer_dispatch == 0) {
             //check non-weight or weight
 
-
-            if ($dispatch->weight_in == '0') {
+            if ($dispatch->weight_in == 0) {
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
                     //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
@@ -123,9 +122,9 @@ class DispatchController extends Controller
             }
         }
 
-        if ($dispatch->weight_in == '0') {
+        if ($dispatch->weight_in == 0) {
             //$qty = $request->qty; Moved to Lines 2023-11-14
-            $dispatch_temperature = '0';
+            $dispatch_temperature = 0;
         } else {
             //$qty = $request->weight_out - $dispatch->weight_in; Moved To Lines 2023-11-14
             $dispatch_temperature = $request->dispatch_temp;
@@ -157,21 +156,22 @@ class DispatchController extends Controller
 
         //dd($request);
         if (!$error) {
-
             if ($request->customer_dispatch == 0) {
-                if ($dispatch->weight_in == '0') {
+
+                if ($dispatch->weight_in == 0) {
                     $form_fields = [
                         // "job_id" => $form_fields['job_id'],
                         //"manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'], Moved to Lines 2023-11-14
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
-                        'weight_out' => '0',
+                        'weight_out' => 0,
                         'weight_out_datetime' => date("Y-m-d\TH:i"),
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $request->qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
                     ];
                 } else {
+
                     $form_fields = [
                         // "job_id" => $form_fields['job_id'],
                         //"manufacture_jobcard_product_id" => $form_fields['manufacture_jobcard_product_id'], Moved to Lines 2023-11-14
@@ -881,9 +881,10 @@ class DispatchController extends Controller
                 <br>
                 <table style=\"width: 750px; border-collapse: collapse; table-layout: fixed;\">
                     <tr>";
-        if ($dispatch->customer_id == '0') {
+        if ($dispatch->customer_id == 0) {
             //Jobcard Dispatch
-            $pdf .= "<td style=\"width: 50%; padding:5px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>" . ($dispatch->jobcard()->customer() ? "Customer" : "Contractor") . ":</strong> " . ($dispatch->jobcard()->customer() ? ucfirst($dispatch->jobcard()->customer()->name) : $dispatch->jobcard()->contractor) . "</td>
+            // dd($dispatch->jobcard());
+            $pdf .= "<td style=\"width: 50%; padding:5px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Contractor:</strong> " . $dispatch->jobcard()->contractor . "</td>
                             <td style=\"width: 50%; padding:5px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Date:</strong> {$dispatch['created_at']}</td>
                         </tr>
                         <tr>

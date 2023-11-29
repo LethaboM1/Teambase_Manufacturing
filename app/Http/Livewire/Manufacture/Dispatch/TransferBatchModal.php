@@ -19,24 +19,24 @@ class TransferBatchModal extends Component
     {
         $this->dispatch = $dispatch;
         $this->job_id = 0;
-        if ($dispatch->customer_id == '0'){
+        if ($dispatch->customer_id == '0') {
             $this->customer_dispatch = 0;
         } else {
             $this->customer_dispatch = 1;
-        } 
+        }
     }
 
     function updatedJobId($value)
     {
         if ($value > 0) {
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
-            $this->delivery = $this->jobcard->delivery;            
+            $this->delivery = $this->jobcard->delivery;
             // dd($this->delivery);
         }
     }
 
     function updatedCustomerDispatch($value)
-    {        
+    {
         $this->customer_dispatch = $value;
         //dd($this->customer_dispatch);
     }
@@ -44,20 +44,20 @@ class TransferBatchModal extends Component
     public function render()
     {
         $jobcard_list = [];
-        if ($this->dispatch->jobcard() !== null) {
-            $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
-                ->where('status', 'Open')
-                ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
-                ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
-                ->get()
-                ->toArray();
-        } elseif ($this->dispatch->customer_product() !== null) {
-            $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
-                ->where('status', 'Open')                
-                ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->customer_product()->id)->get())
-                ->get()
-                ->toArray();
-        } 
+        // if ($this->dispatch->jobcard() !== null) {
+        //     $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
+        //         ->where('status', 'Open')
+        //         ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
+        //         ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
+        //         ->get()
+        //         ->toArray();
+        // } elseif ($this->dispatch->customer_product() !== null) {
+        //     $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
+        //         ->where('status', 'Open')                
+        //         ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->customer_product()->id)->get())
+        //         ->get()
+        //         ->toArray();
+        // } 
 
         if (count($jobcard_list) > 0) {
             array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
@@ -72,16 +72,16 @@ class TransferBatchModal extends Component
 
         //List Cash Customers for External Collection / Delivery
         $customer_list = [];
-        if($this->dispatch->customer_id !== '0'){
-                $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))
-                ->where('id', '<>' ,$this->dispatch->customer_id)
+        if ($this->dispatch->customer_id !== '0') {
+            $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))
+                ->where('id', '<>', $this->dispatch->customer_id)
                 ->get()
                 ->toArray();
-            } else {
-                $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))                
+        } else {
+            $customer_list = ManufactureCustomers::select('id as value', DB::raw("concat(account_number,' - ',name) as name"))
                 ->get()
-                ->toArray();    
-            }
+                ->toArray();
+        }
 
 
         if (count($customer_list) > 0) {

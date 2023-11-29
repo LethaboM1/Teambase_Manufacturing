@@ -13,4 +13,13 @@ class Plants extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        $term = "%" . $searchTerm . "%";
+        return $query->where('plant_number', 'like', $term)
+            ->orWhere('make', 'like', $term)
+            ->orWhere('model', 'like', $term)
+            ->orWhere('reg_number', 'like', $term);
+    }
 }
