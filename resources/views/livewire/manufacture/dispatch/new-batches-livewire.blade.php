@@ -41,10 +41,11 @@
                                                 <button class='btn btn-default modal-dismiss'>Cancel</button>
                                             </div>
                                         </div>
-                                    </footer>
+                                    </footer>                                    
                             </section>
                         </form>
                     </div>
+
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                         <li class="nav-item {{($tab=='loading'?'active':'')}}" role="presentation">
@@ -128,7 +129,7 @@
                                 </thead>
                                     @if($dispatches_archived->count()>0)
                                         @foreach($dispatches_archived as $dispatch)
-                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}"  :dispatch="$dispatch" {{--jobcard_list="{{$jobcard_list}}" delivery_zone_list="{{$delivery_zone_list}}" --}} dispatchaction="view">
+                                            <livewire:manufacture.dispatch.new-batch-line-livewire key="{{$dispatch->id}}_{{now()}}"  :dispatch="$dispatch" dispatchaction="view">
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -154,9 +155,20 @@
                         window.open('{{url("dispatches/print/".Session::get('print_dispatch'))}}','_blank');
                     </script>
 
-                    @endif
+                    @endif                    
 
                 </div> 
             </section>
         </div>
+        <script>
+            $(document).ready(
+                function (){
+                        livewire.on('closeModal', function($dispatch_id, $newdispatch_id){
+                        $('#closeModalBtn_'+$dispatch_id).click();
+                        window.open('{{url("dispatches/print")}}/'+$newdispatch_id, '_blank');                                    
+                        });                
+                }
+            );            
+        </script>
     </div>
+    

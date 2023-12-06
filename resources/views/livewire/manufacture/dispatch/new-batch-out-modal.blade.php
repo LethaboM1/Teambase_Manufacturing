@@ -112,7 +112,7 @@
                                             <th width="20%">Date</th>
                                             <th width="40%">Description</th>
                                             <th width="15%">Unit</th>
-                                            <th width="10%">Qty</th>
+                                            <th width="10%">Qty</th>                                            
                                             <th width="15%">Actions</th>
                                             <th>
                                                 @if ($add_extra_item_show == '0')
@@ -215,13 +215,7 @@
                                 @endif
 
                             </div>
-                            {{-- <div class="col-md-6"><label>Product</label><br>
-                                    @if ($customer_dispatch == 1)                
-                                        <h4>{{$dispatch->customer_product()->code}} {{$dispatch->customer_product()->description}}</h4>
-                                    @else
-                                        <h4>{{$dispatch->jobcard_product()->product()->code}} {{$dispatch->jobcard_product()->product()->description}}</h4>
-                                    @endif            
-                                </div> --}} {{-- Moved into Line Items 2023-11-10 --}}
+                            
                             <div class="col-md-6"><label>Delivery Zone</label><br>
                                 <h4>{{ $dispatch->delivery_zone }}</h4>
                             </div>
@@ -248,10 +242,86 @@
                                 <div class="col-md-6">
                                 </div>
                             @endif
-                            {{-- <div class="col-md-6">
-                                    <label>Qty</label><br>
-                                    <h4>{{$dispatch->qty}}</h4>
-                                </div> --}} {{-- Moved into Line Items 2023-11-10 --}}
+                            <hr>
+                            <div class="col-md-6"><label>Product</label><br>
+                                @if ($customer_dispatch == 1)                
+                                    <h4>{{$dispatch->customer_product()->code}} {{$dispatch->customer_product()->description}}</h4>
+                                @else                                 
+                                    <h4>{{$dispatch->jobcard_product()->product()->code}} {{$dispatch->jobcard_product()->product()->description}}</h4>
+                                @endif            
+                            </div>
+                            <div class="col-md-2">
+                                <label>Qty</label><br>
+                                <h4>{{$dispatch->qty}}</h4>
+                            </div>
+                            @if($dispatchaction=='view' && $dispatch->qty > '0')
+                                <div class="col-md-2">
+                                    <label></label><br>                                    
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label><br>
+                                    <a wire:click="startReturnItem('{{$dispatch->id}}')" class="btn btn-primary btn-sm" title="Return Item">
+                                        <i class="fas fa-rotate-left"></i>                    
+                                    </a>
+                                    @if($dispatch->job_id != '0')
+                                        <a wire:click="startTransferItem('{{$dispatch->id}}')" class="btn btn-primary btn-sm" title="Transfer Item">
+                                            <i class="fas fa-right-left"></i>                    
+                                        </a>
+                                    @endif
+                                </div>
+                            @elseif($dispatchaction=='returning')
+                                @if($dispatch->weight_out > 0)
+                                    <div class="col-md-2">
+                                        <label>Return Weight In</label><br>
+                                        <x-form.number name="dispatch_return_weight_in" step="0.001" value="{{$dispatch_return_weight_in}}" />
+                                        @error('dispatch_return_weight_in')
+                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
+                                        @enderror
+                                        @error('dispatch.qty')
+                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                @else
+                                    <div class="col-md-2">
+                                        <label>Adj Qty</label><br>
+                                        <x-form.number name="dispatch_adjust_qty" step="0.001" value="{{$dispatch_adjust_qty}}" />
+                                    </div>
+                                @endif
+                                <div class="col-md-2">
+                                    <label></label><br>
+                                    <a wire:click="confirmReturnItem('{{$dispatch->id}}')" class="btn btn-success btn-sm" title="Confirm Return">
+                                        <i class="fas fa-check"></i>                    
+                                    </a>
+                                    <a wire:click="cancelReturnItem('{{$dispatch->id}}')" class="btn btn-danger btn-sm" title="Cancel Return">
+                                        <i class="fas fa-ban"></i>                    
+                                    </a>
+                                </div>
+                            @elseif($dispatchaction=='transfering')
+                                <div class="col-md-2">                                    
+                                    <livewire:components.search-livewire name='transfer_job_id' label="To Job Card" :value="$transfer_job_id" />
+                                    @error('transfer_job_id')
+                                        <small class="text-danger"><strong>{{ $message }}</strong></small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label><br>
+                                    <a wire:click="confirmTransferItem('{{$dispatch->id}}')" class="btn btn-success btn-sm" title="Confirm Transfer">
+                                        <i class="fas fa-check"></i>                    
+                                    </a>
+                                    <a wire:click="cancelTransferItem('{{$dispatch->id}}')" class="btn btn-danger btn-sm" title="Cancel Transfer">
+                                        <i class="fas fa-ban"></i>                    
+                                    </a>
+                                </div>
+                            @endif
+                            {{-- @dd($return_item_success) --}}
+                            <div class='col-md-10'><br></div>
+                            @if ($return_item_success == true)                                
+                                <div class='alert alert-success alert-dismissible fade show' role='alert' id='alertReturn'>
+                                    <strong>Success!</strong>&nbsp;{{ $return_item_message }}
+                                    <button type='button' class='btn-close' data-bs-dismiss='alert'
+                                        aria-hidden='true' aria-label='Close'></button>
+                                </div>                                
+                            @endif
 
                             <div class='col-md-10'><br></div>
 
@@ -262,17 +332,25 @@
                                     <thead>
                                         <tr>
                                             <th width="20%">Date</th>
-                                            <th width="40%">Description</th>
-                                            <th width="15%">Unit</th>
+                                            <th width="31%">Description</th>
+                                            <th width="8%">Unit</th>
                                             <th width="10%">Qty</th>
-                                            <th width="15%">Actions</th>
+                                            <th width="15%"></th>
+                                            <th width="16%">Actions</th>
                                         </tr>
                                     </thead>
 
                                     @if (count($extra_items) > 0)
+                                    @if ($return_extraitem_success == true)                                
+                                        <div class='alert alert-success alert-dismissible fade show' role='alert' id='alertReturn'>
+                                            <strong>Success!</strong>&nbsp;{{ $return_extraitem_message }}
+                                            <button type='button' class='btn-close' data-bs-dismiss='alert'
+                                                aria-hidden='true' aria-label='Close'></button>
+                                        </div>                                
+                                    @endif
                                         @foreach ($extra_items as $extra_item)
                                             <livewire:manufacture.dispatch.new-batch-out-extra-items-livewire
-                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction" />
+                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction"/>
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -339,11 +417,11 @@
                     @else
                         <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}") }}"
                             class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>
-                        <button class='btn btn-primary modal-dismiss'>Close</button>
+                        <button class='btn btn-primary modal-dismiss' id='closeModalBtn_{{$dispatch->id}}'>Close</button>
                     @endif
 
                 </div>
             </div>
         </footer>
-    </section>
+    </section>   
 </form>

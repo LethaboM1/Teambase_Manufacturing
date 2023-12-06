@@ -1,4 +1,5 @@
-<div class="row">                                    
+{{-- Original Return Single Item --}} {{-- Obsolete - Returns / Transfer on Batch Out Modal on line item level 2023-12-05 --}}
+{{-- <div class="row">                                    
     @if($dispatch->plant_id>0)  
         <div class="col-md-6">
             <label>Plant</label><br><h4>{{$dispatch->plant()->plant_number}}</h4>
@@ -25,64 +26,14 @@
                                                                                 
     <div class="col-md-6">
         <label>Product</label><br>
-        {{-- @dd($dispatch->customer_id) --}}
+        
         @if ($dispatch->customer_id == '0')            
             <h4>{{($dispatch->product()!==null?$dispatch->product()->description:"")}}</h4>
         @else
             <h4>{{($dispatch->customer_product()!==null?$dispatch->customer_product()->description:"")}}</h4>    
         @endif
     </div>
-           
-        {{-- <div class="col-md-6">
-            <x-form.datetime wire=0 name="weight_in_datetime" label="Date/Time" value={{$weight_in_datetime}}/>
-        </div> 
-        Dates added on post now 2023-09-14
-        --}}
 
-    <hr>
+    <hr>        
         
-        {{-- <div class="col-md-6">                                            
-            <label>Weight Out Date time</label><br>
-            <h4>{{$dispatch->weight_out_datetime}}</h4>
-        </div>
-        <div class="col-md-6">                                            
-            <label>Weight Out</label><br>
-            <h4>{{$dispatch->weight_out}}</h4>
-        </div>
-        <div class="col-md-6">
-            <label>Dispatch Temperature</label><br>
-            <h4>{{$dispatch->dispatch_temp}}</h4>
-        </div> 
-        <div class="col-md-6">
-            <label>Qty</label><br>
-            <h4>{{$dispatch->qty}}</h4>
-        </div> 
-        Not Required on Returns
-        --}}
-
-        {{-- @if ($dispatchaction == "returning")                                           
-
-            <div class="col-md-4">
-                <x-form.datetime wire=0 name="weight_out_datetime" label="Date/Time" value={{$weight_out_datetime}} />
-            </div>
-            <div class="col-md-4">
-                <x-form.number wire=0 name="weight_out" label="Weight Out" step="0.001" value={{$weight_out}}/>
-            </div>
-                                            
-        @else
-            <div class="col-md-6">                                            
-                <label>Weight Out Date time</label><br>
-                <h4>{{$dispatch->weight_out_datetime}}</h4>
-            </div>
-            <div class="col-md-6">                                            
-                <label>Weight Out</label><br>
-                <h4>{{$dispatch->weight_out}}</h4>
-            </div>
-            <div class="col-md-6">
-                <label>Qty</label><br>
-                <h4>{{$dispatch->qty}}</h4>
-            </div>                                      
-        @endif 
-        Removed 2023-09-14 -> Returns are now one step process
-        --}}
-</div>    
+</div>     --}}

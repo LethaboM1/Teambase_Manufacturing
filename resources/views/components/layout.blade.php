@@ -53,6 +53,7 @@
 
 		<!-- Head Libs -->
 		<script src="{{url('vendor/modernizr/modernizr.js')}}"></script>
+		<script src="{{url('vendor/jquery/jquery.js')}}"></script>
 
 	</head>
 
@@ -174,7 +175,7 @@
 		<!-- end: page -->
 	
 <!-- Vendor -->
-<script src="{{url('vendor/jquery/jquery.js')}}"></script>
+{{-- <script src="{{url('vendor/jquery/jquery.js')}}"></script> --}}
 <script src="{{url('vendor/jquery-browser-mobile/jquery.browser.mobile.js')}}"></script>
 <script src="{{url('vendor/popper/umd/popper.min.js')}}"></script>	
 <script src="{{url('vendor/bootstrap/js/bootstrap.js')}}"></script>

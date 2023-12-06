@@ -6,39 +6,44 @@ use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureJobcards;
 use App\Models\ManufactureJobcardProducts;
+use App\Models\ManufactureProductTransactions;
 
 class ReturnBatchModal extends Component
 {
-    public $dispatch, $weight_in;
+    /* public $dispatch, $weight_in, $dispatchaction, $extraitems, $customer_dispatch;
 
-    function mount($dispatch)
+    function mount($dispatch, $dispatchaction)
     {
         $this->dispatch = $dispatch;
-        $this->weight_in = 0;
+        $this->dispatchaction = $dispatchaction;
+
+        if ($dispatch->customer_id == '0') {
+            $this->customer_dispatch = 0;
+        } else {
+            $this->customer_dispatch = 1;
+        }
     }
 
     public function render()
-    {
-        $jobcard_list = [];
-        if ($this->dispatch->jobcard() !== null) {
-
-            // $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',contractor,', ',contact_person) as name"))
-            //     ->where('status', 'Open')
-            //     ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
-            //     ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
-            //     ->get()
-            //     ->toArray();
-        }
-
-        if (count($jobcard_list) > 0) {
-            array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
-        } else {
-            $jobcard_list = [];
-            array_unshift($jobcard_list, ['value' => 0, 'name' => 'No Jobcards found...']);
-        }
+    {   
+        
+        $extra_items = [];
+        $extra_items = ManufactureProductTransactions::select(
+            'id',
+            'dispatch_id',
+            'weight_in_datetime as the_date',
+            'weight_out',
+            DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_description'),
+            DB::raw('(select unit_measure from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as the_unit'),
+            'qty as the_qty'
+        )
+            ->where('dispatch_id', $this->dispatch->id)
+            ->get()
+            ->toArray();
 
         return view('livewire.manufacture.dispatch.return-batch-modal', [
-            'jobcard_list' => $jobcard_list
-        ]);
-    }
+            'customer_dispatch' => $this->customer_dispatch,
+            'extra_items' => $extra_items,
+        ]); 
+    } */ /* Obsolete - Returns / Transfer on Batch Out Modal on line item level 2023-12-05 */
 }

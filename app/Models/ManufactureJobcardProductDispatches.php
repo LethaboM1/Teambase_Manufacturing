@@ -17,7 +17,7 @@ class ManufactureJobcardProductDispatches extends Model
 
     function jobcard_product()
     {
-        //return $this->hasOne(ManufactureJobcardProducts::class, 'id', 'manufacture_jobcard_product_id')->first(); Moved to Transactions 2023-11-10
+        return $this->hasOne(ManufactureJobcardProducts::class, 'id', 'manufacture_jobcard_product_id')->first();
     }
 
     function plant()
@@ -89,10 +89,9 @@ class ManufactureJobcardProductDispatches extends Model
     {
         if ($this->transactions() !== null) {
             return $this->transactions()->customer_product();
-        }
-        /*  if ($this->product_id !== null) {
+        } elseif ($this->product_id !== null) {
             return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
-        } */ //Obsolete 2023-11-15
+        }
     }
 
     function transactions()

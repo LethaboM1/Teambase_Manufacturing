@@ -1,6 +1,8 @@
 <div>
     <div class="mb-1">
-        <label class="form-label col-form-label">{{ $label }}</label>
+        @if ($label)
+            <label class="form-label col-form-label">{{ $label }}</label>    
+        @endif
         <input onClick="this.select();" type="text" class="form-control" name="search" wire:model="search"
             placeholder="{{ $search_name }}" wire:focus="$set('hide',false)" wire:focusout="$set('hide',true)" />
         <input type="hidden" name="{{ $name }}" value="{{ $value }}" autocomplete="off" />
@@ -13,7 +15,7 @@
             </div>
         </div>
         <span class="dropdown-content">
-            <div>
+            <div>                
                 @foreach ($list as $item_)
                     <a class="pointer" wire:click='$set("value",{{ $item_['value'] }})'>{{ $item_['name'] }}
                     </a>

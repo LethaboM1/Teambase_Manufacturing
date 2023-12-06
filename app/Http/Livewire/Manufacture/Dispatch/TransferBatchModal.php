@@ -12,7 +12,7 @@ use App\Models\ManufactureJobcardProducts;
 
 class TransferBatchModal extends Component
 {
-    public $dispatch, $delivery, $job_id, $jobcard, $delivery_zone;
+    /* public $dispatch, $delivery, $job_id, $jobcard, $delivery_zone;
     public $customer_id, $customer_dispatch;
 
     function mount($dispatch)
@@ -31,33 +31,19 @@ class TransferBatchModal extends Component
         if ($value > 0) {
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
-            // dd($this->delivery);
+            
         }
     }
 
     function updatedCustomerDispatch($value)
     {
         $this->customer_dispatch = $value;
-        //dd($this->customer_dispatch);
+        
     }
 
     public function render()
     {
-        $jobcard_list = [];
-        // if ($this->dispatch->jobcard() !== null) {
-        //     $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
-        //         ->where('status', 'Open')
-        //         ->where('jobcard_number', '<>', $this->dispatch->jobcard()->jobcard_number)
-        //         ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->product()->id)->get())
-        //         ->get()
-        //         ->toArray();
-        // } elseif ($this->dispatch->customer_product() !== null) {
-        //     $jobcard_list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' ',IFNULL(contractor,''),', ',IFNULL(contact_person,'')) as name"))
-        //         ->where('status', 'Open')                
-        //         ->whereIn('id', ManufactureJobcardProducts::select('job_id')->where('product_id', $this->dispatch->customer_product()->id)->get())
-        //         ->get()
-        //         ->toArray();
-        // } 
+        $jobcard_list = [];         
 
         if (count($jobcard_list) > 0) {
             array_unshift($jobcard_list, ['value' => 0, 'name' => 'Select']);
@@ -100,5 +86,5 @@ class TransferBatchModal extends Component
             'customer_dispatch' => $this->customer_dispatch
 
         ]);
-    }
+    } */ /* Obsolete - Returns / Transfer on Batch Out Modal on line item level 2023-12-05 */
 }

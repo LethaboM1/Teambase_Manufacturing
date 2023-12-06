@@ -11,7 +11,7 @@ class NewBatchLineLivewire extends Component
 
     function mount($dispatch)
     {
-        $this->dispatch = $dispatch;
+        $this->dispatch = $dispatch;       
     }
 
 

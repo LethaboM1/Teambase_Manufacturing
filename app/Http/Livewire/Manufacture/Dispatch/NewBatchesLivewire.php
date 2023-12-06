@@ -15,7 +15,7 @@ class NewBatchesLivewire extends Component
     public $tab, $search, $search_arc, $search_receive_goods;
 
     protected $listeners = [
-        'refreshNewDispatch'
+        'refreshNewDispatch', 'refreshArchiveDispatch'
     ], $paginationTheme = 'bootstrap';
 
     function mount()
@@ -27,17 +27,17 @@ class NewBatchesLivewire extends Component
         } else {
             $this->tab = 'loading';
         }
-    }
-
-    /* function updatedSearch()
-    {
-        $this->resetPage();
-    } */
-    //2023-09-01 - removed to allow for Tab Navs
+    }    
 
     function refreshNewDispatch()
     {
         $this->resetPage();
+    }
+
+    function refreshArchiveDispatch()
+    {
+        $this->resetPage();
+        $this->tab = 'archive';
     }
 
     function updatedSearchArc()
@@ -59,17 +59,8 @@ class NewBatchesLivewire extends Component
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term);
-                // ->orWhere('haulier_code', 'like', $term);
-            })->paginate(15, ['*'], 'loading');
-
-        /* $product_transactions = ManufactureProductTransactions::where('type', 'REC')->where('status', 'Pending')
-            ->when($this->search_receive_goods, function ($query, $term) {
-                $term = "%{$term}%";
-                $query->where('reference_number', 'LIKE', $term)
-                    ->orWhere('registration_number', 'LIKE', $term);
-            })
-            ->paginate(15, ['*'], 'received'); */ //Moved to Receiving List
+                    ->orWhere('reference', 'like', $term);                
+            })->paginate(15, ['*'], 'loading');        
 
         $dispatches_archived = ManufactureJobcardProductDispatches::where('status', '!=', 'Loading')
             ->when($this->search_arc, function ($query, $term) {
