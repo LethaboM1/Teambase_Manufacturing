@@ -245,7 +245,9 @@
                             <hr>
                             <div class="col-md-6"><label>Product</label><br>
                                 @if ($customer_dispatch == 1)                
+                                @if($dispatch->customer_product())    
                                     <h4>{{$dispatch->customer_product()->code}} {{$dispatch->customer_product()->description}}</h4>
+                                @endif
                                 @else
                                     @if($dispatch->jobcard_product())                                 
                                         <h4>{{$dispatch->jobcard_product()->product()->code}} {{$dispatch->jobcard_product()->product()->description}}</h4>
