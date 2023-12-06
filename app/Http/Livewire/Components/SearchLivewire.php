@@ -75,7 +75,7 @@ class SearchLivewire extends Component
                 break;
 
 
-            case 'job_id'/*  || 'transfer_job_id' */:
+            case 'job_id':
                 $this->list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' - ',IFNULL(contractor,'')) as name"))
                     ->where('status', 'Open')
                     ->when($this->search, function ($query) {

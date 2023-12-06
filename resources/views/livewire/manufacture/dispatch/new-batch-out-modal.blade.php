@@ -246,8 +246,10 @@
                             <div class="col-md-6"><label>Product</label><br>
                                 @if ($customer_dispatch == 1)                
                                     <h4>{{$dispatch->customer_product()->code}} {{$dispatch->customer_product()->description}}</h4>
-                                @else                                 
-                                    <h4>{{$dispatch->jobcard_product()->product()->code}} {{$dispatch->jobcard_product()->product()->description}}</h4>
+                                @else
+                                    @if($dispatch->jobcard_product())                                 
+                                        <h4>{{$dispatch->jobcard_product()->product()->code}} {{$dispatch->jobcard_product()->product()->description}}</h4>
+                                    @endif
                                 @endif            
                             </div>
                             <div class="col-md-2">
