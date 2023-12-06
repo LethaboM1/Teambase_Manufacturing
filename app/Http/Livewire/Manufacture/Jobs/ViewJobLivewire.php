@@ -24,7 +24,7 @@ class ViewJobLivewire extends Component
         unset($this->jobcard['updated_at']);
         unset($this->jobcard['created_at']);
 
-        $this->product_list = ManufactureProducts::select(DB::raw("concat(code,' - ',description) as name, id as value"))->where('active', 1)->orderBy('code','asc')->get()->toArray();
+        $this->product_list = ManufactureProducts::select(DB::raw("concat(code,' - ',description) as name, id as value"))->where('active', 1)->orderBy('code', 'asc')->get()->toArray();
         array_unshift($this->product_list, ['name' => '...', 'value' => 0]);
 
         $this->unit_measure = '';
@@ -49,7 +49,7 @@ class ViewJobLivewire extends Component
 
     function save_jobcard()
     {
-        dd($this->jobcard);
+        // dd($this->jobcard);
         ManufactureJobcards::where('id', $this->jobcard['id'])->update($this->jobcard);
         $this->edit = 0;
     }

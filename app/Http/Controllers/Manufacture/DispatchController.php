@@ -87,9 +87,8 @@ class DispatchController extends Controller
 
             /*$product_qty = $jobcard->qty_due; */ //Moved to Lines 2023-11-14 
 
-
-
-
+            $job = ManufactureJobcards::select('delivery_address')->where('id', $form_fields['job_id'])->first();
+            $form_fields['delivery_address'] = $job->delivery_address;
         } elseif ($request->customer_dispatch == 1) {
             //check non-weight or weight
             if ($dispatch->weight_in == '0') {
@@ -112,6 +111,9 @@ class DispatchController extends Controller
                 ]);
                 // $product_qty = $request->weight_out - $dispatch->weight_in; Moved to Lines 2023-11-14
             }
+
+            $customer = ManufactureCustomers::select('address')->where('id', $form_fields['job_id']);
+            $form_fields['delivery_address'] = $customer->address;
         }
 
         if ($dispatch->weight_in == 0) {
@@ -347,8 +349,8 @@ class DispatchController extends Controller
                             <td style=\"width: 50%; padding:5px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Date:</strong> {$dispatch['created_at']}</td>
                         </tr>
                         <tr>
-                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Address:</strong> {$dispatch->delivery_address} </td>
-                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Job Card:</strong>{$dispatch->jobcard()->jobcard_number}</td>
+                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Address:</strong> " . (strlen($dispatch->delivery_address) > 0 ? $dispatch->delivery_address : $dispatch->jobcard()->delivery_address) . "</td>
+                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Site Number:</strong>{$dispatch->jobcard()->site_number}</td>
                         </tr> ";
         } else {
             //Customer Dispatch
@@ -356,8 +358,8 @@ class DispatchController extends Controller
                             <td style=\"width: 50%; padding:5px; font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none; padding-left: 5px; padding-top: 5px;\"><strong>Date:</strong> {$dispatch['created_at']}</td>
                         </tr>
                         <tr>
-                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Address:</strong> {$dispatch->delivery_address} </td>
-                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Job Card:</strong> Not Applicable </td>
+                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Address:</strong> " . (strlen($dispatch->delivery_address) > 0 ? $dispatch->delivery_address : $dispatch->customer()->address) . " </td>
+                            <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Site Number:</strong> Not Applicable </td>
                         </tr> ";
         }
         $pdf .= "<tr>
@@ -366,7 +368,9 @@ class DispatchController extends Controller
                     </tr>
                     <tr>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Dispatch Temp:</strong>" . ($dispatch->dispatch_temp !== null ? "{$dispatch->dispatch_temp} C" : "N/A") . "</td>
-                        <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"></td>
+                        <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\">
+                            " . ($dispatch->plant_id > 0 ? "<strong>Plant Number:</strong>" . $dispatch->plant()->plant_number . ", Reg:" . $dispatch->plant()->reg_number : $dispatch->registration_number) . "
+                        </td>
                     </tr>
                     <tr>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed In by:</strong>" . ($dispatch->weigh_in_user() !== NULL ? "{$dispatch->weigh_in_user()->name} {$dispatch->weigh_in_user()->last_name}" : "") . "</td>
