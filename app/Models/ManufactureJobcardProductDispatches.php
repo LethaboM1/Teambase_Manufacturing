@@ -89,9 +89,9 @@ class ManufactureJobcardProductDispatches extends Model
     {
         if ($this->transactions() !== null) {
             return $this->transactions()->customer_product();
-        } elseif ($this->product_id !== null) {
+        } /* elseif ($this->product_id !== null) {
             return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
-        }
+        } */
     }
 
     function transactions()
