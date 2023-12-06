@@ -95,7 +95,7 @@ class DispatchController extends Controller
 
             /*$product_qty = $jobcard->qty_due; */ //Moved to Lines 2023-11-14 
 
-            $job = ManufactureJobcards::select('delivery_address')->where('id', $form_fields['job_id']);
+            $job = ManufactureJobcards::select('delivery_address')->where('id', $form_fields['job_id'])->first();
             $form_fields['delivery_address'] = $job->delivery_address;
         } elseif ($request->customer_dispatch == 1) {
             //check non-weight or weight
