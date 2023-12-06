@@ -84,6 +84,7 @@ class SearchLivewire extends Component
 
                 if ($this->value > 0) {
                     $result = ManufactureJobcards::where('id', $this->value)->first();
+                    dd('value:'.$this->value.' result:'.$result);
                     $this->search_name = "{$result['jobcard_number']} - {$result['contractor']}";                    
                 }
                 
