@@ -47,7 +47,7 @@ class ManufactureProducts extends Model
     {
         $qty_batch = $this->batches()->sum('qty');
         $qty = $this->transactions()->sum('qty');
-        $qty_dispatches = $this->batches()->sum('qty');
+        $qty_dispatches = $this->dispatches()->sum('qty');
 
         $qty_dispatches = (!is_numeric($qty_dispatches) ? 0 : $qty_dispatches);
         $qty_batch = (!is_numeric($qty_batch) ? 0 : $qty_batch);
