@@ -46,7 +46,7 @@ class DispatchController extends Controller
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
 
-        $error = false;        
+        $error = false;
 
         if ($request->customer_dispatch == 0) {
             //check non-weight or weight
@@ -128,7 +128,7 @@ class DispatchController extends Controller
         if ($dispatch_temperature < 0 || $dispatch_temperature == '') {
             $error = true;
             return back()->with('alertError', 'Cannot Complete Dispatch. Dispatch Temperature cannot be blank.');
-        }       
+        }
 
         //dd($request);
         if (!$error) {
@@ -196,7 +196,7 @@ class DispatchController extends Controller
 
             $form_fields = ['status' => 'Dispatched'];
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
-            
+
 
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);
         }
@@ -381,8 +381,12 @@ class DispatchController extends Controller
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none;border-bottom: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out date:</strong> {$dispatch->weight_out_datetime} </td>
                     </tr>
                     <tr>
-                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed In:</strong> {$dispatch->weight_in} </td>
-                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out:</strong> {$dispatch->weight_out} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed In:</strong> {$dispatch->weight_in} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none;border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out:</strong> {$dispatch->weight_out} </td>
+                    </tr>
+                    <tr>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Nett Weight:</strong> {$dispatch->qty} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"></td>
                     </tr>
                 </table>
                 <br><br>
