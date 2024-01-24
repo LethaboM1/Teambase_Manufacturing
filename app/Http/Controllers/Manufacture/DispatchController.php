@@ -48,8 +48,14 @@ class DispatchController extends Controller
 
         $error = false;
 
+        if ($dispatch->weight_in > 0) {
+            if ($dispatch->weight_in > $request->weight_out) return back()->with('alertError', 'your weight is lower than when weighed in.');
+        }
+
         if ($request->customer_dispatch == 0) {
             //check non-weight or weight
+
+
 
             if ($dispatch->weight_in == 0) {
                 $form_fields = $request->validate([
@@ -66,7 +72,7 @@ class DispatchController extends Controller
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
                     'dispatch_temp' => 'required|gt:-1',
-                    'weight_in' => 'required:gt:0'
+                    // 'weight_in' => 'required:gt:0'
                 ]);
             }
 
@@ -112,7 +118,7 @@ class DispatchController extends Controller
                 // $product_qty = $request->weight_out - $dispatch->weight_in; Moved to Lines 2023-11-14
             }
 
-            $customer = ManufactureCustomers::select('address')->where('id', $form_fields['job_id']);
+            $customer = ManufactureCustomers::select('address')->where('id', $form_fields['customer_id'])->first();
             $form_fields['delivery_address'] = $customer->address;
         }
 
