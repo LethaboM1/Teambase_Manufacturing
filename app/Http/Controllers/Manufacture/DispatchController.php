@@ -216,7 +216,9 @@ class DispatchController extends Controller
             "registration_number" => 'nullable',
         ]);
 
-        if (!isset($form_fields['registration_number']) && $form_fields['plant_id'] == 0) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
+        if (!isset($form_fields['registration_number']) && !isset($form_fields['plant_id'])) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
+
+        if (isset($form_fields['registration_number']) && $form_fields['registration_number'] == '')  return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
 
         if (isset($form_fields['registration_number'])) {
             $plant = $form_fields['registration_number'];
