@@ -60,6 +60,7 @@ class DispatchController extends Controller
             if ($dispatch->weight_in == 0) {
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
+                    "weight_out_datetime" => "date",
                     //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -68,6 +69,7 @@ class DispatchController extends Controller
             } else {
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
+                    "weight_out_datetime" => "date",
                     //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -100,6 +102,7 @@ class DispatchController extends Controller
             if ($dispatch->weight_in == '0') {
                 $form_fields = $request->validate([
                     "customer_id" => "required|exists:manufacture_customers,id",
+                    "weight_out_datetime" => "date",
                     //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -109,6 +112,7 @@ class DispatchController extends Controller
             } else {
                 $form_fields = $request->validate([
                     "customer_id" => "required|exists:manufacture_customers,id",
+                    "weight_out_datetime" => "date",
                     //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -147,7 +151,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => 0,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $request->qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -160,7 +164,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => $request->weight_out,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -175,7 +179,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => '0',
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $request->qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -188,7 +192,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => $request->weight_out,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -212,6 +216,7 @@ class DispatchController extends Controller
     {
         $form_fields = $request->validate([
             "weight_in" => 'gt:0',
+            'weight_in_datetime' => 'date',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
         ]);
@@ -232,7 +237,7 @@ class DispatchController extends Controller
         $form_fields['status'] = 'Loading';
 
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
-        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
+        $form_fields['weight_in_datetime'] = $form_fields['weight_in_datetime']; //date("Y-m-d\TH:i");
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
         unset($form_fields['job_id']);

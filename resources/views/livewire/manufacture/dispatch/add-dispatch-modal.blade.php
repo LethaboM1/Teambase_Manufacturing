@@ -9,6 +9,10 @@
     <div class="col-md-6">
         <x-form.number name="weight_in" label="Weight In" step="0.001" />
     </div>
+
+    <div class="col-md-6">
+        <x-form.datetime name="weight_in_datetime" label="Date/Time" />
+    </div>
     {{-- @else
         <div class="col-md-6">
             <x-form.hidden name="weighed_dispatch" value={{$weighed_dispatch}}/>

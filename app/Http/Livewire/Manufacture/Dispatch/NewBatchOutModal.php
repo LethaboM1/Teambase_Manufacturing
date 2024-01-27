@@ -321,6 +321,7 @@ class NewBatchOutModal extends Component
 
         $this->validate([
             'dispatch_return_weight_in' => 'lte:dispatch.weight_out|gt:dispatch.weight_in',
+            'weight_out_datetime' => 'date'
         ]);
 
         //Compare what was dispatched with what is being returned

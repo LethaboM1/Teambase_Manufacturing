@@ -63,6 +63,9 @@
                                 </div>
                             </form>
                             <div class="col-md-6">
+                                <x-form.datetime name="weight_out_datetime" label="Date/Time" />
+                            </div>
+                            <div class="col-md-6">
                                 <x-form.input name="reference" label="Reference" />
                             </div>
                             <div class="col-md-6">
