@@ -66,20 +66,23 @@
                  <!-- Nav tabs -->
                  <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                      <li class="nav-item {{ $tab == 'all' ? 'active' : '' }}" role="presentation">
-                         <button class="nav-link {{ $tab == 'all' ? 'active' : '' }}" id="all-tab" data-bs-toggle="tab"
-                             data-bs-target="#all" type="button" role="tab" aria-controls="all"
-                             aria-selected="{{ $tab == 'all' ? 'true' : 'false' }}">All Products</button>
+                         <button class="nav-link {{ $tab == 'all' ? 'active' : '' }}" id="all-tab"
+                             data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab"
+                             aria-controls="all" aria-selected="{{ $tab == 'all' ? 'true' : 'false' }}">All
+                             Products</button>
                      </li>
                      <li class="nav-item {{ $tab == 'recipe' ? 'active' : '' }}" role="presentation">
                          <button class="nav-link {{ $tab == 'recipe' ? 'active' : '' }}" id="recipe-tab"
                              data-bs-toggle="tab" data-bs-target="#recipe" type="button" role="tab"
-                             aria-controls="recipe" aria-selected="{{ $tab == 'recipe' ? 'true' : 'false' }}">Products with
+                             aria-controls="recipe" aria-selected="{{ $tab == 'recipe' ? 'true' : 'false' }}">Products
+                             with
                              Recipes</button>
                      </li>
                      <li class="nav-item {{ $tab == 'raw' ? 'active' : '' }}" role="presentation">
-                         <button class="nav-link {{ $tab == 'raw' ? 'active' : '' }}" id="raw-tab" data-bs-toggle="tab"
-                             data-bs-target="#raw" type="button" role="tab" aria-controls="raw"
-                             aria-selected="{{ $tab == 'raw' ? 'true' : 'false' }}">Raw Material Products</button>
+                         <button class="nav-link {{ $tab == 'raw' ? 'active' : '' }}" id="raw-tab"
+                             data-bs-toggle="tab" data-bs-target="#raw" type="button" role="tab"
+                             aria-controls="raw" aria-selected="{{ $tab == 'raw' ? 'true' : 'false' }}">Raw Material
+                             Products</button>
                      </li>
                  </ul>
 
@@ -111,6 +114,11 @@
                                  @foreach ($products_list as $product)
                                      <x-manufacture.products.item :item="$product" />
                                  @endforeach
+                                 <script>
+                                     setTimeout(function() {
+                                         $.getScript('{{ url('js/examples/examples.modals.js') }}');
+                                     }, 500);
+                                 </script>
                              @else
                                  <tr>
                                      <td colspan="5">No products..</td>
@@ -145,6 +153,11 @@
                                  @foreach ($products_recipe_list as $product)
                                      <x-manufacture.products.item :item="$product" />
                                  @endforeach
+                                 <script>
+                                     setTimeout(function() {
+                                         $.getScript('{{ url('js/examples/examples.modals.js') }}');
+                                     }, 500);
+                                 </script>
                              @else
                                  <tr>
                                      <td colspan="5">No products..</td>
