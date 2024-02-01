@@ -4,10 +4,14 @@ namespace App\Http\Livewire\Manufacture\Customers;
 
 use App\Models\ManufactureCustomers;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ViewLivewire extends Component
 {
+    use WithPagination;
+
     public $search;
+    protected $paginationTheme = 'bootstrap';
 
     public function render()
     {
