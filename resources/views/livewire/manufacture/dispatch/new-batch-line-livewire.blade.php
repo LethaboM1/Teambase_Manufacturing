@@ -1,29 +1,35 @@
 <tr class="pointer">
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->created_at}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->dispatch_number}}</td>
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->jobcard()!==null?$dispatch->jobcard()->jobcard_number:"")}}</td>
-    @if($dispatch->status!=="Loading")
-    
-        @if($dispatch->jobcard()!==null)        
-            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->jobcard()->contractor}}</td>
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->weight_in_datetime }}</td>
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->dispatch_number }}</td>
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">
+        {{ $dispatch->jobcard() !== null ? $dispatch->jobcard()->jobcard_number : '' }}</td>
+    @if ($dispatch->status !== 'Loading')
+
+        @if ($dispatch->jobcard() !== null)
+            <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->jobcard()->contractor }}</td>
         @else
-            <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->customer()!== null ? $dispatch->customer()->name:'None'}}</td>    
-        @endif        
+            <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">
+                {{ $dispatch->customer() !== null ? $dispatch->customer()->name : 'None' }}</td>
+        @endif
     @else
-        <td onclick="$('#edit_btn_{{$dispatch->id}}').click()"></td>
-    @endif    
-    
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{($dispatch->plant()!==null?"{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}":$dispatch->registration_number)}}</td>    
-        
-    <td onclick="$('#edit_btn_{{$dispatch->id}}').click()">{{$dispatch->status}}</td>
+        <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()"></td>
+    @endif
+
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">
+        {{ $dispatch->plant() !== null ? "{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}" : $dispatch->registration_number }}
+    </td>
+
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->status }}</td>
     <td style="width:100px">
-        @if ($dispatchaction == "new")
-            <a id="edit_btn_{{$dispatch->id}}" href="#editDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic" title="Process Loading Dispatch">
+        @if ($dispatchaction == 'new')
+            <a id="edit_btn_{{ $dispatch->id }}" href="#editDispatch_{{ $dispatch->id }}"
+                class="btn btn-primary btn-sm modal-basic" title="Process Loading Dispatch">
                 <i class="fas fa-edit"></i>
             </a>
         @else
-            <a id="edit_btn_{{$dispatch->id}}" href="#editDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic" title="View Archived Dispatch">
-                <i class="fas fa-eye"></i>                    
+            <a id="edit_btn_{{ $dispatch->id }}" href="#editDispatch_{{ $dispatch->id }}"
+                class="btn btn-primary btn-sm modal-basic" title="View Archived Dispatch">
+                <i class="fas fa-eye"></i>
             </a>
             {{-- @if ($dispatch->qty !== '0.000')
                 <a id="return_btn_{{$dispatch->id}}" href="#returnDispatch_{{$dispatch->id}}" class="btn btn-primary btn-sm modal-basic" title="Return Product on this Dispatch">
@@ -33,17 +39,17 @@
                     <i class="fas fa-right-left"></i>                    
                 </a>
             @endif --}} {{-- Moved to Lines Level 2023-12-01 --}}
-        @endif             
-         <div id='editDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>                       
+        @endif
+        <div id='editDispatch_{{ $dispatch->id }}' class='modal-block modal-block-lg mfp-hide'>
             <livewire:manufacture.dispatch.new-batch-out-modal :dispatch="$dispatch" :dispatchaction="$dispatchaction">
                 {{-- Refresh listeners on Modals --}}
                 <script>
                     setTimeout(function() {
                         $.getScript('{{ url('js/examples/examples.modals.js') }}');
                     }, 500);
-                </script>                
+                </script>
         </div>
-        
+
         {{-- <div id='returnDispatch_{{$dispatch->id}}' class='modal-block modal-block-lg mfp-hide'>           
             <livewire:manufacture.dispatch.return-batch-modal :dispatch="$dispatch" :dispatchaction="$dispatchaction"/>
         </div> --}} {{-- Obsolete - Returns / Transfer on Batch Out Modal on line item level 2023-12-05 --}}
@@ -73,7 +79,7 @@
                 </section>
             </form>
         </div> --}} {{-- Obsolete - Returns / Transfer on Batch Out Modal on line item level 2023-12-05 --}}
-        
-    
+
+
     </td>
 </tr>

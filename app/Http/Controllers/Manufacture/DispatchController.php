@@ -47,14 +47,21 @@ class DispatchController extends Controller
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
 
-        $error = false;        
+        $error = false;
+
+        if ($dispatch->weight_in > 0) {
+            if ($dispatch->weight_in > $request->weight_out) return back()->with('alertError', 'your weight is lower than when weighed in.');
+        }
 
         if ($request->customer_dispatch == 0) {
             //check non-weight or weight
 
+
+
             if ($dispatch->weight_in == 0) {
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
+                    "weight_out_datetime" => "date",
                     //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -63,11 +70,12 @@ class DispatchController extends Controller
             } else {
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
+                    "weight_out_datetime" => "date",
                     //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
                     'dispatch_temp' => 'required|gt:-1',
-                    'weight_in' => 'required:gt:0'
+                    // 'weight_in' => 'required:gt:0'
                 ]);
             }
 
@@ -95,6 +103,7 @@ class DispatchController extends Controller
             if ($dispatch->weight_in == '0') {
                 $form_fields = $request->validate([
                     "customer_id" => "required|exists:manufacture_customers,id",
+                    "weight_out_datetime" => "date",
                     //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -104,6 +113,7 @@ class DispatchController extends Controller
             } else {
                 $form_fields = $request->validate([
                     "customer_id" => "required|exists:manufacture_customers,id",
+                    "weight_out_datetime" => "date",
                     //"product_id" => "required|exists:manufacture_products,id", Moved to Lines 2023-11-14
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
@@ -113,7 +123,7 @@ class DispatchController extends Controller
                 // $product_qty = $request->weight_out - $dispatch->weight_in; Moved to Lines 2023-11-14
             }
 
-            $customer = ManufactureCustomers::select('address')->where('id', $form_fields['job_id']);
+            $customer = ManufactureCustomers::select('address')->where('id', $form_fields['customer_id'])->first();
             $form_fields['delivery_address'] = $customer->address;
         }
 
@@ -129,7 +139,7 @@ class DispatchController extends Controller
         if ($dispatch_temperature < 0 || $dispatch_temperature == '') {
             $error = true;
             return back()->with('alertError', 'Cannot Complete Dispatch. Dispatch Temperature cannot be blank.');
-        }       
+        }
 
         //dd($request);
         if (!$error) {
@@ -142,7 +152,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => 0,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $request->qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -155,7 +165,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => $request->weight_out,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -170,7 +180,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => '0',
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $request->qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -183,7 +193,7 @@ class DispatchController extends Controller
                         "reference" => ($form_fields['reference'] == null ? "" : $form_fields['reference']),
                         "delivery_zone" => $form_fields['delivery_zone'],
                         'weight_out' => $request->weight_out,
-                        'weight_out_datetime' => date("Y-m-d\TH:i"),
+                        'weight_out_datetime' => $form_fields['weight_out_datetime'],
                         'weight_out_user_id' => auth()->user()->user_id,
                         //'qty' => $qty, Moved to Lines 2023-11-14
                         'status' => 'Dispatched'
@@ -197,7 +207,7 @@ class DispatchController extends Controller
 
             $form_fields = ['status' => 'Dispatched'];
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
-            
+
 
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);
         }
@@ -207,11 +217,14 @@ class DispatchController extends Controller
     {
         $form_fields = $request->validate([
             "weight_in" => 'gt:0',
+            'weight_in_datetime' => 'date',
             "plant_id" => 'nullable',
             "registration_number" => 'nullable',
         ]);
 
-        if (!isset($form_fields['registration_number']) && $form_fields['plant_id'] == 0) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
+        if (!isset($form_fields['registration_number']) && !isset($form_fields['plant_id'])) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
+
+        if (isset($form_fields['registration_number']) && $form_fields['registration_number'] == '')  return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
 
         if (isset($form_fields['registration_number'])) {
             $plant = $form_fields['registration_number'];
@@ -225,7 +238,7 @@ class DispatchController extends Controller
         $form_fields['status'] = 'Loading';
 
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
-        $form_fields['weight_in_datetime'] = date("Y-m-d\TH:i");
+        $form_fields['weight_in_datetime'] = $form_fields['weight_in_datetime']; //date("Y-m-d\TH:i");
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
         unset($form_fields['job_id']);
@@ -396,8 +409,12 @@ class DispatchController extends Controller
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none;border-bottom: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out date:</strong> {$dispatch->weight_out_datetime} </td>
                     </tr>
                     <tr>
-                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed In:</strong> {$dispatch->weight_in} </td>
-                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out:</strong> {$dispatch->weight_out} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed In:</strong> {$dispatch->weight_in} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-bottom: none;border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Weighed Out:</strong> {$dispatch->weight_out} </td>
+                    </tr>
+                    <tr>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Nett Weight:</strong> {$dispatch->qty} </td>
+                        <td style=\"width: 50%;padding:10px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; padding-left: 5px; padding-bottom: 5px;\"></td>
                     </tr>
                 </table>
                 <br><br>

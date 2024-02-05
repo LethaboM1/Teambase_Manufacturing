@@ -17,7 +17,7 @@ class Functions extends Controller
 
     static function fix_weighed_items()
     {
-        $items = ManufactureProducts::where('has_recipe', 0)->get();
+        $items = ManufactureProducts::get();
         $log = '';
         foreach ($items as $item) {
             if (DefaultsController::unit_measure_weighed[$item['unit_measure']]) {
