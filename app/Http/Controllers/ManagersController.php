@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Functions;
+use App\Models\Settings as ModelsSettings;
 
 class ManagersController extends Controller
 {
@@ -91,5 +92,44 @@ class ManagersController extends Controller
 
         User::where('user_id', $form_fields['user_id'])->update(['active' => 0]);
         return back()->with('alertMessage', 'User has been deleted!');
+    }
+
+    function  setting()
+    {
+        return view('managers.settings');
+    }
+
+    function save_settings(Request $request)
+    {
+        
+        $form_fields = $request->validate([
+            'settings_rows' => 'nullable',
+            'trade_name' => 'required',
+            'reg_no' => 'nullable',
+            'vat_no' => 'nullable',
+            'tel_no' => 'required',
+            'fax_no' => 'nullable',
+            'mobile' => 'nullable',
+            'email' => 'required',
+            'url' => 'nullable',
+            'logo' => 'nullable',
+            'physical_add' => 'nullable',
+            'postal_add' => 'nullable'            
+        ]);
+        
+        $form_fields['logo'] = $request['company_logo'];        
+        
+        if($form_fields['settings_rows'] > 0){
+            //Update
+            unset($form_fields['settings_rows']);
+            ModelsSettings::where('trade_name', 'like', '%')->update($form_fields);
+        } else {
+            //Insert
+            unset($form_fields['settings_rows']);
+            ModelsSettings::insert($form_fields);
+        }
+        return back()->with([
+            'alertMessage' => 'Settings saved!'
+        ]);
     }
 }

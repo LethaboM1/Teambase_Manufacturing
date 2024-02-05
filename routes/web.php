@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
         Route::post('users/save', [ManagersController::class, 'save_user']);
         Route::post('users/delete', [ManagersController::class, 'delete_user']);
         Route::post('users/outofoffice', [ManagersController::class, 'outofoffice_user']);
+        Route::get('settings', [ManagersController::class, 'setting']);
+        Route::post('settings/save', [ManagersController::class, 'save_settings']);
     });
 
     Route::middleware('is_workshop')->group(function () {
@@ -123,6 +125,7 @@ Route::middleware('auth')->group(function () {
             Route::get('report/order-reports', [ManufactureReportsController::class, 'report_order']);
             Route::get('report/lab-reports', [ManufactureReportsController::class, 'report_lab']);
             Route::get('report/dispatch-reports', [ManufactureReportsController::class, 'report_dispatch']);
+            Route::post('report/dispatch-reports/print', [ManufactureReportsController::class, 'dispatchByDateReport']);
         });
     });
 });

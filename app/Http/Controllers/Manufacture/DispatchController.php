@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manufacture;
 
 use App\Models\Plants;
+use App\Models\Settings;
 use Illuminate\Http\Request;
 use App\Models\ManufactureBatches;
 use Illuminate\Support\Facades\DB;
@@ -11,8 +12,8 @@ use App\Models\ManufactureJobcards;
 use App\Models\ManufactureProducts;
 use App\Http\Controllers\Controller;
 use App\Models\ManufactureCustomers;
-use function PHPSTORM_META\elementType;
 
+use function PHPSTORM_META\elementType;
 use App\Models\ManufactureJobcardProducts;
 use App\Models\ManufactureProductTransactions;
 use App\Models\ManufactureJobcardProductDispatches;
@@ -333,10 +334,24 @@ class DispatchController extends Controller
             ->get()
             ->toArray();
 
+        $company_details = Settings::first()->toArray();
+
         $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
                     <tr>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Dispatch Note</th>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">No.{$dispatch['dispatch_number']}</th>
+                        <th style=\"width: 100%; font-weight: bold; font-size: 20px; text-align: center; border: none;\">*** ".strtoupper($company_details['trade_name'])." ***</th>                        
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">".$company_details['postal_add']."&nbsp;&nbsp;&nbsp;&nbsp; Tel No: ".$company_details['tel_no']."&nbsp;&nbsp;&nbsp;&nbsp; Fax No: ".$company_details['fax_no']."</th>
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">Reg No: ".$company_details['reg_no']."&nbsp;&nbsp;&nbsp;&nbsp; VAT No: ".$company_details['vat_no']."</th>
+                    </tr>
+                </table>
+                <br>
+                <table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\">        
+                    <tr>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">Dispatch Note</th>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: right; border: none;\">No.{$dispatch['dispatch_number']}</th>
                     </tr> 
                 </table>
                 <br>
@@ -511,17 +526,31 @@ class DispatchController extends Controller
                     </tfoot>
                 </table>  ";
 
-        Functions::printPDF($pdf, 'receipt-' . $dispatch->id, false, true, 'P', 'A4');
+        Functions::printPDF($pdf, 'dispatch-' . $dispatch->id, false, true, 'P', 'A4');
     }
 
     function print_return(ManufactureProductTransactions $transaction)
     {
         if ($transaction->type != 'RET') return;
 
+        $company_details = Settings::first()->toArray();
+
         $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
                     <tr>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\"># {$transaction['id']}</th>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Return To Supplier</th>
+                        <th style=\"width: 100%; font-weight: bold; font-size: 20px; text-align: center; border: none;\">*** ".strtoupper($company_details['trade_name'])." ***</th>                        
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">".$company_details['postal_add']."&nbsp;&nbsp;&nbsp;&nbsp; Tel No: ".$company_details['tel_no']."&nbsp;&nbsp;&nbsp;&nbsp; Fax No: ".$company_details['fax_no']."</th>
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">Reg No: ".$company_details['reg_no']."&nbsp;&nbsp;&nbsp;&nbsp; VAT No: ".$company_details['vat_no']."</th>
+                    </tr>
+                </table>
+                <br>
+                <table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
+                    <tr>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\"># {$transaction['id']}</th>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">Return To Supplier</th>
                     </tr> 
                 </table>
                 <br>
@@ -579,17 +608,30 @@ class DispatchController extends Controller
                     </tfoot>
                 </table>  ";
 
-        Functions::printPDF($pdf, 'receipt-' . $transaction->id, false, true, 'P', 'A4');
+        Functions::printPDF($pdf, 'return-' . $transaction->id, false, true, 'P', 'A4');
         // dd($transaction);
     }
 
     function print_receipt(ManufactureProductTransactions $transaction)
     {
+        $company_details = Settings::first()->toArray();
 
         $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
                     <tr>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Receipt # {$transaction['id']}</th>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 20px; text-align: left; border: none;\">Reference No. # {$transaction['reference_number']}</th>
+                        <th style=\"width: 100%; font-weight: bold; font-size: 20px; text-align: center; border: none;\">*** ".strtoupper($company_details['trade_name'])." ***</th>                        
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">".$company_details['postal_add']."&nbsp;&nbsp;&nbsp;&nbsp; Tel No: ".$company_details['tel_no']."&nbsp;&nbsp;&nbsp;&nbsp; Fax No: ".$company_details['fax_no']."</th>
+                    </tr>
+                    <tr>
+                        <th style=\"width: 100%; font-weight: normal; font-size: 14px; text-align: center; border: none;\">Reg No: ".$company_details['reg_no']."&nbsp;&nbsp;&nbsp;&nbsp; VAT No: ".$company_details['vat_no']."</th>
+                    </tr>
+                </table>
+                <br>
+                <table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
+                    <tr>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">Receipt # {$transaction['id']}</th>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">Reference No. # {$transaction['reference_number']}</th>
                     </tr> 
                 </table>
                 <br>

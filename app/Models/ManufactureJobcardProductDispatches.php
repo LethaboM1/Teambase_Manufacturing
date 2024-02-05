@@ -98,6 +98,14 @@ class ManufactureJobcardProductDispatches extends Model
     function transactions()
     {
 
-        return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->first();
+        return $this->hasOne(ManufactureProductTransactions::class, 'dispatch_id', 'id')->first();
+        
     }
+
+    function linked_transactions()
+    {
+        return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->get();
+    }
+
 }
+
