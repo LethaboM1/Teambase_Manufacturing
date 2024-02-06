@@ -198,7 +198,7 @@ class ManufactureReportsController extends Controller
                         
             }
             //Totals Line           
-            if($dispatch['product_id'] != '0'||isset($dispatch_transactions) && $dispatch_transactions['product_id'] != '0'){
+            if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){
                 $pdf .= "<tr>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
@@ -314,7 +314,7 @@ class ManufactureReportsController extends Controller
                             
                 }
                 //Totals Line
-                if($dispatch['product_id'] != '0'||isset($dispatch_transactions) && $dispatch_transactions['product_id'] != '0'){              
+                if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){              
                     $pdf .= "<tr>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
