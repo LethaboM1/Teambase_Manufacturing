@@ -59,7 +59,9 @@ class NewBatchesLivewire extends Component
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term);                
+                    ->orWhere('reference', 'like', $term)
+                    ->orWhere('registration_number', 'like', $term)
+                    ->orWhere('status', 'like', $term);                
             })->paginate(15, ['*'], 'loading');        
 
         $dispatches_archived = ManufactureJobcardProductDispatches::where('status', '!=', 'Loading')
@@ -67,8 +69,9 @@ class NewBatchesLivewire extends Component
 
                 $term = "%{$term}%";
                 $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term);
-                // ->orWhere('haulier_code', 'like', $term);
+                    ->orWhere('reference', 'like', $term)
+                    ->orWhere('registration_number', 'like', $term)
+                    ->orWhere('status', 'like', $term);
             })
             ->orderBy('id', 'desc')
             ->paginate(15, ['*'], 'archived');
