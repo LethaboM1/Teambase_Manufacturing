@@ -197,9 +197,8 @@ class ManufactureReportsController extends Controller
                         }                            
                         
             }
-            //Totals Line
-            // dd('GT Qty:'.$total_qty_sum.', This Grp Qty:'.$group_qty_sum.', GT Mass:'.$total_mass_sum.', This Grp Mass:'.$group_mass_sum);            
-            if($dispatch['product_id'] != '0'||$dispatch_transactions['product_id'] != '0'){
+            //Totals Line           
+            if($dispatch['product_id'] != '0'){
                 $pdf .= "<tr>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
@@ -315,7 +314,7 @@ class ManufactureReportsController extends Controller
                             
                 }
                 //Totals Line
-                if($dispatch['product_id'] != '0'||$dispatch_transactions['product_id'] != '0'){               
+                if($dispatch['product_id'] != '0'){               
                     $pdf .= "<tr>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
