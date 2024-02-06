@@ -199,38 +199,39 @@ class ManufactureReportsController extends Controller
             }
             //Totals Line
             // dd('GT Qty:'.$total_qty_sum.', This Grp Qty:'.$group_qty_sum.', GT Mass:'.$total_mass_sum.', This Grp Mass:'.$group_mass_sum);            
-            
-            $pdf .= "<tr>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
-                    </tr>
-                    <tr>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
-                    </tr>
-                    ";
+            if($dispatch['product_id'] != '0'||$dispatch_transactions['product_id'] != '0'){
+                $pdf .= "<tr>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                        </tr>
+                        <tr>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
+                        </tr>
+                        ";
+            }
         }
         //<td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</td>//old line total client ref. removed due to wierd scaling issues on cells when text overflows
 
@@ -314,75 +315,95 @@ class ManufactureReportsController extends Controller
                             
                 }
                 //Totals Line
-               
-                $pdf .= "<tr>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
-                        </tr>
-                        <tr>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
-                        </tr>
-                        ";
+                if($dispatch['product_id'] != '0'||$dispatch_transactions['product_id'] != '0'){               
+                    $pdf .= "<tr>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                            </tr>
+                            <tr>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
+                            </tr>
+                            ";
+                }
             }
 
         }
 
         //Grand Totals Line
-        $pdf .= "
-                <tr>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
-                </tr>
-                <tr>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                    <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                    <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Grand Totals</td>
-                    <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_qty_sum, 3)."</td>
-                    <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_mass_sum, 3)."</td>                                                                                   
-                </tr>
-                ";
+        if(count($the_report_dispatches)>0){
+            $pdf .= "
+                    <tr>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                    </tr>
+                    <tr>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Grand Totals</td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_qty_sum, 3)."</td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_mass_sum, 3)."</td>                                                                                   
+                    </tr>
+                    ";
+        } else {
+            $pdf .= "
+                    <tr>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Nothing to list matching the provided parameters...</td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
+                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                    </tr>";
+        }
         
 
         $pdf .= "</tbody>
@@ -398,8 +419,7 @@ class ManufactureReportsController extends Controller
                 </table>";                            
                         
             Functions::printPDF($pdf,'Transaction Report-' . $request['dispatch_report_category'] . ' from ' . $request['from_date'] . ' to ' . $request['to_date'], true, false, 'L', 'A4');    
-
-            return back()->with(['alertMessage' => 'Report Generated.']);
+            
             
     }
 
