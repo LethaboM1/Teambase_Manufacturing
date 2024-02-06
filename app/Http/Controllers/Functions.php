@@ -178,7 +178,7 @@ class Functions extends Controller
                 }
 
                 if ($pdf_save) {
-                    $html2pdf->Output("$pdf_filename.pdf", "F");
+                    $html2pdf->Output("$pdf_filename.pdf", "D");
                 }
             } catch (Html2PdfException $e) {
                 echo  $e;

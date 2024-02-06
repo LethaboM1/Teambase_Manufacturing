@@ -6,7 +6,12 @@
                 {{$class}}
             @endif
             "
-            name="{{$name}}" 
+            name="{{$name}}"
+            
+            @if($wire) 
+                wire:model.debounce.500="{{$name}}"
+            @endif 
+            
             >
     </div>
         @if(strlen($path)>0)

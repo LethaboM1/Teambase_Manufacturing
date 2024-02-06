@@ -32,6 +32,12 @@ class SelectLists extends Controller
         ['name' => 'Max-viodless Density', 'value' => 'max-viodless-density'],
         ['name' => 'Road Test Core', 'value' => 'road-test-cores'],
     ];
+
+    public const dispatch_report_categories = [
+        ['name' => 'All', 'value' => 'all'],
+        ['name' => 'Contractors', 'value' => 'jobcard'],
+        ['name' => 'Cash Clients', 'value' => 'cash'],        
+    ];
 }
 
 
