@@ -841,7 +841,6 @@ class NewBatchOutModal extends Component
                 ->where('manufacture_jobcard_products.job_id', $this->job_id)
                 ->where('manufacture_jobcard_products.filled', 0)
                 ->where('manufacture_products.weighed_product', 0)
-                ->where('manufacture_products.has_recipe', 0)
                 ->join('manufacture_products', 'manufacture_products.id', 'manufacture_jobcard_products.product_id')
                 ->orderBy('name', 'asc')
                 ->get()
@@ -877,15 +876,13 @@ class NewBatchOutModal extends Component
 
         $products_list_unweighed = ManufactureProducts::select('manufacture_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
             ->where('manufacture_products.weighed_product', 0)
-            ->where('manufacture_products.has_recipe', 0)
             ->orderBy('name', 'asc')
             ->get()
             ->toArray();
 
         $products_list = ManufactureProducts::select('manufacture_products.id as value', DB::raw("concat(manufacture_products.code,' ',manufacture_products.description ) as name"))
             ->where(function ($query) {
-                $query->where('manufacture_products.weighed_product', 1)
-                    ->orWhere('manufacture_products.has_recipe', 1);
+                $query->where('manufacture_products.weighed_product', 1);
             })
             ->orderBy('name', 'asc')
             ->get()

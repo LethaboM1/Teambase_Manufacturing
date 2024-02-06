@@ -61,8 +61,7 @@ class SearchLivewire extends Component
             case 'product_id':
                 $this->list = ManufactureProducts::select('id as value', DB::raw("concat(code,' - ',description) as name"))
                     ->where(function ($query) {
-                        $query->where('weighed_product', 1)
-                            ->orWhere('has_recipe', 1);
+                        $query->where('weighed_product', 1);
                     })
                     ->when($this->search, function ($query) {
                         $query->search($this->search);
@@ -80,14 +79,14 @@ class SearchLivewire extends Component
                     ->where('status', 'Open')
                     ->when($this->search, function ($query) {
                         $query->search($this->search);
-                    })->get();                    
+                    })->get();
 
                 if ($this->value > 0) {
-                    $result = ManufactureJobcards::where('id', $this->value)->first();                   
-                    
-                    $this->search_name = "{$result['jobcard_number']} - {$result['contractor']}";                    
+                    $result = ManufactureJobcards::where('id', $this->value)->first();
+
+                    $this->search_name = "{$result['jobcard_number']} - {$result['contractor']}";
                 }
-                
+
                 break;
 
             case 'transfer_job_id':
@@ -95,14 +94,14 @@ class SearchLivewire extends Component
                     ->where('status', 'Open')
                     ->when($this->search, function ($query) {
                         $query->search($this->search);
-                    })->get();                    
+                    })->get();
 
                 if ($this->value > 0) {
-                    $result = ManufactureJobcards::where('id', $this->value)->first();                   
-                    
-                    $this->search_name = "{$result['jobcard_number']} - {$result['contractor']}";                    
+                    $result = ManufactureJobcards::where('id', $this->value)->first();
+
+                    $this->search_name = "{$result['jobcard_number']} - {$result['contractor']}";
                 }
-                
+
                 break;
 
             case 'manufacture_jobcard_product_id':
@@ -119,7 +118,7 @@ class SearchLivewire extends Component
 
                         if ($product_->count() !== 0) {
 
-                            if ($product_->first()['weighed_product'] == 1 || $product_->first()['has_recipe'] == 1) {
+                            if ($product_->first()['weighed_product'] == 1) {
                                 $this->list[] = [
                                     'value' => $product['id'],
                                     'name' => $product_->first()['code'] . ' - ' . $product_->first()['description']
