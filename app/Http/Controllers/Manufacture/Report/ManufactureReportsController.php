@@ -198,7 +198,7 @@ class ManufactureReportsController extends Controller
                         
             }
             //Totals Line           
-            if($dispatch['product_id'] != '0'){
+            
                 $pdf .= "<tr>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                             <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
@@ -230,7 +230,7 @@ class ManufactureReportsController extends Controller
                             <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
                         </tr>
                         ";
-            }
+            
         }
         //<td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</td>//old line total client ref. removed due to wierd scaling issues on cells when text overflows
 
@@ -314,7 +314,7 @@ class ManufactureReportsController extends Controller
                             
                 }
                 //Totals Line
-                if($dispatch['product_id'] != '0'){               
+                              
                     $pdf .= "<tr>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
                                 <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
@@ -346,7 +346,7 @@ class ManufactureReportsController extends Controller
                                 <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
                             </tr>
                             ";
-                }
+                
             }
 
         }
