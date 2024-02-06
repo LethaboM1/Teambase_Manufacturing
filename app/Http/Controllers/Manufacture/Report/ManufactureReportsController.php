@@ -351,7 +351,7 @@ class ManufactureReportsController extends Controller
         }
 
         //Grand Totals Line
-        $pdf .= "<br><br>
+        $pdf .= "
                 <tr>
                     <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
                     <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
