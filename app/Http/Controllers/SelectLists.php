@@ -35,8 +35,8 @@ class SelectLists extends Controller
 
     public const dispatch_report_categories = [
         ['name' => 'All', 'value' => 'all'],
-        ['name' => 'Contractors', 'value' => 'jobcard'],
-        ['name' => 'Cash Clients', 'value' => 'cash'],        
+        ['name' => 'Jobcards', 'value' => 'jobcard'],
+        ['name' => 'Customers', 'value' => 'cash'],        
     ];
 }
 
