@@ -118,7 +118,7 @@ class SearchLivewire extends Component
 
                         if ($product_->count() !== 0) {
 
-                            if ($product_->first()['weighed_product'] == 1 || $product_->first()['has_recipe'] == 1) {
+                            if ($product_->first()['weighed_product'] == 1) {
                                 $this->list[] = [
                                     'value' => $product['id'],
                                     'name' => $product_->first()['code'] . ' - ' . $product_->first()['description']
