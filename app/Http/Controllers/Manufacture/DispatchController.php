@@ -232,7 +232,8 @@ class DispatchController extends Controller
             $plant = Plants::where('plant_id', $form_fields['plant_id'])->first();
             if ($plant == null) return back()->with('alertError', 'Plant not found.');
             $plant = $plant->toArray();
-            $plant = "{$plant['plant_number']} {$plant['make']} {$plant['model']} {$plant['reg_number']}";
+            $form_fields['registration_number'] = $plant['reg_number'];
+            $plant = "{$plant['plant_number']} {$plant['make']} {$plant['model']} {$plant['reg_number']}";            
         }
 
         $form_fields['status'] = 'Loading';
@@ -243,6 +244,7 @@ class DispatchController extends Controller
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
         unset($form_fields['job_id']);
 
+        // dd($form_fields);
         ManufactureJobcardProductDispatches::insert($form_fields);
 
         return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}");

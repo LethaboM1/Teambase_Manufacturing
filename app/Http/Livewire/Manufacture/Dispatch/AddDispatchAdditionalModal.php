@@ -197,8 +197,13 @@ class AddDispatchAdditionalModal extends Component
         } else {
             $plant = Plants::where('plant_id', $form_fields['plant_id'])->first();
             if ($plant == null) return back()->with('alertError', 'Plant not found.');
-            $plant = $plant->toArray();
+            $plant = $plant->toArray();            
             $plant = "{$plant['plant_number']} {$plant['make']} {$plant['model']} {$plant['reg_number']}";
+        }
+
+        if($form_fields['plant_id'] > 0 && $form_fields['registration_number'] == ''){
+            $plant = Plants::where('plant_id', $form_fields['plant_id'])->first();
+            $form_fields['registration_number'] = $plant['reg_number'];
         }
 
         $form_fields['status'] = 'Dispatched';
@@ -212,7 +217,7 @@ class AddDispatchAdditionalModal extends Component
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
 
-
+        // dd($form_fields);
         $dispatch_id = ManufactureJobcardProductDispatches::insertGetId($form_fields);
 
         if (count($this->extra_items)) {
