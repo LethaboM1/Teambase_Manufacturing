@@ -373,6 +373,13 @@ class DispatchLivewire extends Component
         array_unshift($this->dispatch_report_reference_list, ['value' => '0', 'name' => 'All']);        
         
     }
+
+    /* public function mount(){
+        $this->extra_criteria = 0;
+        $this->job_number_filter = 0;
+        $this->site_number_filter = 0;
+        $this->ref_number_filter = 0;
+    } */
     
     public function render()
     {

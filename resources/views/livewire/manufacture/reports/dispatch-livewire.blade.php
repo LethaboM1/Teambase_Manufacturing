@@ -10,6 +10,9 @@
         </div>
         <form method="post" action="{{url('report/dispatch-reports/print')}}">
             @csrf
+            <x-form.hidden wire=0 name="job_number_filter" value="{{$job_number_filter}}"/>
+            <x-form.hidden wire=0 name="site_number_filter" value="{{$site_number_filter}}"/>
+            <x-form.hidden wire=0 name="ref_number_filter" value="{{$ref_number_filter}}"/>
             <div class="row">
                 <div class="col-md-12 pb-sm-3 pb-md-0">					
                     <x-form.select label="List Dispatches" name="dispatch_report_category" :list="$dispatch_report_category_list" />                        

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\ManufactureProductTransactions;
 use App\Models\ManufactureJobcardProductDispatches;
 
+use function PHPUnit\Framework\isNull;
+
 class ManufactureReportsController extends Controller
 {
 
@@ -45,11 +47,14 @@ class ManufactureReportsController extends Controller
             'to_date.required'    => 'The To Date is required.',          
          ]);
 
+        
         $this->the_request = $request;
+        
 
         //Dispatches in Range
         if($request['dispatch_report_category'] == 'jobcard'){
             //filters - Contractors
+            // dd($this->the_request);
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
@@ -83,8 +88,8 @@ class ManufactureReportsController extends Controller
             ->get();
             /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
             $query = vsprintf($query, $the_report_dispatches->getBindings());
-            dd($query); */
-            
+            dd($query);
+            dd($the_report_dispatches); */
             $report_title = 'Transaction Report - Contractors - from '.$request['from_date'].' to '.$request['to_date'];
         } elseif($request['dispatch_report_category'] == 'cash'){
             //filters - Cash
@@ -217,6 +222,7 @@ class ManufactureReportsController extends Controller
 
         foreach ($the_report_dispatches as $dispatch) {
             //Reset Group Totals
+            // dd($dispatch);
             $group_qty_sum = 0.000;
             $group_mass_sum = 0.000;
 
@@ -259,6 +265,7 @@ class ManufactureReportsController extends Controller
              
             //Dispatch Transaction Items
             foreach ($dispatch->linked_transactions() as $dispatch_transactions) {
+                // dd($dispatch_transactions);
                 $pdf .= "<tr>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
@@ -477,6 +484,7 @@ class ManufactureReportsController extends Controller
 
         //Grand Totals Line
         if(count($the_report_dispatches)>0){
+            // dd(count($the_report_dispatches));
             $pdf .= "
                     <tr>
                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
@@ -510,6 +518,7 @@ class ManufactureReportsController extends Controller
                     </tr>
                     ";
         } else {
+            // dd(count($the_report_dispatches));
             $pdf .= "
                     <tr>
                         <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Nothing to list matching the provided parameters...</td>
