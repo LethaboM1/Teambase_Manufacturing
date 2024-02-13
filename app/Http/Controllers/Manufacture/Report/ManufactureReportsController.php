@@ -15,6 +15,7 @@ use App\Models\ManufactureJobcardProductDispatches;
 class ManufactureReportsController extends Controller
 {
 
+    protected $the_request;
        
 
     function report_stock()
@@ -31,7 +32,7 @@ class ManufactureReportsController extends Controller
     }
     
     function dispatchByDateReport (Request $request){
-        
+        // dd($request);
         //validate inputs
         $request->validate([
             'dispatch_report_category' => 'required|in:all,jobcard,cash',
@@ -44,39 +45,127 @@ class ManufactureReportsController extends Controller
             'to_date.required'    => 'The To Date is required.',          
          ]);
 
+        $this->the_request = $request;
+
         //Dispatches in Range
         if($request['dispatch_report_category'] == 'jobcard'){
             //filters - Contractors
-            $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
-            ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
-            ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
-            ->where('job_id','!=', '0')
-            ->groupBy('job_id')
-            ->orderBy('dispatch_number', 'asc')
+            $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+            ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
+            'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
+            'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
+            'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
+            'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
+            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            ->where('dispatches.status', 'Dispatched')
+            ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+            ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+            ->where (function($query){                
+                if($this->the_request['job_number_filter'] != '0'){                    
+                    $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['site_number_filter'] != '0'){
+                    $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['ref_number_filter'] != '0'){
+                    $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where('dispatches.job_id','!=', '0')
+            ->groupBy('dispatches.job_id')
+            ->orderBy('dispatches.dispatch_number', 'asc')
             ->get();
+            /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
+            $query = vsprintf($query, $the_report_dispatches->getBindings());
+            dd($query); */
+            
             $report_title = 'Transaction Report - Contractors - from '.$request['from_date'].' to '.$request['to_date'];
         } elseif($request['dispatch_report_category'] == 'cash'){
             //filters - Cash
-            $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
+            /* $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
             ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
             ->where('customer_id','!=', '0')
             ->groupBy('customer_id')
             ->orderBy('dispatch_number', 'asc')            
+            ->get(); */
+            $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+            ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
+            'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
+            'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
+            'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
+            'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
+            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            ->where('dispatches.status', 'Dispatched')
+            ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+            ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+            ->where (function($query){                
+                if($this->the_request['job_number_filter'] != '0'){                    
+                    $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['site_number_filter'] != '0'){
+                    $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['ref_number_filter'] != '0'){
+                    $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where('dispatches.customer_id','!=', '0')
+            ->groupBy('dispatches.customer_id')
+            ->orderBy('dispatches.dispatch_number', 'asc')            
             ->get();
+
             $report_title = 'Transaction Report - Cash Clients - from '.$request['from_date'].' to '.$request['to_date'];
         } else {
-            //filters - All - Will add Cash Clients first then add Jobs during loop below - GroupBy Limitiations on dual fields            
-            $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
-            ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
-            ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
-            ->where('customer_id','!=', '0')                        
-            ->groupBy('customer_id')
-            ->orderBy('dispatch_number', 'asc')
+            //filters - All - Will add Cash Clients first then add Jobs during loop below - GroupBy Limitiations on dual fields                        
+            $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+            ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
+            'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
+            'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
+            'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
+            'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
+            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            ->where('dispatches.status', 'Dispatched')
+            ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+            ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+            ->where (function($query){                
+                if($this->the_request['job_number_filter'] != '0'){                    
+                    $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['site_number_filter'] != '0'){
+                    $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['ref_number_filter'] != '0'){
+                    $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where('dispatches.customer_id','!=', '0')                        
+            ->groupBy('dispatches.customer_id')
+            ->orderBy('dispatches.dispatch_number', 'asc')
             ->get();
             $report_title = 'Transaction Report - All Dispatches - from '.$request['from_date'].' to '.$request['to_date'];
             
         }
+
+        // dd($the_report_dispatches);
 
         $company_details = Settings::first()->toArray();                        
         
@@ -107,19 +196,19 @@ class ManufactureReportsController extends Controller
                             <br>
                         </tr> 
                         <tr style=\"background-color: rgb(85, 85, 85);\">
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Document No</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Type</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Status</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Date</div></th>
-                            <th><div style=\"width: 80px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Ref No</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Reg No</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Del Zone</div></th>                            
-                            <th><div style=\"width: 130px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Customer / Contractor Name</div></th>
-                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Jobcard</div></th>                            
-                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Product Code</div></th>
-                            <th><div style=\"width: 185px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 5px;\">Product Name</div></th>
-                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: right; padding: 5px;\">Qty</div></th>
-                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: right; padding: 5px;\">Net Mass</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Document No</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Type</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Status</div></th>
+                            <th><div style=\"width: 97px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Date</div></th>
+                            <th><div style=\"width: 80px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Ref No</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Reg No</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Del Zone</div></th>                            
+                            <th><div style=\"width: 140px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Customer / Contractor Name</div></th>
+                            <th><div style=\"width: 60px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Jobcard</div></th>                            
+                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Product Code</div></th>
+                            <th><div style=\"width: 200px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: left; padding: 3px;\">Product Name</div></th>
+                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: right; padding: 3px;\">Qty</div></th>
+                            <th><div style=\"width: 40px; overflow: scroll; font-weight: bold; font-size: 11px; color: #FFFFFF; text-align: right; padding: 3px;\">Net Mass</div></th>
                         </tr>
                     </thead>
                     <tbody>";
@@ -134,19 +223,19 @@ class ManufactureReportsController extends Controller
             //Dispatch Header Item
             if($dispatch['product_id'] != '0'){
                 $pdf .= "<tr>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['dispatch_number']}</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll; font-size: 10px; text-align: left; padding: 5px;\">Dispatch</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['status']}</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['weight_out_datetime']}</div></td>
-                        <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['reference']}</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                        <td><div style=\"width: 130px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
-                        <td><div style=\"width: 185px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['dispatch_number']}</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll; font-size: 9px; text-align: left; padding: 3px;\">Dispatch</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['status']}</div></td>
+                        <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['weight_out_datetime']}</div></td>
+                        <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['reference']}</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+                        <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
+                        <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
                     </tr>";
             
                 //Totaling Dispatch Header Item
@@ -171,19 +260,19 @@ class ManufactureReportsController extends Controller
             //Dispatch Transaction Items
             foreach ($dispatch->linked_transactions() as $dispatch_transactions) {
                 $pdf .= "<tr>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['dispatch_number']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">Dispatch</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions['status']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['weight_out_datetime']}</div></td>
-                            <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['reference']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                            <td><div style=\"width: 130px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
-                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions->product()->code}</div></td>
-                            <td><div style=\"width: 185px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions->product()->description}</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
+                            <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
+                            <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+                            <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
+                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->code}</div></td>
+                            <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->description}</div></td>
+                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
+                            <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
                         </tr>";
 
                         //Totaling Transaction Items                       
@@ -200,49 +289,84 @@ class ManufactureReportsController extends Controller
             //Totals Line           
             // if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){
                 $pdf .= "<tr>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>                            
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
                         </tr>
                         <tr>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
-                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Total</td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_qty_sum, 3)."</td>
+                            <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
                         </tr>
                         ";
             // }
         }
-        //<td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</td>//old line total client ref. removed due to wierd scaling issues on cells when text overflows
+        //<td style=\"font-weight: bold; overflow: scroll;  font-size: 9px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</td>//old line total client ref. removed due to wierd scaling issues on cells when text overflows
 
         if($request['dispatch_report_category'] == 'all'){
             //filters - All            
-            $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
+            /* $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
             ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
             ->where('job_id','!=', '0') 
             ->orderBy('dispatch_number', 'asc')
             ->groupBy('job_id')
-            ->get();            
+            ->get(); */
+            $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+            ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
+            'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
+            'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
+            'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
+            'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
+            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            ->where('dispatches.status', 'Dispatched')
+            ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+            ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+            ->where (function($query){                
+                if($this->the_request['job_number_filter'] != '0'){                    
+                    $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['site_number_filter'] != '0'){
+                    $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['ref_number_filter'] != '0'){
+                    $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where('dispatches.job_id','!=', '0')                        
+            ->groupBy('dispatches.job_id')
+            ->orderBy('dispatches.dispatch_number', 'asc')
+            ->get();
+            /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
+            $query = vsprintf($query, $the_report_dispatches->getBindings());
+            dd($query); */
+                        
 
             foreach ($the_report_dispatches as $dispatch) {
                 //Reset Group Totals
@@ -253,19 +377,19 @@ class ManufactureReportsController extends Controller
                 if($dispatch['product_id'] != '0'){
 
                     $pdf .= "<tr>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['dispatch_number']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">Dispatch</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['status']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['weight_out_datetime']}</div></td>
-                            <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['reference']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                            <td><div style=\"width: 130px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
-                            <td><div style=\"width: 185px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 5px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 5px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['status']}</div></td>
+                            <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
+                            <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+                            <td><div style=\"width: 140px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
+                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
+                            <td><div style=\"width: 200px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
+                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
+                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
                         </tr>";
 
                         //Totaling Dispatch Header Item
@@ -287,19 +411,19 @@ class ManufactureReportsController extends Controller
                 //Dispatch Transaction Items
                 foreach ($dispatch->linked_transactions() as $dispatch_transactions) {
                     $pdf .= "<tr>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['dispatch_number']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">Dispatch</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions['status']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['weight_out_datetime']}</div></td>
-                                <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch['reference']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                                <td><div style=\"width: 130px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions->product()->code}</div></td>
-                                <td><div style=\"width: 185px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\">{$dispatch_transactions->product()->description}</div></td>
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 5px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
+                                <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
+                                <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+                                <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
+                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->code}</div></td>
+                                <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->description}</div></td>
+                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
+                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
                             </tr>";
 
                             //Totaling Transaction Items                            
@@ -316,34 +440,34 @@ class ManufactureReportsController extends Controller
                 //Totals Line
                 // if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){              
                     $pdf .= "<tr>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>                            
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 5px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>                            
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
                             </tr>
                             <tr>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Total</td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_qty_sum, 3)."</td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Total</td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_qty_sum, 3)."</td>
+                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
                             </tr>
                             ";
                 // }
@@ -355,52 +479,52 @@ class ManufactureReportsController extends Controller
         if(count($the_report_dispatches)>0){
             $pdf .= "
                     <tr>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
                     </tr>
                     <tr>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Grand Totals</td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_qty_sum, 3)."</td>
-                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 5px;\">".number_format($total_mass_sum, 3)."</td>                                                                                   
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+                        <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Grand Totals</td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($total_qty_sum, 3)."</td>
+                        <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($total_mass_sum, 3)."</td>                                                                                   
                     </tr>
                     ";
         } else {
             $pdf .= "
                     <tr>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\">Nothing to list matching the provided parameters...</td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                            
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>
-                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 5px;\"></td>                                                                                   
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Nothing to list matching the provided parameters...</td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: normal; font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+                        <td style=\"font-weight: bold; font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
                     </tr>";
         }
         
@@ -412,7 +536,7 @@ class ManufactureReportsController extends Controller
                 <table style='width: 1080px;'>
                     <tfoot>
                     <tr>
-                        <td style='width: 100%; text-align: right; font-weight: bold; font-size: 10px;'>Report generated @".date("Y-m-d h:i:s",time())."</td>
+                        <td style='width: 100%; text-align: right; font-weight: bold; font-size: 9px;'>Report generated @".date("Y-m-d h:i:s",time())."</td>
                     </tr>
                     </tfoot>
                 </table>";                            

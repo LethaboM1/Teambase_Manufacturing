@@ -1,6 +1,7 @@
 <tr class="pointer">
     <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->weight_in_datetime }}</td>
     <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->dispatch_number }}</td>
+    <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->reference }}</td>
     <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">
         {{ $dispatch->jobcard() !== null ? $dispatch->jobcard()->jobcard_number : '' }}</td>
     @if ($dispatch->status !== 'Loading')

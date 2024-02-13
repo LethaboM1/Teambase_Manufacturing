@@ -11,6 +11,7 @@ class Checkbox extends Component
         $toggle,
         $wire,
         $value,
+        $disabled,
         $class;
 
     /**
@@ -18,11 +19,12 @@ class Checkbox extends Component
      *
      * @return void
      */
-    public function __construct($name, $label, $toggle = true, $wire = true, $value = '', $class = '')
+    public function __construct($name, $label, $toggle = true, $wire = true, $value = '', $class = '', $disabled = false)
     {
         $this->name = $name;
         $this->label = $label;
         $this->toggle = $toggle;
+        $this->disabled = $disabled;
         $this->wire = $wire;
         $this->value = $value;
         $this->class = $class;

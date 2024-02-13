@@ -9,6 +9,9 @@
             @if($toggle)
                 checked="checked"
             @endif
+            @if($disabled)
+                disabled="{{$disabled}}" 
+            @endif
             value="{{$value}}" 
             @if($wire) 
                 wire:model="{{$name}}"

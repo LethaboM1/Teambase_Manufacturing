@@ -74,8 +74,9 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="15%">Dispatch Number</th>
-                                        <th width="15%">Job Card</th>
+                                        <th width="10%">Dispatch</th>
+                                        <th width="10%">Ref</th>
+                                        <th width="10%">Job Card</th>
                                         <th width="20%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         {{-- <th width="15%">Product</th>
@@ -117,8 +118,9 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="15%">Dispatch Number</th>
-                                        <th width="15%">Job Card</th>
+                                        <th width="10%">Dispatch</th>
+                                        <th width="10%">Ref</th>
+                                        <th width="10%">Job Card</th>
                                         <th width="20%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         {{-- <th width="15%">Product</th>
