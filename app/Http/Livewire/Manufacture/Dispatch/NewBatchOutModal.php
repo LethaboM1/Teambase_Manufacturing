@@ -182,9 +182,9 @@ class NewBatchOutModal extends Component
 
         if($this->dispatch->jobcard_id > 0){
             $this->validate(['weight_out' => 'gt:0|lte:'.$this->qty_due + 0.5 + $this->dispatch->weight_in]);
-        } else {
+        }/*  else {
             $this->validate(['weight_out' => 'gt:0|lte:'.$this->dispatch->weight_in]);
-        }
+        } */
 
         $this->qty = $value - $this->dispatch->weight_in;                
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
