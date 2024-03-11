@@ -170,7 +170,9 @@ class NewBatchOutModal extends Component
             'weight_out' => 0,
             'qty' => 0
         ]);        
-        $this->qty_due = $this->dispatch->jobcard_product()->qty_due;
+        if($this->dispatch->jobcard_id > 0){
+            $this->qty_due = $this->dispatch->jobcard_product()->qty_due;
+        }
     }
 
     function updatedWeightOut($value)
@@ -186,7 +188,7 @@ class NewBatchOutModal extends Component
             'qty' => $this->qty
         ]);
 
-        if($this->qty_due){}
+        // if($this->qty_due){}
         
         if (($this->dispatch->jobcard_product()->qty_due == 0 && $this->dispatch->jobcard_product()->product()->weighed_product == 0)||($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->product()->weighed_product > 0)) {    
             ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 1]);            
