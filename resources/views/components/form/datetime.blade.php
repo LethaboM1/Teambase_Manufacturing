@@ -2,7 +2,7 @@
     @if(strlen($label)>0)
         <label class="form-label col-form-label">{{$label}}</label>
     @endif
-    <input type="datetime-local" class="form-control form-control-sm
+    <input type="datetime-local" class="form-control form-control-md
         @if(isset($class) && strlen($class)>0)
             {{$class}}
         @endif
