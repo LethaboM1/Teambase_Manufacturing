@@ -11,7 +11,7 @@
                         @if ($dispatch->plant_id > 0)
                             <div class="col-md-6">
                                 <label>Plant</label><br>
-                                <h4>{{ $dispatch->plant()->plant_number }}</h4>
+                                <h4>{{ $dispatch->plant()->plant_number }}</h4>                                
                             </div>
                             <div class="col-md-6">
                                 <label>Reg No.</label><br>
@@ -22,9 +22,21 @@
                                 <h4>{{ $dispatch->delivery_zone }}</h4>
                             </div>
                         @else
-                            <div class="col-md-6">
-                                <b>Vehicle</b>&nbsp;{{ $dispatch->registration_number }}
-                            </div>
+                            @if ($dispatch->outsourced_contractor != '')
+                                <div class="col-md-6">
+                                    <label>Outsourced Contractor</label><br>
+                                    <h4>{{ $dispatch->outsourced_contractor }}</h4>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Reg No.</label><br>
+                                    <h4>{{ $dispatch->registration_number }}</h4>
+                                </div>
+                            @else
+                                <div class="col-md-6">
+                                    <label>Reg No.</label><br>
+                                    <h4>{{ $dispatch->registration_number }}</h4>
+                                </div>
+                            @endif                            
                         @endif
                         @if ($dispatch->weight_in > 0)
                             <div class="col-md-6">
@@ -95,16 +107,25 @@
                                 <x-form.select name="delivery_zone" label="Delivery Zone" :list="$delivery_zone_list" />
                             </div>
                             @if ($dispatch->weight_in > 0)
-                                <div class="col-md-4">
-                                    <x-form.number name="weight_out" label="Weight Out" step="0.001" />
+                                <div class="col-md-4">                                    
+                                    <x-form.number name="weight_out" label="Weight Out" step="0.001"/>
+                                    @error('weight_out')
+                                        <small class="text-danger"><strong>{{ $message }}</strong></small>
+                                    @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <x-form.number name="dispatch_temp" label="Dispatched Temperature" step="0.01"
                                         value={{ $dispatch_temp }} />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <b>Nett Weight</b><br><br>
-                                    <h3>{{ $qty }}</h3>
+                                    <h3>{{ $qty }}</h3>                                                                        
+                                    {{-- <h3>{{ $qty_due }}</h3>  --}}
+                                </div>
+                                <div class="col-md-6">
+                                    <br><br>                                    
+                                    <small class="text-danger"><strong>{{$over_under_variance}}</strong></small>
+                                    {{-- <h3>{{ $qty_due }}</h3>  --}}
                                 </div>
                             @endif
 
@@ -204,6 +225,8 @@
 
                             <div class="col-md-4">
                                 <x-form.hidden wire=0 name="customer_dispatch" value="{{ $customer_dispatch }}" />
+                                <x-form.hidden wire=0 name="qty" value="{{ $qty }}" />
+                                <x-form.hidden wire=0 name="qty_due" value="{{ $qty_due }}" />
                             </div>
                         @else
                             <div class="col-md-6">
@@ -221,6 +244,17 @@
                                 @endif
 
                             </div>
+
+                            
+                            @if ($customer_dispatch != 1 || $dispatch->customer() == null)
+                                <div class="col-md-6">
+                                    <label>Site No.</label><br>
+                                    <h4>{{ $dispatch->jobcard() !== null ? $dispatch->jobcard()->site_number : '-' }}
+                                    </h4>
+                                </div>
+                            @endif
+
+                            
 
                             <div class="col-md-6"><label>Delivery Zone</label><br>
                                 <h4>{{ $dispatch->delivery_zone }}</h4>

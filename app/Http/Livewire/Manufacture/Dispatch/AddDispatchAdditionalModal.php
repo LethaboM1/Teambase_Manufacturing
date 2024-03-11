@@ -19,12 +19,15 @@ class AddDispatchAdditionalModal extends Component
     public
         $reference = '',
         $delivery,
+        $use_historical_weight_in,
         $weight_in,
         $weight_in_datetime,
         $weight_out,
         $weight_out_datetime,
         $status,
         $plant_id = 0,
+        $outsourced_transport,
+        $outsourced_contractor,
         $registration_number = '',
         $batch_id,
         $qty,
@@ -42,6 +45,7 @@ class AddDispatchAdditionalModal extends Component
         switch ($var) {
             case 'plant_id':
                 $this->plant_id = $value;
+                // dd( $this->plant_id);
                 break;
 
 
@@ -60,12 +64,19 @@ class AddDispatchAdditionalModal extends Component
         }
     }
 
+    function refreshNewDispatchModal (){        
+        //Reload Modal        
+        return redirect(request()->header('Referer'));
+    }
+
     function mount()
     {
 
         $this->delivery = 0;
+        $this->use_historical_weight_in = 0;
         $this->weight_in_datetime = date("Y-m-d\TH:i");
         $this->customer_dispatch = 0;
+        $this->outsourced_transport = 0;
     }
 
     function AddExtraItemShow()
@@ -92,7 +103,21 @@ class AddDispatchAdditionalModal extends Component
             $this->registration_number = '';
         } else {
             $this->plant_id = 0;
-        }
+            $this->outsourced_contractor = '';
+            $this->outsourced_transport = 0;
+        }       
+        
+    } 
+
+    function updatedOutsourcedTransport($value)
+    {
+        $this->outsourced_transport = $value;
+        if($this->outsourced_transport != 1){
+            //Clear values if not delivered                        
+            $this->outsourced_contractor = '';            
+            $this->use_historical_weight_in = 0;                        
+        } else {$this->plant_id = 0;}
+        
     }
 
     function removeExtraItem($key)
@@ -145,10 +170,12 @@ class AddDispatchAdditionalModal extends Component
         $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();
 
         if ($manufacture_jobcard_product) {
+            //Apply Variance of 500kg/ton on weighed items
             $product_qty = $manufacture_jobcard_product->qty_due;
-            if ($form_fields['qty'] > $product_qty) {
+            //if ($form_fields['qty'] > $product_qty) { 2024-02-28 Variances
+            if (($form_fields['qty'] > $product_qty + 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($form_fields['qty'] > $product_qty && $manufacture_jobcard_product->product()->weighed_product == 0)) {
                 $this->extra_item_error = true;
-                $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product. Qty left on job card is {$product_qty}";
+                $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product (plus Variance for weighed products). Qty left on job card is {$product_qty}";
             } else {
                 $form_fields['manufacture_jobcard_product_id'] = $this->manufacture_jobcard_product_id;
             }
@@ -179,6 +206,7 @@ class AddDispatchAdditionalModal extends Component
     function dispatch()
     {
         $form_fields['plant_id'] = $this->plant_id;
+        $form_fields['outsourced_contractor'] = $this->outsourced_contractor;        
         $form_fields['job_id'] = ($this->job_id == null ? 0 : $this->job_id);
         $form_fields['customer_id'] = ($this->customer_id == null ? 0 : $this->customer_id);
         $form_fields['reference'] = $this->reference;
@@ -233,9 +261,17 @@ class AddDispatchAdditionalModal extends Component
                     $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $item['manufacture_jobcard_product_id'])->first();
 
                     if ($manufacture_jobcard_product) {
+                        //Apply Variance of 500kg/ton on weighed items
                         $product_qty = $manufacture_jobcard_product->qty_due;
-                        if ($product_qty == 0) {
+                        //if ($product_qty == 0) { 2024-02-28 Variances
+                        if (($product_qty <= 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($product_qty == 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {
                             ManufactureJobcardProducts::where('id', $manufacture_jobcard_product->id)->update(['filled' => 1]);
+                        }
+                        
+                        //Set job card as Filled if filled <> 0
+                        if (ManufactureJobcardProducts::where('job_id', $manufacture_jobcard_product->jobcard()->id)->where('filled', '0')->count() == 0) {
+
+                            ManufactureJobcards::where('id', $manufacture_jobcard_product->jobcard()->id)->update(['status' => 'Filled']);
                         }
                     }
                 }
@@ -248,6 +284,8 @@ class AddDispatchAdditionalModal extends Component
         $this->plant_id = 0;
         $this->customer_id = 0;
         $this->reference = '';
+        $this->outsourced_transport = '0';
+        $this->outsourced_contractor = '';
         $this->registration_number = '';
 
         $this->extra_product_id = '';
@@ -375,13 +413,21 @@ class AddDispatchAdditionalModal extends Component
         $delivery_zone_list = SelectLists::zones_select;
         array_unshift($delivery_zone_list, ['value' => 0, 'name' => 'Select']);
 
+        $outsourced_contractors_list = ManufactureJobcardProductDispatches::select('outsourced_contractor as value')
+        ->distinct()
+        ->orderBy('outsourced_contractor', 'asc') 
+        ->where('outsourced_contractor','<>','')       
+        ->get()
+        ->toArray();
+
         return view('livewire.manufacture.dispatch.add-dispatch-additional-modal', [
             'plant_list' => $plant_list,
             'jobcard_list' => $jobcard_list,
             'customer_list' => $customer_list,
             'delivery_zone_list' => $delivery_zone_list,
             'manufacture_jobcard_products_list' => $manufacture_jobcard_products_list,
-            'products_list' => $products_list
+            'products_list' => $products_list,
+            'outsourced_contractors_list' => $outsourced_contractors_list,
             // 'weighed_dispatch' => $this->weighed_dispatch
         ]);
     }

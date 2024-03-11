@@ -15,11 +15,26 @@
 
                             {{-- Determine if Job is for collection or delivery (Plant assigned or Reg no of Collector assigned) --}}
                             @if ($delivery)
-                                <div class="col-md-6">
-                                    <livewire:components.search-livewire name='plant_id' label="Plant"
-                                        :list="$plant_list" />
-                                    {{-- <x-form.select name="plant_id" label="Plant" :list="$plant_list"/> --}}
+                                <div class="col-md-10" style="margin-top: 10px;">
+                                    <x-form.checkbox name="outsourced_transport" label="Delivery done by Outsourced Transport Contractor" value=1 />
                                 </div>
+                                @if($outsourced_transport != '1')
+                                    <div class="col-md-6">
+                                        <livewire:components.search-livewire name='plant_id' label="Plant" :list="$plant_list"/>                                        
+                                    </div>                                    
+                                @else
+                                    <div class="col-md-6">
+                                        <x-form.datalist label="Outsourced Contractor Name" name="outsourced_contractor" :list="$outsourced_contractors_list" />                                       
+                                    </div>
+                                    <div class="col-md-6">
+                                        <x-form.input name="registration_number" label="Outsource Reg No." />
+                                    </div>            
+                                @endif
+                            
+                                {{-- <div class="col-md-6">
+                                    <livewire:components.search-livewire name='plant_id' label="Plant"
+                                        :list="$plant_list" />                                    
+                                </div> --}}
                             @else
                                 <div class="col-md-6">
                                     <x-form.input name="registration_number" label="Reg No." />
@@ -165,7 +180,7 @@
             <div class='row'>
                 <div class='col-md-12 text-right'>
                     <button type='submit' class='btn btn-primary'>Confirm</button>
-                    <button id="cancel_dispatch" class='btn btn-default modal-dismiss'>Cancel</button>
+                    <button wire:click="refreshNewDispatchModal" id="cancel_dispatch" class='btn btn-default modal-dismiss'>Cancel</button>
                 </div>
             </div>
         </footer>

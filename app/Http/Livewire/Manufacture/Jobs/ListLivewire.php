@@ -10,11 +10,11 @@ class ListLivewire extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $tab, $search, $search_arc;
+    public $tab, $search, $search_arc, $search_filled;
 
     function mount()
     {
-        $this->tab = 'open';
+        $this->tab = 'unfilled';
     }
 
     function updatedSearchArc()
@@ -24,27 +24,48 @@ class ListLivewire extends Component
 
     function updatedSearch()
     {
-        $this->tab = 'open';
+        $this->tab = 'unfilled';
+    }
+
+    function updatedSearchFilled()
+    {
+        $this->tab = 'filled';
+    }
+
+    public function toggleTab($value)
+    {
+        $this->tab = $value;
     }
 
     public function render()
-    {
-        $jobcards_list = ManufactureJobcards::where('status', '!=', 'Completed')->where('status', '!=', 'Canceled')->when($this->search, function ($query, $term) {
+    {      
+
+        $jobcards_list = ManufactureJobcards::where('status', '!=', 'Completed')->where('status', '!=', 'Cancelled')->where('status', '!=', 'Filled')->when($this->search, function ($query, $term) {
             $term = "%{$term}%";
             $query->where('jobcard_number', 'like', $term)
                 ->orWhere('contractor', 'like', $term)
                 ->orWhere('site_number', 'like', $term);
-        })->paginate(15, ['*'], 'open');
-        $archive_list = ManufactureJobcards::where('status', 'Completed')->orWhere('status', 'Canceled')->when($this->search_arc, function ($query, $term) {
+        })->paginate(15, ['*'], 'unfilled');
+
+        $jobcards_list_filled = ManufactureJobcards::where('status', '!=', 'Completed')->where('status', '!=', 'Cancelled')->where('status', '!=', 'Open')->when($this->search_filled, function ($query, $term) {
+            $term = "%{$term}%";
+            $query->where('jobcard_number', 'like', $term)
+                ->orWhere('contractor', 'like', $term)
+                ->orWhere('site_number', 'like', $term);
+        })->paginate(15, ['*'], 'filled');
+
+        $archive_list = ManufactureJobcards::where('status', 'Completed')->orWhere('status', 'Cancelled')->when($this->search_arc, function ($query, $term) {
             $term = "%{$term}%";
             $query->where('jobcard_number', 'like', $term)
                 ->orWhere('contractor', 'like', $term)
                 ->orWhere('site_number', 'like', $term);
         })->paginate(15, ['*'], 'arc');
+
         //$jobcards_list = ManufactureJobcards::where('status', '!=', 'Completed')->where('status', '!=', 'Canceled')->toSql();
 
         return view('livewire.manufacture.jobs.list-livewire', [
             'jobcards_list' => $jobcards_list,
+            'jobcards_list_filled' => $jobcards_list_filled,
             'archive_list' => $archive_list
         ]);
     }

@@ -107,10 +107,20 @@ class ManufactureJobcardProductDispatches extends Model
         return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->get();
     }
 
+    function linked_transactions_filtered($id)
+    {
+        return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->where('product_id', $id)->get();
+    }
+
+    function linked_transactions_filtered_joined($id)
+    {
+        return $this->hasMany(ManufactureProductTransactions::class, 'dispatch_id', 'id')->where('product_id', $id)->get();
+    }
+
     function distinct_jobs()
     {
         return $this->hasMany(ManufactureJobcards::class, 'id', 'job_id')->distinct()->select('jobcard_number')->get();
-    }
+    }    
 
 }
 

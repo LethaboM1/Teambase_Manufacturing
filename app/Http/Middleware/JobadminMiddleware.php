@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class ProductsMiddleware
+class JobadminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class ProductsMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            if (auth()->user()->role == 'manager' || auth()->user()->role == 'recipe' || auth()->user()->role == 'job admin') {
+            if (auth()->user()->role == 'job admin') {                
                 return $next($request);
             }
         }

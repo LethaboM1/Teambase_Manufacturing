@@ -46,11 +46,11 @@ class DispatchController extends Controller
 
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
-
+// dd($request);
         $error = false;
 
         if ($dispatch->weight_in > 0) {
-            if ($dispatch->weight_in > $request->weight_out) return back()->with('alertError', 'your weight is lower than when weighed in.');
+            if ($dispatch->weight_in > $request->weight_out) return back()->with('alertError', 'Your weight is lower than when weighed in.');
         }
 
         if ($request->customer_dispatch == 0) {
@@ -71,25 +71,44 @@ class DispatchController extends Controller
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
                     "weight_out_datetime" => "date",
-                    //"manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", Moved to Lines 2023-11-13
+                    "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", //Moved to Lines 2023-11-13 *Update 2024-03-05 Returned for weighed products
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
                     'dispatch_temp' => 'required|gt:-1',
-                    // 'weight_in' => 'required:gt:0'
+                    'qty' => 'required|gt:0',                    
+                    // 'qty_due' => 'required|gte:-0.500',
                 ]);
             }
+
+            // $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();
+            // if ($manufacture_jobcard_product) {
+
+            //     $product_qty = $manufacture_jobcard_product->qty_due;                
+            //     //Apply Variance of 500kg/ton on weighed items
+            //     // if ($product_qty > 0) { 2024-02-28 Variances                    
+            //     if (($product_qty <= 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($product_qty == 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {
+                    
+            //         ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->update(['filled' => 1]);
+                    
+            //     } else {
+            //         ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->update(['filled' => 0]);
+            //     }
+            // }
 
             //Get Jobcard(s) on this Dispatch and Check if AllFilled=True to Close.
             // $manufacture_jobcard_product_id = ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->first();
 
-            $jobcards = ManufactureJobcards::where('id', $form_fields['job_id'])->get();
+            $jobcards = ManufactureJobcards::where('id', $form_fields['job_id'])
+            ->where('status', '!=', 'Completed')
+            ->get();
             foreach ($jobcards as $jobcard) {
 
                 //Close job card if all filled
-
                 if (ManufactureJobcardProducts::where('job_id', $jobcard->id)->where('filled', '0')->count() == 0) {
 
-                    ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Completed']);
+                    ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Filled']);
+                } else {
+                    ManufactureJobcards::where('id', $jobcard->id)->update(['status' => 'Open']);
                 }
             }
             //***** $jobcard = ManufactureJobcardProducts::where('id', $form_fields['manufacture_jobcard_product_id'])->first();            
@@ -218,9 +237,13 @@ class DispatchController extends Controller
         $form_fields = $request->validate([
             "weight_in" => 'gt:0',
             'weight_in_datetime' => 'date',
-            "plant_id" => 'nullable',
+            "plant_id" => 'nullable',            
             "registration_number" => 'nullable',
+            "use_historical_weight_in" => 'nullable',
+            "outsourced_contractor" => 'nullable',
         ]);
+
+        // dd($form_fields);
 
         if (!isset($form_fields['registration_number']) && !isset($form_fields['plant_id'])) return back()->with('alertError', 'Plant/Reg No must be selected/filled.');
 
@@ -392,6 +415,7 @@ class DispatchController extends Controller
                             <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Site Number:</strong> Not Applicable </td>
                         </tr> ";
         }
+        // " . ($dispatch->plant_id > 0 ? "<strong>Plant Number:</strong>" . $dispatch->plant()->plant_number . ", Reg:" . $dispatch->plant()->reg_number : $dispatch->registration_number) . "
         $pdf .= "<tr>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Zone:</strong>" . ($dispatch->delivery_zone == null || $dispatch->delivery_zone == 0 ? "N/A" : "{$dispatch->delivery_zone}") . "</td>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\"><strong>Ref:</strong> {$dispatch->reference} </td>
@@ -399,7 +423,7 @@ class DispatchController extends Controller
                     <tr>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-top: none;border-bottom: none; padding-left: 5px; padding-bottom: 5px;\"><strong>Dispatch Temp:</strong>" . ($dispatch->dispatch_temp !== null ? "{$dispatch->dispatch_temp} C" : "N/A") . "</td>
                         <td style=\"width: 50%; padding:5px;  font-weight: normal; font-size: 13px; text-align: left; border: 1.5px solid rgb(39, 39, 39); border-left: none; border-top: none; border-bottom: none;padding-left: 5px; padding-bottom: 5px;\">
-                            " . ($dispatch->plant_id > 0 ? "<strong>Plant Number:</strong>" . $dispatch->plant()->plant_number . ", Reg:" . $dispatch->plant()->reg_number : $dispatch->registration_number) . "
+                            " . ($dispatch->plant_id > 0 ? "<strong>Plant Number: </strong>" . $dispatch->plant()->plant_number . ", <strong>Reg:</strong> " . $dispatch->plant()->reg_number : (strlen($dispatch->outsourced_contractor) > 0 ? "<strong>Outsourced To: </strong>" . $dispatch->outsourced_contractor . ", <strong>Reg: </strong>" . $dispatch->registration_number : "<strong>Reg: </strong>".$dispatch->registration_number)) . "
                         </td>
                     </tr>
                     <tr>

@@ -19,7 +19,7 @@
             disabled="{{$disabled}}" 
         @endif
         @if($wire) 
-            wire:model="{{$name}}"
+            wire:model.debounce.500="{{$name}}"            
         @endif
         >
         {{-- @error($name)

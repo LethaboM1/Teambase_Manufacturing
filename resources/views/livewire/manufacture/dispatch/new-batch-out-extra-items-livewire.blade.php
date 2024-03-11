@@ -8,7 +8,7 @@
     <td>
         @if($extraitem['returning']==true)            
             <x-form.number name="adjust_qty"
-            step="0.001" value="{{$extraitem['adjust_qty']}}" />
+            step="0.001" value="{{$extraitem['adjust_qty']}}" />            
             @error('adjust_qty')
                 <small class="text-danger"><strong>{{ $message }}</strong></small>
             @enderror

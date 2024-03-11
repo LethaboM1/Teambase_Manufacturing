@@ -26,10 +26,26 @@
 
     {{-- Determine if Job is for collection or delivery (Plant assigned or Reg no of Collector assigned) --}}
     @if ($delivery)
-        <div class="col-md-6">
-            <livewire:components.search-livewire name='plant_id' label="Plant" :value="$plant_id" />
-            {{-- <x-form.select name="plant_id" label="Plant" :list="$plant_list"/> --}}
+        <div class="col-md-10" style="margin-top: 10px;">
+            <x-form.checkbox name="outsourced_transport" label="Delivery done by Outsourced Transport Contractor" value=1 />
         </div>
+        @if($outsourced_transport != '1')
+            <div class="col-md-6">
+                <livewire:components.search-livewire name='plant_id' label="Plant" :value="$plant_id"/>                
+            </div>
+            @if($plant_id != '')
+                <div class="col-md-6" style="margin-top: 40px;">
+                    <x-form.checkbox name="use_historical_weight_in" label="Use previous Empty Weight of this Plant" value=1 />
+                </div>
+            @endif
+        @else
+            <div class="col-md-6">
+                <x-form.datalist label="Outsourced Contractor Name" name="outsourced_contractor" :list="$outsourced_contractors_list" />              
+            </div>
+            <div class="col-md-6">
+                <x-form.input name="registration_number" label="Outsource Reg No." />
+            </div>            
+        @endif
     @else
         <div class="col-md-6">
             <x-form.input name="registration_number" label="Reg No." />

@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('is_manager')->group(function () {
         });
     });
-
+    
     Route::middleware('is_manufacture')->group(function () {
         Route::middleware('is_manager')->group(function () {
             /* Suppliers */
@@ -127,5 +127,5 @@ Route::middleware('auth')->group(function () {
             Route::get('report/dispatch-reports', [ManufactureReportsController::class, 'report_dispatch']);
             Route::post('report/dispatch-reports/print', [ManufactureReportsController::class, 'dispatchByDateReport']);
         });
-    });
+    });    
 });

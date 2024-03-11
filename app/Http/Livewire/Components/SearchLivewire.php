@@ -21,7 +21,7 @@ class SearchLivewire extends Component
         $this->hide = $hide;
         $this->job_id = $jobid;
         $this->list = [];
-        $this->value = $value;
+        $this->value = $value;        
     }
 
     function updatedValue()
@@ -75,7 +75,7 @@ class SearchLivewire extends Component
 
 
             case 'job_id':
-                $this->list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' - ',IFNULL(contractor,'')) as name"))
+                $this->list = ManufactureJobcards::select('id as value', DB::raw("concat(jobcard_number,' - ',IFNULL(site_number,''), ' - ',IFNULL(contractor,'')) as name"))
                     ->where('status', 'Open')
                     ->when($this->search, function ($query) {
                         $query->search($this->search);

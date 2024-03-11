@@ -47,8 +47,10 @@
 							@endif Only Internal Jobs 2023-10-19 --}}
 							<x-form.input name="contractor" label="Contractor" />
 						</div>
-						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-							<x-form.input name="site_number" label="Site Number" />
+						<div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">							
+							{{-- <x-form.input name="site_number" label="Site Number" /> --}}
+							<x-form.custommask name="site_number" label="Site Number" themask="9999/9{2,}" themaskplaceholder="0" value="{{$site_number_new}}"/>																					
+							
 						</div>
 					</div>
 					<div class="row">

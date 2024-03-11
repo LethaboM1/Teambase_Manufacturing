@@ -186,4 +186,15 @@ class Functions extends Controller
             }
         }
     }
+
+    static function incrementSiteSubNo($number){
+        // get amount of decimals
+        $decimal = strlen(strrchr($number, '.')) -1;
+      
+        $factor = pow(10,$decimal);
+      
+        $incremented = (($factor * $number) + 1) / $factor;
+      
+        return $incremented;
+    }
 }

@@ -47,4 +47,9 @@ class ManufactureProductTransactions extends Model
     {
             return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
     }
+
+    function dispatch()
+    {
+            return $this->hasOne(ManufactureJobcardProductDispatches::class, 'id', 'dispatch_id')->first();
+    }
 }

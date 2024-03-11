@@ -47,19 +47,22 @@
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="JobTabs" role="tablist">
-                      <li class="nav-item {{($tab=='open'?'active':'')}}" role="presentation">
-                        <button class="nav-link {{($tab=='open'?'active':'')}}" id="open-tab" data-bs-toggle="tab" data-bs-target="#open" type="button" role="tab" aria-controls="open" aria-selected="{{($tab=='open'?'true':'false')}}">Open Jobcards</button>
+                      <li class="nav-item {{($tab=='unfilled'?'active':'')}}" role="presentation">
+                        <button class="nav-link {{($tab=='unfilled'?'active':'')}}" id="unfilled-tab" data-bs-toggle="tab" data-bs-target="#unfilled" type="button" role="tab" aria-controls="unfilled" wire:click="toggleTab('unfilled')" aria-selected="{{($tab=='unfilled'?'true':'false')}}">Unfilled Jobcards</button>
+                      </li>
+                      <li class="nav-item {{($tab=='filled'?'active':'')}}" role="presentation">
+                        <button class="nav-link {{($tab=='filled'?'active':'')}}" id="filled-tab" data-bs-toggle="tab" data-bs-target="#filled" type="button" role="tab" aria-controls="filled" wire:click="toggleTab('filled')" aria-selected="{{($tab=='filled'?'true':'false')}}">Filled Jobcards</button>
                       </li>
                       <li class="nav-item {{($tab=='archive'?'active':'')}}" role="presentation">
-                        <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
+                        <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" wire:click="toggleTab('archive')" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
                       </li>
                     </ul>
                     
                     <!-- Tab panes -->
                     <div class="tab-content">
-                      <div class="tab-pane {{($tab=='open'?'active':'')}}" id="open" role="tabpanel" aria-labelledby="open-tab">
+                      <div class="tab-pane {{($tab=='unfilled'?'active':'')}}" id="unfilled" role="tabpanel" aria-labelledby="unfilled-tab">
                         <div class="header-right mb-5">
-                            <h4>Open</h4>
+                            <h4>Unfilled</h4>
                             <form action="#" class="search nav-form">
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="search" wire:model="search" placeholder="Search Jobcard...">
@@ -71,10 +74,11 @@
                             <thead>
                                 <tr>
                                     <th width="15%">Date</th>
-                                    <th width="15%">Job Number</th>
-                                    <th width="40%">Customer/Contractor</th>
+                                    <th width="10%">Job Number</th>
+                                    <th width="10%">Site Number</th>
+                                    <th width="45%">Customer/Contractor</th>
                                     <th width="15%">Contact Number</th>
-                                    <th width="15%">Action</th>
+                                    <th width="5%">Action</th>
                                 </tr>
                             </thead>
                                 @if($jobcards_list->count()>0)
@@ -88,6 +92,40 @@
                                 @endif
                         </table>          
                         {{$jobcards_list->links()}}         
+
+                      </div>
+                      <div class="tab-pane {{($tab=='filled'?'active':'')}}" id="filled" role="tabpanel" aria-labelledby="filled-tab">
+                        <div class="header-right mb-5">
+                            <h4>Filled</h4>
+                            <form action="#" class="search nav-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="search" wire:model="search_filled" placeholder="Search Jobcard...">
+                                    <button class="btn btn-default" type="submit"><i class="bx bx-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <table width="100%" class="table table-hover table-responsive-md mb-0">
+                            <thead>
+                                <tr>
+                                    <th width="15%">Date</th>
+                                    <th width="10%">Job Number</th>
+                                    <th width="10%">Site Number</th>
+                                    <th width="45%">Customer/Contractor</th>
+                                    <th width="15%">Contact Number</th>
+                                    <th width="5%">Action</th>
+                                </tr>
+                            </thead>
+                                @if($jobcards_list_filled->count()>0)
+                                    @foreach($jobcards_list_filled as $jobcard)
+                                        <x-manufacture.jobs.item :jobcard="$jobcard" />
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5">No jobcards..</td>
+                                    </tr>
+                                @endif
+                        </table>          
+                        {{$jobcards_list_filled->links()}}         
 
                       </div>
                       <div class="tab-pane {{($tab=='archive'?'active':'')}}" id="archive" role="tabpanel" aria-labelledby="archive-tab">
@@ -104,10 +142,11 @@
                             <thead>
                                 <tr>
                                     <th width="15%">Date</th>
-                                    <th width="15%">Job Number</th>
-                                    <th width="40%">Contact Person</th>
+                                    <th width="10%">Job Number</th>
+                                    <th width="10%">Site Number</th>
+                                    <th width="45%">Customer/Contractor</th>
                                     <th width="15%">Contact Number</th>
-                                    <th width="15%">Action</th>
+                                    <th width="5%">Action</th>
                                 </tr>
                             </thead>
                                 @if($archive_list->count()>0)

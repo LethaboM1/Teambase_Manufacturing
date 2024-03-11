@@ -54,6 +54,9 @@
 		<!-- Head Libs -->
 		<script src="{{url('vendor/modernizr/modernizr.js')}}"></script>
 		<script src="{{url('vendor/jquery/jquery.js')}}"></script>
+		{{-- <script src="{{url('vendor/jquery-inputmask/jquery.inputmask.js')}}"></script> --}}
+		{{-- <script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script> --}}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
 	</head>
 

@@ -38,7 +38,7 @@
                                         <div class='row'>
                                             <div class='col-md-12 text-right'>
                                                 <button type='submit' class='btn btn-primary'>Confirm</button>
-                                                <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                                <button wire:click="refreshNewDispatchModal" class='btn btn-default modal-dismiss'>Cancel</button>
                                             </div>
                                         </div>
                                     </footer>                                    
@@ -49,10 +49,10 @@
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                         <li class="nav-item {{($tab=='loading'?'active':'')}}" role="presentation">
-                            <button class="nav-link {{($tab=='loading'?'active':'')}}" id="loading-tab" data-bs-toggle="tab" data-bs-target="#loading" type="button" role="tab" aria-controls="loading" aria-selected="{{($tab=='loading'?'true':'false')}}">Loading Dispatches</button>
+                            <button class="nav-link {{($tab=='loading'?'active':'')}}" id="loading-tab" data-bs-toggle="tab" data-bs-target="#loading" type="button" role="tab" aria-controls="loading" wire:click="toggleTab('loading')" aria-selected="{{($tab=='loading'?'true':'false')}}">Loading Dispatches</button>
                         </li>
                         <li class="nav-item {{($tab=='archive'?'active':'')}}" role="presentation">
-                            <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
+                            <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" wire:click="toggleTab('archive')" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
                         </li>
                     </ul>
                     
@@ -74,15 +74,16 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="10%">Dispatch</th>
+                                        <th width="5%">Dispatch</th>
                                         <th width="10%">Ref</th>
                                         <th width="10%">Job Card</th>
-                                        <th width="20%">Contractor / Customer</th>
+                                        <th width="10%">Site Number</th>
+                                        <th width="25%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         {{-- <th width="15%">Product</th>
                                         <th width="5%">Qty</th> --}} {{-- Moved into Lines 2023-11-10 --}}
                                         <th width="10%">Status</th>
-                                        <th width="15%">Action</th>
+                                        <th width="5%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches->count()>0)
@@ -118,15 +119,16 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="10%">Dispatch</th>
+                                        <th width="5%">Dispatch</th>
                                         <th width="10%">Ref</th>
                                         <th width="10%">Job Card</th>
-                                        <th width="20%">Contractor / Customer</th>
+                                        <th width="10%">Site Number</th>
+                                        <th width="25%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         {{-- <th width="15%">Product</th>
                                         <th width="5%">Qty</th> --}} {{-- Moved into Lines 2023-11-10 --}}
                                         <th width="10%">Status</th>
-                                        <th width="15%">Action</th>
+                                        <th width="5%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches_archived->count()>0)

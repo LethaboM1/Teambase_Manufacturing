@@ -57,13 +57,16 @@ class ManufactureReportsController extends Controller
             // dd($this->the_request);
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')            
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
             'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
             'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
             'dispatches.product_id as product_id', 'dispatches.qty as qty', 
-            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            'dispatches.outsourced_contractor as outsourced_contractor',
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
+            'customers.account_number as account_number')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -80,6 +83,21 @@ class ManufactureReportsController extends Controller
             ->where (function($query){
                 if($this->the_request['ref_number_filter'] != '0'){
                     $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where (function($query){                
+                if($this->the_request['customer_name_filter'] != '0'){                    
+                    $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['account_number_filter'] != '0'){
+                    $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['product_description_filter'] != '0'){
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.job_id','!=', '0')
@@ -102,13 +120,16 @@ class ManufactureReportsController extends Controller
             ->get(); */
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
             'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
             'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
             'dispatches.product_id as product_id', 'dispatches.qty as qty', 
-            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            'dispatches.outsourced_contractor as outsourced_contractor',
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
+            'customers.account_number as account_number')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -125,6 +146,21 @@ class ManufactureReportsController extends Controller
             ->where (function($query){
                 if($this->the_request['ref_number_filter'] != '0'){
                     $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where (function($query){                
+                if($this->the_request['customer_name_filter'] != '0'){                    
+                    $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['account_number_filter'] != '0'){
+                    $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['product_description_filter'] != '0'){
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.customer_id','!=', '0')
@@ -137,13 +173,16 @@ class ManufactureReportsController extends Controller
             //filters - All - Will add Cash Clients first then add Jobs during loop below - GroupBy Limitiations on dual fields                        
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
             'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
             'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
-            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
-            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            'dispatches.product_id as product_id', 'dispatches.qty as qty',
+            'dispatches.outsourced_contractor as outsourced_contractor', 
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
+            'customers.account_number as account_number')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -160,6 +199,21 @@ class ManufactureReportsController extends Controller
             ->where (function($query){
                 if($this->the_request['ref_number_filter'] != '0'){
                     $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where (function($query){                
+                if($this->the_request['customer_name_filter'] != '0'){                    
+                    $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['account_number_filter'] != '0'){
+                    $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['product_description_filter'] != '0'){
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.customer_id','!=', '0')                        
@@ -234,7 +288,7 @@ class ManufactureReportsController extends Controller
                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['status']}</div></td>
                         <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['weight_out_datetime']}</div></td>
                         <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['reference']}</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
                         <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
@@ -264,7 +318,12 @@ class ManufactureReportsController extends Controller
             
              
             //Dispatch Transaction Items
-            foreach ($dispatch->linked_transactions() as $dispatch_transactions) {
+            if($this->the_request['product_description_filter'] != '0'){
+                $dispatch_linked_transactions = $dispatch->linked_transactions_filtered($this->the_request['product_description_filter']);
+            } else {
+                $dispatch_linked_transactions = $dispatch->linked_transactions();
+            }
+            foreach ($dispatch_linked_transactions as $dispatch_transactions) {
                 // dd($dispatch_transactions);
                 $pdf .= "<tr>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
@@ -272,7 +331,7 @@ class ManufactureReportsController extends Controller
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
                             <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
                             <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
                             <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
@@ -341,13 +400,16 @@ class ManufactureReportsController extends Controller
             ->get(); */
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
             'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
             'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
             'dispatches.product_id as product_id', 'dispatches.qty as qty', 
-            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+            'dispatches.outsourced_contractor as outsourced_contractor',
+            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
+            'customers.account_number as account_number')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -364,6 +426,21 @@ class ManufactureReportsController extends Controller
             ->where (function($query){
                 if($this->the_request['ref_number_filter'] != '0'){
                     $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+                }
+            })
+            ->where (function($query){                
+                if($this->the_request['customer_name_filter'] != '0'){                    
+                    $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['account_number_filter'] != '0'){
+                    $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
+                }
+            })
+            ->where (function($query){
+                if($this->the_request['product_description_filter'] != '0'){
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.job_id','!=', '0')                        
@@ -389,7 +466,7 @@ class ManufactureReportsController extends Controller
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['status']}</div></td>
                             <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
                             <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
                             <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
                             <td><div style=\"width: 140px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
                             <td><div style=\"width: 60px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
@@ -416,14 +493,19 @@ class ManufactureReportsController extends Controller
                 }
 
                 //Dispatch Transaction Items
-                foreach ($dispatch->linked_transactions() as $dispatch_transactions) {
+                if($this->the_request['product_description_filter'] != '0'){
+                    $dispatch_linked_transactions = $dispatch->linked_transactions_filtered($this->the_request['product_description_filter']);
+                } else {
+                    $dispatch_linked_transactions = $dispatch->linked_transactions();
+                }
+                foreach ($dispatch_linked_transactions as $dispatch_transactions) {
                     $pdf .= "<tr>
                                 <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
                                 <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
                                 <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
                                 <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
                                 <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number:$dispatch['registration_number'])."</div></td>
+                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
                                 <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
                                 <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
                                 <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
@@ -545,7 +627,8 @@ class ManufactureReportsController extends Controller
                 <table style='width: 1080px;'>
                     <tfoot>
                     <tr>
-                        <td style='width: 100%; text-align: right; font-weight: bold; font-size: 9px;'>Report generated @".date("Y-m-d h:i:s",time())."</td>
+                        <td style='width: 30%; text-align: left; font-weight: normal; font-style: italic; font-size: 9px;'>* Outsourced Contractor Used</td>    
+                        <td style='width: 70%; text-align: right; font-weight: bold; font-size: 9px;'>Report generated @".date("Y-m-d h:i:s",time())."</td>
                     </tr>
                     </tfoot>
                 </table>";                            

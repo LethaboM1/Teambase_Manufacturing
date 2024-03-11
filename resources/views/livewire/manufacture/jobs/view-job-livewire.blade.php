@@ -3,6 +3,9 @@
         <section class="card">
             <header class="card-header">
                 <h2 class="card-title">Job Card : {{ $jobcard['jobcard_number'] }} : {{ $jobcard['status'] }}</h2>
+                @if($percentage_filled > 0)
+                    <h2 class="card-subtitle">* This Job Card is average {{$percentage_filled}}% filled across all Line Items.</h2>    
+                @endif                
             </header>
             <div class="card-body">
                 {{-- <form wire:submit.prevent="save_jobcard" method="post">			
@@ -13,8 +16,19 @@
                         <label>Job.</label>
                         <h5>{{ $jobcard['jobcard_number'] }}</h5>
                     </div>
+
                     <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
+                            {{-- <x-form.input name="jobcard.site_number" label="Site Number" /> --}}
+                            <x-form.custommask name="site_number" label="Site Number" themask="9999/9{2,}" themaskplaceholder="0" value="{{$site_number_new}}"/>
+                        @else
+                            <label>Site Number</label>
+                            <h5>{{ $jobcard['site_number'] }}</h5>
+                        @endif
+                    </div>
+
+                    <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                             @if ($jobcard['internal_jobcard'])
                                 <x-form.input name="jobcard.contractor" label="Contractor" />
                             @else
@@ -25,18 +39,11 @@
                             <h5>{{ $jobcard['contractor'] }}</h5>
                         @endif
                     </div>
-                    <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
-                            <x-form.input name="jobcard.site_number" label="Site Number" />
-                        @else
-                            <label>Site Number</label>
-                            <h5>{{ $jobcard['site_number'] }}</h5>
-                        @endif
-                    </div>
+                    
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                             <x-form.input name="jobcard.contact_person" label="Contact Person" />
                         @else
                             <label>Contact Person</label>
@@ -44,7 +51,7 @@
                         @endif
                     </div>
                     <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                             <x-form.textarea name="jobcard.delivery_address" label="Delivery Address" />
                         @else
                             <label>Delivery Address</label>
@@ -52,7 +59,7 @@
                         @endif
                     </div>
                     <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
-                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                        @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                             <x-form.textarea name="jobcard.notes" label="Notes" />
                         @else
                             <label>Notes</label>
@@ -64,7 +71,7 @@
                 <div class="row">
                     <div class="form-group row pb-4">
                         <div class="col-lg-6">
-                            @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                            @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                                 <div class="radio">
                                     <label><input type="radio" wire:model="jobcard.delivery" name="delivery" value=1
                                             checked="">Delivery</label>
@@ -78,21 +85,69 @@
                         </div>
                     </div>
                     <div class="row pb-4">
-                        <div class="col-lg-6">
-                            @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                        <div class="col-lg-12">
+                            @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
+                                
                                 <button type="button"
-                                    class="btn @if ($edit) btn-primary  @else btn-secondary @endif"
+                                    class="btn btn-primary m-2"
                                     wire:click="save_jobcard"
                                     @if (!$edit) disabled="disabled" @endif>Save Job
-                                    Card</button>
-                            @endif
+                                    Card</button>                            
+                            
+                                @if(!$confirmclose)
+                                    <button type="button"
+                                        class="btn btn-secondary"                                        
+                                        wire:click="close_jobcard"                                   
+                                                                            
+                                        @if (auth()->user()->role != 'job admin') disabled="disabled" @endif
+                                        >Close Job
+                                        Card</button>
+                                @else
+                                    <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
+                                    <button type="button"
+                                        class="btn btn-success m-2"                                       
+                                        wire:click="confirmed_close_jobcard"                                                                           
+                                        ><i class="fas fa-check"></i></button>
+                                    <button type="button"
+                                        class="btn btn-danger"                                        
+                                        wire:click="decline_jobcard_change"
+                                        ><i class="fas fa-xmark"></i></button>
+                                @endif
+                                
 
+                                   
+                            @else
+                                @if(!$confirmopen)
+                                    <button type="button"
+                                        class="btn btn-primary m-2"
+                                        wire:click="reopen_jobcard"                                                                       
+                                                                        
+                                        @if (auth()->user()->role != 'job admin') disabled="disabled" @endif>Re-open Job
+                                        Card</button>
+                                @else
+                                    
+                                    <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
+                                    <button type="button"
+                                        class="btn btn-success m-2"                                       
+                                        wire:click="confirmed_reopen_jobcard"                                                                           
+                                        ><i class="fas fa-check"></i></button>
+                                    <button type="button"
+                                        class="btn btn-danger"                                        
+                                        wire:click="decline_jobcard_change"
+                                        ><i class="fas fa-xmark"></i></button>
+
+                                @endif
+                                
+
+                                
+                            @endif
                         </div>
                     </div>
+                    
                 </div>
                 {{-- </form>			 --}}
                 <hr>
-                @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Canceled')
+                @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                     <div class="row">
                         <div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
                             <h3>Product</h3>

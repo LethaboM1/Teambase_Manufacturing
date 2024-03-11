@@ -19,7 +19,7 @@ use App\Models\ManufactureJobcardProductDispatches;
 
 class NewBatchOutModal extends Component
 {
-    public $dispatch, $weight_out_datetime, $weight_out, $dispatch_temp, $dispatchaction, $qty, $job_id, $weight_in_datetime, $weight_in;
+    public $dispatch, $weight_out_datetime, $weight_out, $over_under_variance, $dispatch_temp, $dispatchaction, $qty, $qty_due, $job_id, $weight_in_datetime, $weight_in;
     public $jobcard, $delivery, $delivery_zone, $reference, $manufacture_jobcard_product_id, $extra_manufacture_jobcard_product_id;
     public $customer_dispatch, $customer_id, $product_id;
     public $add_extra_item_show, $extra_product_id, $extra_product_unit_measure, $extraproduct, $extra_product_qty, $extra_product_weight_in_date, $extra_item_message, $extra_item_error;
@@ -72,6 +72,7 @@ class NewBatchOutModal extends Component
         $this->dispatch_transfer_weight_in = $this->dispatch->weight_out;
         $this->weight_out_datetime = date("Y-m-d\TH:i");
         $this->weight_out = $this->dispatch->weight_out;
+        $this->over_under_variance = '';
         $this->manufacture_jobcard_product_id = $this->dispatch->manufacture_jobcard_product_id;
         $this->product_id = $this->dispatch->product_id;
         $this->dispatch_temp = $this->dispatch->dispatch_temp;
@@ -80,6 +81,13 @@ class NewBatchOutModal extends Component
         $this->reference = $this->dispatch->reference;
         $this->job_id = $this->dispatch->job_id;
         $this->customer_id = $this->dispatch->customer_id;
+        if($this->dispatch->manufacture_jobcard_product_id > 0){
+            $jobcard = ManufactureJobcardProducts::where('id', $this->dispatch->manufacture_jobcard_product_id)->first();            
+            $this->qty_due = $jobcard->qty_due;
+        } else {
+            $this->qty_due = 0;
+        }
+        
 
         if ($dispatch->customer_id == '0') {
             $this->customer_dispatch = 0;
@@ -155,14 +163,39 @@ class NewBatchOutModal extends Component
         $this->extra_item_error = false;
     }
 
+    function updatingWeightOut($value)
+    {
+                
+        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+            'weight_out' => 0,
+            'qty' => 0
+        ]);        
+        $this->qty_due = $this->dispatch->jobcard_product()->qty_due;
+    }
+
     function updatedWeightOut($value)
     {
+        
         if ($value < $this->dispatch->weight_in) return;
-        $this->qty = $value - $this->dispatch->weight_in;
+
+        $this->validate(['weight_out' => 'gt:0|lte:'.$this->qty_due + 0.5 + $this->dispatch->weight_in]);
+
+        $this->qty = $value - $this->dispatch->weight_in;                
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
             'weight_out' => $value,
             'qty' => $this->qty
         ]);
+
+        if($this->qty_due){}
+        
+        if (($this->dispatch->jobcard_product()->qty_due == 0 && $this->dispatch->jobcard_product()->product()->weighed_product == 0)||($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->product()->weighed_product > 0)) {    
+            ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 1]);            
+            if ($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->qty_due >= -0.5 && $this->dispatch->jobcard_product()->qty_due != 0){$this->over_under_variance='Product filled with Variance of '.number_format(Functions::negate($this->dispatch->jobcard_product()->qty_due), 3).'.';}else{$this->over_under_variance='';}
+        } else {
+            ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 0]);
+            $this->over_under_variance='';
+        }
+        
     }
 
     function updatedDispatchAdjustQty($value)
@@ -231,6 +264,9 @@ class NewBatchOutModal extends Component
                 'manufacture_jobcard_product_id' => $value,
                 'product_id' => $this->product_id
             ]);
+
+            $this->qty_due = $jobcard->qty_due;
+            
         } else {
             ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
                 'manufacture_jobcard_product_id' => 0,
@@ -273,23 +309,35 @@ class NewBatchOutModal extends Component
         if ($manufacture_jobcard_product) {
 
             $product_qty = $manufacture_jobcard_product->qty_due;
-
-            if ($product_qty > 0) {
+            //Apply Variance of 500kg/ton on weighed items
+            // if ($product_qty > 0) { 2024-02-28 Variances
+            if (($product_qty > 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($product_qty > 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {
+                
                 ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->update(['filled' => 0]);
+                                
+                //Set job card as Open if filled <> 1
+                if (ManufactureJobcardProducts::where('job_id', $this->dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+
+                    ManufactureJobcards::where('id', $this->dispatch->jobcard()->id)->update(['status' => 'Open']);
+                }
+                
             }
         }
     }
 
     public function messages()
     {
+        // dd($this->dispatch->product()->description);
         return [
             'dispatch_return_weight_in.lte' => 'The Return Weight In is more than Dispatch Weight Out.',
             'dispatch_return_weight_in.gt' => 'The Return Weight In is less than Dispatch Weight In.',
+            'weight_out.gte' => 'The dispatched Qty cannot be less than 0',
+            'weight_out.lte' => 'The dispatched Qty cannot be more than Unfilled Qty (plus Variance for weighed Products)',            
             'dispatch.qty.gte' => 'The Return / Transfer Qty is more than the Dispatched Qty.',
             'extraitemqty.gte' => 'The Return / Transfer Qty is more than the Dispatched Qty.',
             'transfer_job_id.required' => 'A New Jobcard is required.',
             'transfer_job_id.not_in' => 'The New Jobcard cannot be same as Old Jobcard.',
-            'transfer_job_id.in' => 'The New Jobcard should contain Product ' . $this->dispatch->customer_id == '0' ? $this->dispatch->product()->description : $this->dispatch->customer_product()->description,
+            'transfer_job_id.in' => 'The New Jobcard should contain Product ' . $this->dispatch->customer_id == '0' ? isset($this->dispatch->product()->description) : isset($this->dispatch->customer_product()->description),
         ];
     }
 
@@ -350,8 +398,10 @@ class NewBatchOutModal extends Component
 
             if ($dispatch->customer_id == '0') {
                 //If Qty due after Dispatch Return is > 0 then set Product unfilled again
-                if ($dispatch->jobcard_product()->qty_due > 0) {
-                    ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
+                //Apply Variance of 500kg/ton on weighed items
+                //if ($dispatch->jobcard_product()->qty_due > 0) { 2024-02-28 Variances
+                if (($dispatch->jobcard_product()->qty_due > 0.5 && $dispatch->jobcard_product()->product()->weighed_product > 0)||($dispatch->jobcard_product()->qty_due > 0 && $dispatch->jobcard_product()->product()->weighed_product == 0)) {    
+                    ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);                    
                 }
 
                 //Set job card as Open if filled <> 1
@@ -464,7 +514,9 @@ class NewBatchOutModal extends Component
 
             if ($dispatch->customer_id == '0') {
                 //If Qty due after Dispatch Return is > 0 then set Product unfilled again
-                if ($manufacture_jobcard_product->qty_due > 0) {
+                //Apply Variance of 500kg/ton on weighed items
+                //if ($manufacture_jobcard_product->qty_due > 0) { 2024-02-28 Variances
+                if (($manufacture_jobcard_product->qty_due > 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($manufacture_jobcard_product->qty_due > 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {   
 
                     ManufactureJobcardProducts::where('id', $manufacture_jobcard_product->id)->update(['filled' => 0]);
                 }
@@ -584,9 +636,10 @@ class NewBatchOutModal extends Component
                 $newjobcard = ManufactureJobcardProducts::where('job_id', $this->transfer_job_id)->where('filled', '0')->where('product_id', $dispatch->customer_product()->id)->first();
             }
 
-            //Compare what was dispatched with what is being transfered
-
-            if ($newjobcard->qty_due <= $dispatch->qty) {
+            //Compare what was dispatched with what is being transferred
+            //Apply Variance of 500kg/ton on weighed items
+            // if ($newjobcard->qty_due <= $dispatch->qty) { 2024-02-28 Variances                
+            if (($newjobcard->qty_due <= $dispatch->qty && $newjobcard->product()->weighed_product == 0) || ($newjobcard->qty_due <= $dispatch->qty-0.5 && $newjobcard->product()->weighed_product > 0)) {
                 $filledqty = $newjobcard->qty_due;
             } else {
                 $filledqty = $dispatch->qty;
@@ -609,7 +662,9 @@ class NewBatchOutModal extends Component
 
             if ($dispatch->customer_id == '0') {
                 //set this->jobcard status if required after qty credit
-                if ($dispatch->jobcard_product()->qty_due > 0) {
+                //Apply Variance of 500kg/ton on weighed items
+                //if ($dispatch->jobcard_product()->qty_due > 0) { 2024-02-28 Variances
+                if (($dispatch->jobcard_product()->qty_due > 0.5 && $dispatch->jobcard_product()->product()->weighed_product > 0)||($dispatch->jobcard_product()->qty_due > 0 && $dispatch->jobcard_product()->product()->weighed_product == 0)) {
                     ManufactureJobcardProducts::where('id', $dispatch->jobcard_product()->id)->update(['filled' => 0]);
                 }
 
@@ -661,13 +716,15 @@ class NewBatchOutModal extends Component
 
             if ($this->transfer_job_id !== null) {
                 //Adjust status on clone->dispatch->Jobcard if filled
-                if ($newjobcard->qty_due == 0) {
+                //Apply Variance of 500kg/ton on weighed items
+                //if ($newjobcard->qty_due == 0) { 2028-02-28 Variances
+                if (($newjobcard->qty_due == 0 && $newjobcard->product()->weighed_product == 0)||($newjobcard->qty_due <= 0.5 && $newjobcard->product()->weighed_product > 0)) {    
                     ManufactureJobcardProducts::where('id', $newjobcard->id)->update(['filled' => 1]);
                 }
 
                 if (ManufactureJobcardProducts::where('job_id', $this->transfer_job_id)->where('filled', '0')->count() == 0) {
 
-                    ManufactureJobcards::where('id', $this->transfer_job_id)->update(['status' => 'Completed']);
+                    ManufactureJobcards::where('id', $this->transfer_job_id)->update(['status' => 'Filled']);
                 }
             }
 
@@ -753,10 +810,12 @@ class NewBatchOutModal extends Component
 
 
         if ($manufacture_jobcard_product) {
+            //Apply Variance of 500kg/ton on weighed items
             $product_qty = $manufacture_jobcard_product->qty_due;
-            if ($form_fields['qty'] > $product_qty) {
+            //if ($form_fields['qty'] > $product_qty) { 2024-02-28 Variances
+            if (($form_fields['qty'] > $product_qty + 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($form_fields['qty'] > $product_qty && $manufacture_jobcard_product->product()->weighed_product == 0)) {
                 $this->extra_item_error = true;
-                $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product. Qty left on job card is {$product_qty}";
+                $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product (plus Variance for weighed products). Qty left on job card is {$product_qty}";
             } else {
                 $form_fields['manufacture_jobcard_product_id'] = $this->extra_manufacture_jobcard_product_id;
             }
@@ -773,9 +832,16 @@ class NewBatchOutModal extends Component
             //Get Qty Due and mark as Filled if required
             if ($manufacture_jobcard_product) {
                 $product_qty = $manufacture_jobcard_product->qty_due;
-
-                if ($product_qty == 0) {
+                //Apply Variance of 500kg/ton on weighed items
+                //if ($product_qty == 0) { 2024-02-28 Variances
+                if (($product_qty == 0 && $manufacture_jobcard_product->product()->weighed_product == 0)||($product_qty <= 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)) {
                     ManufactureJobcardProducts::where('id', $manufacture_jobcard_product->id)->update(['filled' => 1]);
+
+                    //Set job card as Filled if filled <> 0
+                    if (ManufactureJobcardProducts::where('job_id', $this->dispatch->jobcard()->id)->where('filled', '0')->count() == 0) {
+
+                        ManufactureJobcards::where('id', $this->dispatch->jobcard()->id)->update(['status' => 'Filled']);
+                    }
                 }
             }
 

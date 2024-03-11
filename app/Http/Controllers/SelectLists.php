@@ -22,7 +22,7 @@ class SelectLists extends Controller
         ['name' => 'Open', 'value' => 'Open'],
         ['name' => 'In Production', 'value' => 'In Production'],
         ['name' => 'on Hold', 'value' => 'on Hold'],
-        ['name' => 'Canceled', 'value' => 'Canceled'],
+        ['name' => 'Cancelled', 'value' => 'Cancelled'],
         ['name' => 'Ready for dispatch', 'value' => 'Ready for dispatch'],
     ];
 

@@ -12,6 +12,8 @@ class ManufactureJobcardProducts extends Model
     use HasFactory;
     protected $table = 'manufacture_jobcard_products', $guard = [], $dates = ['updated_at', 'created_at'];
 
+    private $item_average, $counter;
+
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
@@ -72,4 +74,15 @@ class ManufactureJobcardProducts extends Model
         $qty = round($this->qty - $this->getQtyFilledAttribute(), 3);
         return $qty;
     }
+
+    function getFilledItemPercentageAttribute()
+    {
+        $qty = round($this->qty, 3);
+        $qty_due = round($this->qty - $this->getQtyFilledAttribute(), 3);
+        $qty_filled = round($qty - $qty_due, 3);
+        $filled_item_percentage = round(100 / $qty * $qty_filled, 3);
+        // dd('qty:'.$qty.', filled:'.$qty_filled.', filled%:'.$filled_item_percentage);
+        return $filled_item_percentage;
+    }
+    
 }

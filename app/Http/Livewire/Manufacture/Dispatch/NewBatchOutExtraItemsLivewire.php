@@ -73,7 +73,7 @@ class NewBatchOutExtraItemsLivewire extends Component
     public function startReturnExtraItem (){
         
         $this->extraitem['returning'] = !$this->extraitem['returning'];
-        $this->extraitem['adjust_qty'] = Functions::negate($this->extraitem['the_qty']);         
+        $this->extraitem['adjust_qty'] = number_format(Functions::negate($this->extraitem['the_qty']), 3);         
     }
 
     public function startTransferExtraItem (){
