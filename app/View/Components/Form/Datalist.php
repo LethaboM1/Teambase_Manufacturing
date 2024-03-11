@@ -20,7 +20,7 @@ class Datalist extends Component
      *
      * @return void
      */
-    public function __construct($name, $label = '', $id = '', $wire = true, $value = '', $class = '', $disabled = false, $list)
+    public function __construct($name, $label = '', /* $id = '', */ $wire = true, $value = '', $class = '', $disabled = false, $list=[])
     {
         $this->name = $name;
         $this->label = $label;
@@ -28,8 +28,8 @@ class Datalist extends Component
         $this->wire = $wire;
         $this->value = $value;
         $this->class = $class;
-        $this->id = $id;
-        $this->list = $list;
+        /* $this->id = $id; */
+        $this->list = $list;        
     }
 
     /**
@@ -38,7 +38,7 @@ class Datalist extends Component
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
     public function render()
-    {
+    {        
         return view('components.form.datalist');
     }
 }
