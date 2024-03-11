@@ -120,7 +120,8 @@ class AddDispatchModal extends Component
         $outsourced_contractors_list = ManufactureJobcardProductDispatches::select('outsourced_contractor as value')
         ->distinct()
         ->orderBy('outsourced_contractor', 'asc') 
-        ->where('outsourced_contractor','<>','')       
+        ->where('outsourced_contractor','<>','')
+        ->whereNotNull('outsourced_contractor')       
         ->get()
         ->toArray();                  
 
