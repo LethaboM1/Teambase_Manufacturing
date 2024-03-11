@@ -182,8 +182,6 @@ class NewBatchOutModal extends Component
 
         if($this->dispatch->jobcard_id > 0){
             $this->validate(['weight_out' => 'gt:0|lte:'.$this->qty_due + 0.5 + $this->dispatch->weight_in]);
-        } else {
-            $this->validate(['weight_out' => 'gt:0|lte:'.$this->dispatch->weight_in]);
         }
 
         $this->qty = $value - $this->dispatch->weight_in;                
@@ -194,12 +192,14 @@ class NewBatchOutModal extends Component
 
         // if($this->qty_due){}
         
-        if (($this->dispatch->jobcard_product()->qty_due == 0 && $this->dispatch->jobcard_product()->product()->weighed_product == 0)||($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->product()->weighed_product > 0)) {    
-            ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 1]);            
-            if ($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->qty_due >= -0.5 && $this->dispatch->jobcard_product()->qty_due != 0){$this->over_under_variance='Product filled with Variance of '.number_format(Functions::negate($this->dispatch->jobcard_product()->qty_due), 3).'.';}else{$this->over_under_variance='';}
-        } else {
-            ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 0]);
-            $this->over_under_variance='';
+        if($this->dispatch->jobcard_id > 0){
+            if (($this->dispatch->jobcard_product()->qty_due == 0 && $this->dispatch->jobcard_product()->product()->weighed_product == 0)||($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->product()->weighed_product > 0)) {    
+                ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 1]);            
+                if ($this->dispatch->jobcard_product()->qty_due <= 0.5 && $this->dispatch->jobcard_product()->qty_due >= -0.5 && $this->dispatch->jobcard_product()->qty_due != 0){$this->over_under_variance='Product filled with Variance of '.number_format(Functions::negate($this->dispatch->jobcard_product()->qty_due), 3).'.';}else{$this->over_under_variance='';}
+            } else {
+                ManufactureJobcardProducts::where('id', $this->dispatch->jobcard_product()->id)->update(['filled' => 0]);
+                $this->over_under_variance='';
+            }
         }
         
     }
