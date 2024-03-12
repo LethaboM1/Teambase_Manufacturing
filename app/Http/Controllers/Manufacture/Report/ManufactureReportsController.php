@@ -34,6 +34,8 @@ class ManufactureReportsController extends Controller
     }
     
     function dispatchByDateReport (Request $request){
+
+        set_time_limit(300);
         // dd($request);
         //validate inputs
         $request->validate([
