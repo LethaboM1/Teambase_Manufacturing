@@ -99,7 +99,7 @@
                                         class="btn btn-secondary"                                        
                                         wire:click="close_jobcard"                                   
                                                                             
-                                        @if (auth()->user()->role != 'job admin') disabled="disabled" @endif
+                                        @if (auth()->user()->role != 'manager') disabled="disabled" @endif
                                         >Close Job
                                         Card</button>
                                 @else
@@ -122,7 +122,7 @@
                                         class="btn btn-primary m-2"
                                         wire:click="reopen_jobcard"                                                                       
                                                                         
-                                        @if (auth()->user()->role != 'job admin') disabled="disabled" @endif>Re-open Job
+                                        @if (auth()->user()->role != 'manager') disabled="disabled" @endif>Re-open Job
                                         Card</button>
                                 @else
                                     

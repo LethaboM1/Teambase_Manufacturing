@@ -1284,27 +1284,27 @@ class DispatchLivewire extends Component
                     $this->primary_filter = 'product';
                     $this->primary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->primary_filter_text = $this->product_description_filter;
-                    $this->primary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';                    
+                    $this->primary_filter_column2 = 'manufacture_product_transactions.product_id';                    
                 } elseif ($this->secondary_filter == ''){
                     $this->secondary_filter = 'product';
                     $this->secondary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->secondary_filter_text = $this->product_description_filter;
-                    $this->secondary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';
+                    $this->secondary_filter_column2 = 'manufacture_product_transactions.product_id';
                 } elseif ($this->tertiary_filter == ''){
                     $this->tertiary_filter = 'product';                
                     $this->tertiary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->tertiary_filter_text = $this->product_description_filter;
-                    $this->tertiary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';
+                    $this->tertiary_filter_column2 = 'manufacture_product_transactions.product_id';
                 } elseif ($this->quaternary_filter == ''){
                     $this->quaternary_filter = 'product';                
                     $this->quaternary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->quaternary_filter_text = $this->product_description_filter;
-                    $this->quaternary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';
+                    $this->quaternary_filter_column2 = 'manufacture_product_transactions.product_id';
                 } elseif ($this->quinary_filter == ''){
                     $this->quinary_filter = 'product';                
                     $this->quinary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->quinary_filter_text = $this->product_description_filter;
-                    $this->quinary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';
+                    $this->quinary_filter_column2 = 'manufacture_product_transactions.product_id';
                 } elseif ($this->senary_filter == ''){
                     $this->senary_filter = 'product';                
                     $this->senary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
@@ -1521,7 +1521,8 @@ class DispatchLivewire extends Component
                 $this->senary_filter_text = '';
                 $this->senary_filter_column2 = '';                
             }
-        }        
+        } 
+        // dd($this->product_description_filter);       
     }
 
     public function buildSelects($dispatch_list){
@@ -1599,13 +1600,13 @@ class DispatchLivewire extends Component
             if($item->product_id != '0'){array_unshift($dispatch_report_product_list, ['value' => $item->product_id, 'name' => $item->description]);}          
         }
         //Add Linked Items from Transactions        
-        /* foreach($dispatch_list as $item){                                               
+        foreach($dispatch_list as $item){                                               
             foreach($item->linked_transactions() as $linked_item) {
                 if($linked_item->product_id != '0'){                
                     array_unshift($dispatch_report_product_list, ['value' => $linked_item->product_id, 'name' => $linked_item->product()->description]);
                 }          
             }
-        } */
+        }
 
         //Remove duplicate Products        
         $seenItems = array();
@@ -1696,31 +1697,38 @@ class DispatchLivewire extends Component
                 $dispatch_list = ManufactureJobcardProductDispatches::join('manufacture_jobcards', 'manufacture_jobcards.id', '=', 'manufacture_jobcard_product_dispatches.job_id', 'left outer')
                 ->join('manufacture_customers', 'manufacture_customers.id', '=', 'manufacture_jobcard_product_dispatches.customer_id', 'left outer')
                 ->join('manufacture_products', 'manufacture_products.id', '=', 'manufacture_jobcard_product_dispatches.product_id', 'left outer')
-                ->select('manufacture_jobcard_product_dispatches.id as id','manufacture_jobcard_product_dispatches.job_id as job_id','manufacture_jobcard_product_dispatches.product_id as product_id','manufacture_jobcard_product_dispatches.reference as reference'
-                ,'manufacture_jobcards.jobcard_number as jobcard_number','manufacture_jobcards.site_number as site_number','manufacture_customers.name as name','manufacture_customers.account_number as account_number'
-                ,'manufacture_products.description as description')
+                ->join('manufacture_product_transactions', 'manufacture_product_transactions.dispatch_id', '=', 'manufacture_jobcard_product_dispatches.id', 'left outer')
+                ->select('manufacture_jobcard_product_dispatches.id as id','manufacture_jobcard_product_dispatches.job_id as job_id','manufacture_jobcard_product_dispatches.customer_id as customer_id','manufacture_jobcard_product_dispatches.reference as reference'
+                ,'manufacture_jobcard_product_dispatches.product_id as product_id','manufacture_jobcards.jobcard_number as jobcard_number','manufacture_jobcards.site_number as site_number','manufacture_customers.name as name'
+                ,'manufacture_customers.account_number as account_number','manufacture_products.description as description','manufacture_product_transactions.product_id as transactions_product_id')
                 ->where('manufacture_jobcard_product_dispatches.status', 'Dispatched')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '>=', $this->from_date.' 00:00:01')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '<=', $this->to_date.' 23:59:59')
                 ->where (function($query){
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
-                        $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')->where
+                        $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')                        
+                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
                         (function($query){
                             if($this->secondary_filter != ''){
-                                $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')->where
+                                $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
+                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
-                                        $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')->where
+                                        $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
+                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
-                                                $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')->where
+                                                $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
+                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
-                                                        $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')->where
+                                                        $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
+                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
-                                                                $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%');
+                                                                $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
+                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
                                                             }
                                                         });
                                                     }                                                    
@@ -1742,31 +1750,38 @@ class DispatchLivewire extends Component
                 $dispatch_list = ManufactureJobcardProductDispatches::join('manufacture_jobcards', 'manufacture_jobcards.id', '=', 'manufacture_jobcard_product_dispatches.job_id', 'left outer')
                 ->join('manufacture_customers', 'manufacture_customers.id', '=', 'manufacture_jobcard_product_dispatches.customer_id', 'left outer')
                 ->join('manufacture_products', 'manufacture_products.id', '=', 'manufacture_jobcard_product_dispatches.product_id', 'left outer')
+                ->join('manufacture_product_transactions', 'manufacture_product_transactions.dispatch_id', '=', 'manufacture_jobcard_product_dispatches.id', 'left outer')
                 ->select('manufacture_jobcard_product_dispatches.id as id','manufacture_jobcard_product_dispatches.job_id as job_id','manufacture_jobcard_product_dispatches.customer_id as customer_id','manufacture_jobcard_product_dispatches.reference as reference'
                 ,'manufacture_jobcard_product_dispatches.product_id as product_id','manufacture_jobcards.jobcard_number as jobcard_number','manufacture_jobcards.site_number as site_number','manufacture_customers.name as name'
-                ,'manufacture_customers.account_number as account_number','manufacture_products.description as description')
+                ,'manufacture_customers.account_number as account_number','manufacture_products.description as description','manufacture_product_transactions.product_id as transactions_product_id')
                 ->where('manufacture_jobcard_product_dispatches.status', 'Dispatched')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '>=', $this->from_date.' 00:00:01')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '<=', $this->to_date.' 23:59:59')                
                 ->where (function($query){
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
-                        $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')->where
+                        $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')
+                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
                         (function($query){
                             if($this->secondary_filter != ''){
-                                $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')->where
+                                $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
+                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
-                                        $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')->where
+                                        $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
+                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
-                                                $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')->where
+                                                $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
+                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
-                                                        $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')->where
+                                                        $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
+                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
-                                                                $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%');
+                                                                $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
+                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
                                                             }
                                                         });
                                                     }                                                    
@@ -1788,10 +1803,10 @@ class DispatchLivewire extends Component
                 $dispatch_list = ManufactureJobcardProductDispatches::join('manufacture_jobcards', 'manufacture_jobcards.id', '=', 'manufacture_jobcard_product_dispatches.job_id', 'left outer')
                 ->join('manufacture_customers', 'manufacture_customers.id', '=', 'manufacture_jobcard_product_dispatches.customer_id', 'left outer')
                 ->join('manufacture_products', 'manufacture_products.id', '=', 'manufacture_jobcard_product_dispatches.product_id', 'left outer')
-                // ->join('manufacture_product_transactions', 'manufacture_product_transactions.dispatch_id', '=', 'manufacture_jobcard_product_dispatches.id', 'left outer')
+                ->join('manufacture_product_transactions', 'manufacture_product_transactions.dispatch_id', '=', 'manufacture_jobcard_product_dispatches.id', 'left outer')
                 ->select('manufacture_jobcard_product_dispatches.id as id','manufacture_jobcard_product_dispatches.job_id as job_id','manufacture_jobcard_product_dispatches.customer_id as customer_id','manufacture_jobcard_product_dispatches.reference as reference'
                 ,'manufacture_jobcard_product_dispatches.product_id as product_id','manufacture_jobcards.jobcard_number as jobcard_number','manufacture_jobcards.site_number as site_number','manufacture_customers.name as name'
-                ,'manufacture_customers.account_number as account_number','manufacture_products.description as description'/* ,'manufacture_product_transactions.product_id as transactions_product_id' */)
+                ,'manufacture_customers.account_number as account_number','manufacture_products.description as description','manufacture_product_transactions.product_id as transactions_product_id')
                 ->where('manufacture_jobcard_product_dispatches.status', 'Dispatched')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '>=', $this->from_date.' 00:00:01')
                 ->where('manufacture_jobcard_product_dispatches.weight_out_datetime', '<=', $this->to_date.' 23:59:59')
@@ -1799,27 +1814,27 @@ class DispatchLivewire extends Component
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
                         $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')
-                        /* ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%') */->where
+                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
                         (function($query){
                             if($this->secondary_filter != ''){
                                 $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
-                                /* ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%') */->where
+                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
                                         $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
-                                        /* ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%') */->where
+                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
                                                 $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
-                                                /* ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%') */->where
+                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
                                                         $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
-                                                        /* ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%') */->where
+                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
                                                                 $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
-                                                                /* ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%') */;
+                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
                                                             }
                                                         });
                                                     }                                                    
@@ -1839,7 +1854,7 @@ class DispatchLivewire extends Component
                 dd($query); */                
                 
             } 
-            //dd($dispatch_list);
+            // dd($dispatch_list);
             $this->buildSelects($dispatch_list);
             
             

@@ -85,6 +85,16 @@ class ManufactureJobcardProductDispatches extends Model
         }
     }
 
+    function customer_weighed_product()
+    {
+        /* if ($this->transactions() !== null) {
+            return $this->transactions()->customer_product();
+        } */
+         if ($this->product_id !== null) {
+            return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+        }
+    }
+
     function customer_product()
     {
         if ($this->transactions() !== null) {

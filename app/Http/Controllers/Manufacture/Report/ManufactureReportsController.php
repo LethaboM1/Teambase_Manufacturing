@@ -57,7 +57,8 @@ class ManufactureReportsController extends Controller
             // dd($this->the_request);
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
-            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')            
+            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
+            ->join('manufacture_product_transactions as transactions', 'transactions.dispatch_id', '=', 'dispatches.id', 'left outer')            
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
@@ -66,7 +67,7 @@ class ManufactureReportsController extends Controller
             'dispatches.product_id as product_id', 'dispatches.qty as qty', 
             'dispatches.outsourced_contractor as outsourced_contractor',
             'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
-            'customers.account_number as account_number')
+            'customers.account_number as account_number','transactions.product_id as transactions_product_id')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -97,11 +98,13 @@ class ManufactureReportsController extends Controller
             })
             ->where (function($query){
                 if($this->the_request['product_description_filter'] != '0'){
-                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter'])
+                    ->orWhere('transactions.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.job_id','!=', '0')
-            ->groupBy('dispatches.job_id')
+            // ->groupBy('dispatches.job_id')
+            ->groupBy('dispatches.dispatch_number')
             ->orderBy('dispatches.dispatch_number', 'asc')
             ->get();
             /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
@@ -121,6 +124,7 @@ class ManufactureReportsController extends Controller
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
             ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
+            ->join('manufacture_product_transactions as transactions', 'transactions.dispatch_id', '=', 'dispatches.id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
@@ -129,7 +133,7 @@ class ManufactureReportsController extends Controller
             'dispatches.product_id as product_id', 'dispatches.qty as qty', 
             'dispatches.outsourced_contractor as outsourced_contractor',
             'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
-            'customers.account_number as account_number')
+            'customers.account_number as account_number','transactions.product_id as transactions_product_id')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -160,11 +164,13 @@ class ManufactureReportsController extends Controller
             })
             ->where (function($query){
                 if($this->the_request['product_description_filter'] != '0'){
-                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter'])
+                    ->orWhere('transactions.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
             ->where('dispatches.customer_id','!=', '0')
-            ->groupBy('dispatches.customer_id')
+            // ->groupBy('dispatches.customer_id')
+            ->groupBy('dispatches.dispatch_number')            
             ->orderBy('dispatches.dispatch_number', 'asc')            
             ->get();
 
@@ -174,6 +180,7 @@ class ManufactureReportsController extends Controller
             $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
             ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
             ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
+            ->join('manufacture_product_transactions as transactions', 'transactions.dispatch_id', '=', 'dispatches.id', 'left outer')
             ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
             'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
             'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
@@ -182,7 +189,7 @@ class ManufactureReportsController extends Controller
             'dispatches.product_id as product_id', 'dispatches.qty as qty',
             'dispatches.outsourced_contractor as outsourced_contractor', 
             'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
-            'customers.account_number as account_number')
+            'customers.account_number as account_number','transactions.product_id as transactions_product_id')
             ->where('dispatches.status', 'Dispatched')
             ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
             ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
@@ -213,14 +220,21 @@ class ManufactureReportsController extends Controller
             })
             ->where (function($query){
                 if($this->the_request['product_description_filter'] != '0'){
-                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
+                    $query->where('dispatches.product_id', $this->the_request['product_description_filter'])
+                    ->orWhere('transactions.product_id', $this->the_request['product_description_filter']);                    
                 }
             })
-            ->where('dispatches.customer_id','!=', '0')                        
-            ->groupBy('dispatches.customer_id')
+            // ->where('dispatches.customer_id','!=', '0')                        
+            // ->groupBy('dispatches.customer_id')
+            ->groupBy('dispatches.dispatch_number')
             ->orderBy('dispatches.dispatch_number', 'asc')
             ->get();
             $report_title = 'Transaction Report - All Dispatches - from '.$request['from_date'].' to '.$request['to_date'];
+
+            /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
+            $query = vsprintf($query, $the_report_dispatches->getBindings());
+            dd($query);
+            dd($the_report_dispatches); */
             
         }
 
@@ -273,43 +287,49 @@ class ManufactureReportsController extends Controller
                     <tbody>";
 
         
-
         foreach ($the_report_dispatches as $dispatch) {
             //Reset Group Totals
             // dd($dispatch);
             $group_qty_sum = 0.000;
             $group_mass_sum = 0.000;
-
-            //Dispatch Header Item
-            if($dispatch['product_id'] != '0'){
+// dd($this->the_request);
+            if($this->the_request['product_description_filter'] != '0'){
+                $dispatch_linked_header = $dispatch->where('product_id', $this->the_request['product_description_filter'])->first();                
+                
+            } else {
+                $dispatch_linked_header = $dispatch;             
+            }
+            //Dispatch Header Item            
+            if(null !== $dispatch_linked_header && $dispatch_linked_header['product_id'] != '0'){                                              
+                // dd($dispatch_linked_header);
                 $pdf .= "<tr>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['dispatch_number']}</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch_linked_header['dispatch_number']}</div></td>
                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll; font-size: 9px; text-align: left; padding: 3px;\">Dispatch</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['status']}</div></td>
-                        <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['weight_out_datetime']}</div></td>
-                        <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch['reference']}</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                        <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
-                        <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
-                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch_linked_header['status']}</div></td>
+                        <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch_linked_header['weight_out_datetime']}</div></td>
+                        <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">{$dispatch_linked_header['reference']}</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".(strlen($dispatch_linked_header['registration_number']) == 0 && $dispatch_linked_header['plant_id'] > 0 ? $dispatch_linked_header->plant()->reg_number : (strlen($dispatch_linked_header['outsourced_contractor']) != 0 ?  $dispatch_linked_header['registration_number']."*" : $dispatch_linked_header['registration_number']))."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch_linked_header['delivery_zone'] != '0' ? $dispatch_linked_header['delivery_zone']:'')."</div></td>
+                        <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch_linked_header['customer_id'] == '0' ? ucfirst($dispatch_linked_header->jobcard()->contractor):ucfirst($dispatch_linked_header->customer()->name))."</div></td>
+                        <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch_linked_header['job_id'] != '0' ? $dispatch_linked_header->jobcard()->jobcard_number:'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch_linked_header['product_id'] != '0' ? $dispatch_linked_header->product()->code:'')."</div></td>
+                        <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: left; padding: 3px;\">".($dispatch_linked_header['product_id'] != '0' ? $dispatch_linked_header->product()->description:'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch_linked_header['product_id'] != '0' ? ($dispatch_linked_header->product()->weighed_product == '0' ? $dispatch_linked_header['qty']:''):'')."</div></td>
+                        <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 9px; text-align: right; padding: 3px;\">".($dispatch_linked_header['product_id'] != '0' ? ($dispatch_linked_header->product()->weighed_product == '1' ? $dispatch_linked_header['qty']:''):'')."</div></td>
                     </tr>";
             
                 //Totaling Dispatch Header Item
                 
-                if($dispatch->product()->weighed_product == '0'){
+                if($dispatch_linked_header->product()->weighed_product == '0'){
                     
-                    $group_qty_sum = $group_qty_sum + (float)$dispatch['qty'];
-                    $total_qty_sum = $total_qty_sum + (float)$dispatch['qty'];
+                    $group_qty_sum = $group_qty_sum + (float)$dispatch_linked_header['qty'];
+                    $total_qty_sum = $total_qty_sum + (float)$dispatch_linked_header['qty'];
                     // dd('GT Qty:'.$total_qty_sum.', This Grp Qty:'.$group_qty_sum);                    
                 }
-                elseif ($dispatch->product()->weighed_product == '1'){
+                elseif ($dispatch_linked_header->product()->weighed_product == '1'){
                     
-                    $group_mass_sum = $group_mass_sum + (float)$dispatch['qty'];
-                    $total_mass_sum = $total_mass_sum + (float)$dispatch['qty'];
+                    $group_mass_sum = $group_mass_sum + (float)$dispatch_linked_header['qty'];
+                    $total_mass_sum = $total_mass_sum + (float)$dispatch_linked_header['qty'];
                     // dd('GT Mass:'.$total_mass_sum.', This Grp Mass:'.$group_mass_sum);
                 }                
                 
@@ -319,6 +339,7 @@ class ManufactureReportsController extends Controller
              
             //Dispatch Transaction Items
             if($this->the_request['product_description_filter'] != '0'){
+
                 $dispatch_linked_transactions = $dispatch->linked_transactions_filtered($this->the_request['product_description_filter']);
             } else {
                 $dispatch_linked_transactions = $dispatch->linked_transactions();
@@ -389,182 +410,186 @@ class ManufactureReportsController extends Controller
         }
         //<td style=\"font-weight: bold; overflow: scroll;  font-size: 9px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</td>//old line total client ref. removed due to wierd scaling issues on cells when text overflows
 
-        if($request['dispatch_report_category'] == 'all'){
-            //filters - All            
-            /* $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
-            ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
-            ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
-            ->where('job_id','!=', '0') 
-            ->orderBy('dispatch_number', 'asc')
-            ->groupBy('job_id')
-            ->get(); */
-            $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
-            ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
-            ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
-            ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
-            'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
-            'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
-            'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
-            'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
-            'dispatches.product_id as product_id', 'dispatches.qty as qty', 
-            'dispatches.outsourced_contractor as outsourced_contractor',
-            'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
-            'customers.account_number as account_number')
-            ->where('dispatches.status', 'Dispatched')
-            ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
-            ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
-            ->where (function($query){                
-                if($this->the_request['job_number_filter'] != '0'){                    
-                    $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
-                }
-            })
-            ->where (function($query){
-                if($this->the_request['site_number_filter'] != '0'){
-                    $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
-                }
-            })
-            ->where (function($query){
-                if($this->the_request['ref_number_filter'] != '0'){
-                    $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
-                }
-            })
-            ->where (function($query){                
-                if($this->the_request['customer_name_filter'] != '0'){                    
-                    $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
-                }
-            })
-            ->where (function($query){
-                if($this->the_request['account_number_filter'] != '0'){
-                    $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
-                }
-            })
-            ->where (function($query){
-                if($this->the_request['product_description_filter'] != '0'){
-                    $query->where('dispatches.product_id', $this->the_request['product_description_filter']);                    
-                }
-            })
-            ->where('dispatches.job_id','!=', '0')                        
-            ->groupBy('dispatches.job_id')
-            ->orderBy('dispatches.dispatch_number', 'asc')
-            ->get();
-            /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
-            $query = vsprintf($query, $the_report_dispatches->getBindings());
-            dd($query); */
+        // if($request['dispatch_report_category'] == 'all'){
+        //     //filters - All            
+        //     /* $the_report_dispatches = ManufactureJobcardProductDispatches::where('status', 'Dispatched')
+        //     ->where('weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+        //     ->where('weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+        //     ->where('job_id','!=', '0') 
+        //     ->orderBy('dispatch_number', 'asc')
+        //     ->groupBy('job_id')
+        //     ->get(); */
+        //     $the_report_dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+        //     ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')
+        //     ->join('manufacture_customers as customers', 'customers.id', '=', 'dispatches.customer_id', 'left outer')
+        //     ->join('manufacture_product_transactions as transactions', 'transactions.dispatch_id', '=', 'dispatches.id', 'left outer')
+        //     ->select('dispatches.id as id', 'dispatches.dispatch_number as dispatch_number', 
+        //     'dispatches.status as status', 'dispatches.weight_out_datetime as weight_out_datetime', 
+        //     'dispatches.reference as reference', 'dispatches.registration_number as registration_number', 
+        //     'dispatches.plant_id as plant_id', 'dispatches.delivery_zone as delivery_zone', 
+        //     'dispatches.customer_id as customer_id', 'dispatches.job_id as job_id', 
+        //     'dispatches.product_id as product_id', 'dispatches.qty as qty', 
+        //     'dispatches.outsourced_contractor as outsourced_contractor',
+        //     'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number',
+        //     'customers.account_number as account_number')
+        //     ->where('dispatches.status', 'Dispatched')
+        //     ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
+        //     ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
+        //     ->where (function($query){                
+        //         if($this->the_request['job_number_filter'] != '0'){                    
+        //             $query->where('dispatches.job_id', $this->the_request['job_number_filter']);    
+        //         }
+        //     })
+        //     ->where (function($query){
+        //         if($this->the_request['site_number_filter'] != '0'){
+        //             $query->where('jobs.site_number', $this->the_request['site_number_filter']);                                  
+        //         }
+        //     })
+        //     ->where (function($query){
+        //         if($this->the_request['ref_number_filter'] != '0'){
+        //             $query->where('dispatches.reference', $this->the_request['ref_number_filter']);                    
+        //         }
+        //     })
+        //     ->where (function($query){                
+        //         if($this->the_request['customer_name_filter'] != '0'){                    
+        //             $query->where('dispatches.customer_id', $this->the_request['customer_name_filter']);    
+        //         }
+        //     })
+        //     ->where (function($query){
+        //         if($this->the_request['account_number_filter'] != '0'){
+        //             $query->where('customers.account_number', $this->the_request['account_number_filter']);                                  
+        //         }
+        //     })
+        //     ->where (function($query){
+        //         if($this->the_request['product_description_filter'] != '0'){
+        //             $query->where('dispatches.product_id', $this->the_request['product_description_filter'])
+        //             ->orWhere('transactions.product_id', $this->the_request['product_description_filter']);                    
+        //         }
+        //     })
+        //     ->where('dispatches.job_id','!=', '0')                        
+        //     // ->groupBy('dispatches.job_id')
+        //     ->groupBy('dispatches.dispatch_number')
+        //     ->orderBy('dispatches.dispatch_number', 'asc')
+        //     ->get();
+        //     /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
+        //     $query = vsprintf($query, $the_report_dispatches->getBindings());
+        //     dd($query); */            
                         
 
-            foreach ($the_report_dispatches as $dispatch) {
-                //Reset Group Totals
-                $group_qty_sum = 0.000;
-                $group_mass_sum = 0.000;
+        //     foreach ($the_report_dispatches as $dispatch) {
+        //         //Reset Group Totals
+        //         $group_qty_sum = 0.000;
+        //         $group_mass_sum = 0.000;
 
-                //Dispatch Header Item
-                if($dispatch['product_id'] != '0'){
+        //         //Dispatch Header Item
+        //         if($dispatch['product_id'] != '0'){
 
-                    $pdf .= "<tr>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['status']}</div></td>
-                            <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
-                            <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                            <td><div style=\"width: 140px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                            <td><div style=\"width: 60px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
-                            <td><div style=\"width: 200px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
-                            <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
-                        </tr>";
+        //             $pdf .= "<tr>
+        //                     <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
+        //                     <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
+        //                     <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['status']}</div></td>
+        //                     <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
+        //                     <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
+        //                     <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
+        //                     <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+        //                     <td><div style=\"width: 140px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+        //                     <td><div style=\"width: 60px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>
+        //                     <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->code:'')."</div></td>
+        //                     <td><div style=\"width: 200px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['product_id'] != '0' ? $dispatch->product()->description:'')."</div></td>
+        //                     <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '0' ? $dispatch['qty']:''):'')."</div></td>
+        //                     <td><div style=\"width: 40px; font-weight: normal;  overflow: scroll; font-size: 10px; text-align: right; padding: 1px;\">".($dispatch['product_id'] != '0' ? ($dispatch->product()->weighed_product == '1' ? $dispatch['qty']:''):'')."</div></td>
+        //                 </tr>";
 
-                        //Totaling Dispatch Header Item
+        //                 //Totaling Dispatch Header Item
                         
-                            if($dispatch->product()->weighed_product == '0'){
+        //                     if($dispatch->product()->weighed_product == '0'){
                     
-                                $group_qty_sum = $group_qty_sum + (float)$dispatch['qty'];
-                                $total_qty_sum = $total_qty_sum + (float)$dispatch['qty'];
-                                // dd('GT Qty:'.$total_qty_sum.', This Grp Qty:'.$group_qty_sum);                    
-                            }
-                            elseif ($dispatch->product()->weighed_product == '1'){
+        //                         $group_qty_sum = $group_qty_sum + (float)$dispatch['qty'];
+        //                         $total_qty_sum = $total_qty_sum + (float)$dispatch['qty'];
+        //                         // dd('GT Qty:'.$total_qty_sum.', This Grp Qty:'.$group_qty_sum);                    
+        //                     }
+        //                     elseif ($dispatch->product()->weighed_product == '1'){
                                 
-                                $group_mass_sum = $group_mass_sum + (float)$dispatch['qty'];
-                                $total_mass_sum = $total_mass_sum + (float)$dispatch['qty'];
-                                // dd('GT Mass:'.$total_mass_sum.', This Grp Mass:'.$group_mass_sum);
-                            }
-                }
+        //                         $group_mass_sum = $group_mass_sum + (float)$dispatch['qty'];
+        //                         $total_mass_sum = $total_mass_sum + (float)$dispatch['qty'];
+        //                         // dd('GT Mass:'.$total_mass_sum.', This Grp Mass:'.$group_mass_sum);
+        //                     }
+        //         }
 
-                //Dispatch Transaction Items
-                if($this->the_request['product_description_filter'] != '0'){
-                    $dispatch_linked_transactions = $dispatch->linked_transactions_filtered($this->the_request['product_description_filter']);
-                } else {
-                    $dispatch_linked_transactions = $dispatch->linked_transactions();
-                }
-                foreach ($dispatch_linked_transactions as $dispatch_transactions) {
-                    $pdf .= "<tr>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
-                                <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
-                                <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
-                                <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
-                                <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->code}</div></td>
-                                <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->description}</div></td>
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
-                                <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
-                            </tr>";
+        //         //Dispatch Transaction Items
+        //         if($this->the_request['product_description_filter'] != '0'){
+        //             $dispatch_linked_transactions = $dispatch->linked_transactions_filtered($this->the_request['product_description_filter']);
+        //         } else {
+        //             $dispatch_linked_transactions = $dispatch->linked_transactions();
+        //         }
+        //         foreach ($dispatch_linked_transactions as $dispatch_transactions) {
+        //             $pdf .= "<tr>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['dispatch_number']}</div></td>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">Dispatch</div></td>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions['status']}</div></td>
+        //                         <td><div style=\"width: 97px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['weight_out_datetime']}</div></td>
+        //                         <td><div style=\"width: 80px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch['reference']}</div></td>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".(strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch->plant()->reg_number : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number']))."</div></td>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:'')."</div></td>
+        //                         <td><div style=\"width: 140px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['customer_id'] == '0' ? ucfirst($dispatch->jobcard()->contractor):ucfirst($dispatch->customer()->name))."</div></td>
+        //                         <td><div style=\"width: 60px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">".($dispatch['job_id'] != '0' ? $dispatch->jobcard()->jobcard_number:'')."</div></td>                            
+        //                         <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->code}</div></td>
+        //                         <td><div style=\"width: 200px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\">{$dispatch_transactions->product()->description}</div></td>
+        //                         <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '0' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>
+        //                         <td><div style=\"width: 40px; font-weight: normal; overflow: scroll;  font-size: 10px; text-align: right; padding: 1px;\">".($dispatch_transactions->product()->weighed_product == '1' ? \App\Http\Controllers\Functions::negate($dispatch_transactions['qty']):'')."</div></td>                                                                                   
+        //                     </tr>";
 
-                            //Totaling Transaction Items                            
-                            if ($dispatch_transactions->product()->weighed_product == '1'){
-                                $group_mass_sum = $group_mass_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
-                                $total_mass_sum = $total_mass_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
-                            }
-                            elseif ($dispatch_transactions->product()->weighed_product == '0'){
-                                $group_qty_sum = $group_qty_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
-                                $total_qty_sum = $total_qty_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
-                            }                            
+        //                     //Totaling Transaction Items                            
+        //                     if ($dispatch_transactions->product()->weighed_product == '1'){
+        //                         $group_mass_sum = $group_mass_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
+        //                         $total_mass_sum = $total_mass_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
+        //                     }
+        //                     elseif ($dispatch_transactions->product()->weighed_product == '0'){
+        //                         $group_qty_sum = $group_qty_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
+        //                         $total_qty_sum = $total_qty_sum + (float)\App\Http\Controllers\Functions::negate($dispatch_transactions['qty']);
+        //                     }                            
                             
-                }
-                //Totals Line
-                // if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){              
-                    $pdf .= "<tr>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>                            
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
-                            </tr>
-                            <tr>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Total</td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_qty_sum, 3)."</td>
-                                <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
-                            </tr>
-                            ";
-                // }
-            }
+        //         }
+        //         //Totals Line
+        //         // if($dispatch['product_id'] != '0'||isset($dispatch_transactions)){              
+        //             $pdf .= "<tr>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>                            
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; padding: 1px;\"></td>
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.0px double rgb(39, 39, 39); padding: 1px;\"></td>                                                                                   
+        //                     </tr>
+        //                     <tr>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: normal; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>                            
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\"></td>
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: left; border-bottom: 1.5px single rgb(39, 39, 39); padding: 1px;\">Total</td>
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_qty_sum, 3)."</td>
+        //                         <td style=\"font-weight: bold; overflow: scroll;  font-size: 10px; text-align: right; border-bottom: 1.5px single rgb(39, 39, 39); border-top: 1.5px single rgb(39, 39, 39); padding: 1px;\">".number_format($group_mass_sum, 3)."</td>                                                                                   
+        //                     </tr>
+        //                     ";
+        //         // }
+        //     }
 
-        }
+        // }
 
         //Grand Totals Line
+        // dd($the_report_dispatches);
         if(count($the_report_dispatches)>0){
             // dd(count($the_report_dispatches));
             $pdf .= "

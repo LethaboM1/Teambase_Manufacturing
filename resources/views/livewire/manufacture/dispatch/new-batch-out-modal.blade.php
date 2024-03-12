@@ -285,9 +285,9 @@
                             <hr>
                             <div class="col-md-6"><label>Product</label><br>
                                 @if ($customer_dispatch == 1)
-                                    @if ($dispatch->customer_product())
-                                        <h4>{{ $dispatch->customer_product()->code }}
-                                            {{ $dispatch->customer_product()->description }}</h4>
+                                    @if ($dispatch->customer_weighed_product())
+                                        <h4>{{ $dispatch->customer_weighed_product()->code }}
+                                            {{ $dispatch->customer_weighed_product()->description }}</h4>
                                     @endif
                                 @else
                                     @if ($dispatch->jobcard_product())
