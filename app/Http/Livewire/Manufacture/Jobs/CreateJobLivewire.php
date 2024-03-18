@@ -57,37 +57,40 @@ class CreateJobLivewire extends Component
     {
         //Validation on Site Number Formatting     
         // $current_sites = ManufactureJobcards::select('site_number')->distinct()->get();
-        $current_sites = ManufactureJobcards::select('site_number', \DB::raw('substr(site_number, 1, 4) as siteno, concat(".",substr(site_number, 6)) as subno'))->distinct()->get();        
+        // $current_sites = ManufactureJobcards::select('site_number', \DB::raw('substr(site_number, 1, 4) as siteno, concat(".",substr(site_number, 6)) as subno'))->distinct()->get();        
         
-        if($current_sites->where('siteno', substr($this->site_number, 0, 4))->count() > 0){
-            // dd('we have a double');                        
-            $siteno=$current_sites->where('siteno', substr($this->site_number, 0, 4))->first()->siteno;
-            $subno=$current_sites->where('siteno', substr($this->site_number, 0, 4))->sortByDesc('subno')->first()->subno;
+        // if($current_sites->where('siteno', substr($this->site_number, 0, 4))->count() > 0){
+        //     // dd('we have a double');                        
+        //     $siteno=$current_sites->where('siteno', substr($this->site_number, 0, 4))->first()->siteno;
+        //     $subno=$current_sites->where('siteno', substr($this->site_number, 0, 4))->sortByDesc('subno')->first()->subno;
             
-            $subnonext= Functions::incrementSiteSubNo($subno);
-            $siteno=floatval($siteno+$subnonext);
+        //     $subnonext= Functions::incrementSiteSubNo($subno);
+        //     $siteno=floatval($siteno+$subnonext);
             
-            $this->site_number = str_replace('.','/',$siteno);           
+        //     $this->site_number = str_replace('.','/',$siteno);           
 
-            // dd('current highest sub:'.$subno.', next no:'.$subnonext);            
+        //     // dd('current highest sub:'.$subno.', next no:'.$subnonext);            
 
-        } else{
-            // dd('we do not have a double');
-            $siteno=substr($this->site_number, 0, 4);
-            $subno='.'.substr($this->site_number, 5);
+        // } else{
+        //     // dd('we do not have a double');
+        //     $siteno=substr($this->site_number, 0, 4);
+        //     $subno='.'.substr($this->site_number, 5);
             
-            if($subno == '.00'){
-                $subnonext=Functions::incrementSiteSubNo($subno);
-                $siteno=floatval($siteno+$subnonext);
-                $this->site_number = str_replace('.','/',$siteno);
-            } else {
-                $subnonext = $subno;
-                $siteno=floatval($siteno+$subnonext);
-                $this->site_number = str_replace('.','/',$siteno);
-            }
+        //     if($subno == '.00'){
+        //         $subnonext=Functions::incrementSiteSubNo($subno);
+        //         $siteno=floatval($siteno+$subnonext);
+        //         $this->site_number = str_replace('.','/',$siteno);
+        //     } else {
+        //         $subnonext = $subno;
+        //         $siteno=floatval($siteno+$subnonext);
+        //         $this->site_number = str_replace('.','/',$siteno);
+        //     }
             
-            // dd('current highest sub:'.$subno.', next no:'.$subnonext);
-        }
+        //     // dd('current highest sub:'.$subno.', next no:'.$subnonext);
+        // } Site Number checks removed 2024-03-18
+
+        $siteno=substr($this->site_number, 0, 7);
+        $this->site_number = str_replace('.','/',$siteno);
         
         $this->site_number_new=$this->site_number;
     }
