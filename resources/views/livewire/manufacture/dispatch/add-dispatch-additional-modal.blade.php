@@ -199,7 +199,7 @@
                 Livewire.on('closeDispatch', function($key) {
                     Livewire.emit('refreshNewDispatch');
                     $('#cancel_dispatch').click();
-                    window.open('{{ url('dispatches/print') }}/' + $key,
+                    window.open('{{ url('dispatches/print') }}/' + $key +'?type=dispatch',
                         '_blank'); //$('#edit_btn_' + $key).click();
 
                 })

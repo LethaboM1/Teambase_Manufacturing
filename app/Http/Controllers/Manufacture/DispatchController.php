@@ -363,7 +363,7 @@ class DispatchController extends Controller
         ]);
     }
 
-    function print_dispatch(ManufactureJobcardProductDispatches $dispatch, $overundervariance = '', Request $request)
+    function print_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request, $overundervariance = '')
     {                
         
         // dd('Type:'.$request->type.', ID:'.$request->extraitemid);        
