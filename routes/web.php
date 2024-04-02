@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UtilsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ManagersController;
 use App\Http\Controllers\SupplierController;
@@ -64,6 +65,12 @@ Route::middleware('auth')->group(function () {
             Route::post('customers/delete', [CustomerController::class, 'delete_customer']);
         });
 
+        Route::middleware('is_super')->group(function () {
+            /* Utils Route */
+            Route::get('system/utils', [UtilsController::class, 'view']);            
+            Route::post('system/headerproducts/transfer', [UtilsController::class, 'transfer_header_products_to_lines']);
+        });
+
         Route::middleware('is_products')->group(function () {
             /* */
             Route::get('products', [ProductsController::class, 'products']);
@@ -110,6 +117,9 @@ Route::middleware('auth')->group(function () {
             Route::post('dispatches/return/{dispatch}', [DispatchController::class, 'return_dispatch']);
             Route::post('dispatches/transfer/{dispatch}', [DispatchController::class, 'transfer_dispatch']);
             Route::get('dispatches/print/{dispatch}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_/{dispatch}/{overundervariance}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_return/{dispatch}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_transfer/{dispatch}', [DispatchController::class, 'print_dispatch']);
             Route::post('dispatches/receiving-goods', [DispatchController::class, 'receiving_goods']);
             Route::post('dispatches/return-goods', [DispatchController::class, 'return_goods']);
             Route::get('dispatches/return-goods/{transaction}/print', [DispatchController::class, 'print_return']);

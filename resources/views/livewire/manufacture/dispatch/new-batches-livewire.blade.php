@@ -45,6 +45,12 @@
                             </section>
                         </form>
                     </div>
+                    {{-- Refresh listeners on Modals --}}
+                    <script>
+                        setTimeout(function() {
+                            $.getScript('{{ url('js/examples/examples.modals.js') }}');
+                        }, 500);
+                    </script>
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
@@ -153,14 +159,18 @@
                     </div>                                                
                         
 
-                    {{-- Print of Dispatch Note --}}
+                    {{-- Print of Dispatch Note --}}                    
                     @if(Session::get('print_dispatch'))
-                    <script>
-                        window.open('{{url("dispatches/print/".Session::get('print_dispatch'))}}','_blank');
-                    </script>
-
-                    @endif                    
-
+                        @if(Session::get('over_under_variance'))
+                            <script>
+                                window.open('{{url("dispatches/print_/".Session::get('print_dispatch')."/".Session::get('over_under_variance')."?type=dispatch")}}','_blank');
+                            </script>
+                        @else
+                            <script>
+                                window.open('{{url("dispatches/print/".Session::get('print_dispatch')."?type=dispatch")}}','_blank');
+                            </script>
+                        @endif
+                    @endif
                 </div> 
             </section>
         </div>
@@ -169,10 +179,10 @@
                 function (){
                         livewire.on('closeModal', function($dispatch_id, $newdispatch_id){
                         $('#closeModalBtn_'+$dispatch_id).click();
-                        window.open('{{url("dispatches/print")}}/'+$newdispatch_id, '_blank');                                    
+                        window.open('{{url("dispatches/print")}}/'+$newdispatch_id+'?type=dispatch', '_blank');                                    
                         });                
                 }
-            );            
-        </script>
+            );                        
+        </script>        
     </div>
     

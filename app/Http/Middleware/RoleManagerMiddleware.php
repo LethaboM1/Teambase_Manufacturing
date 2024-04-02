@@ -17,7 +17,7 @@ class RoleManagerMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            if (auth()->user()->role == 'manager') {
+            if (auth()->user()->role == 'manager'||auth()->user()->role == 'system') {
                 return $next($request);
             }
         }

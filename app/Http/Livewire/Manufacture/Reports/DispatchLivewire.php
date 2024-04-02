@@ -25,32 +25,32 @@ class DispatchLivewire extends Component
         $product_description_filter = 0,
         $primary_filter,
         $primary_filter_column,
-        $primary_filter_column2,
+        // $primary_filter_column2,
         $primary_filter_text,
         $job_number_filter_old,
         $secondary_filter,
         $secondary_filter_column,
-        $secondary_filter_column2,
+        // $secondary_filter_column2,
         $secondary_filter_text,
         $site_number_filter_old,
         $tertiary_filter,
         $tertiary_filter_column,
-        $tertiary_filter_column2,
+        //$tertiary_filter_column2,
         $tertiary_filter_text,
         $ref_number_filter_old,
         $quaternary_filter,
         $quaternary_filter_column,
-        $quaternary_filter_column2,
+        //$quaternary_filter_column2,
         $quaternary_filter_text,
         $customer_name_filter_old,
         $quinary_filter,
         $quinary_filter_column,
-        $quinary_filter_column2,
+        //$quinary_filter_column2,
         $quinary_filter_text,
         $account_number_filter_old,
         $senary_filter,
         $senary_filter_column,
-        $senary_filter_column2,
+        //$senary_filter_column2,
         $senary_filter_text,
         $product_description_filter_old,
         $dispatch_report_jobcard_list = [],
@@ -98,32 +98,32 @@ class DispatchLivewire extends Component
         $this->product_description_filter = 0;
         $this->primary_filter = '';
         $this->primary_filter_column = '';
-        $this->primary_filter_column2 = '';
+        //$this->primary_filter_column2 = '';
         $this->primary_filter_text = '';
         $this->job_number_filter_old = '';
         $this->secondary_filter = '';
         $this->secondary_filter_column = '';
-        $this->secondary_filter_column2 = '';
+        //$this->secondary_filter_column2 = '';
         $this->secondary_filter_text = '';
         $this->site_number_filter_old = '';
         $this->tertiary_filter = '';
         $this->tertiary_filter_column = '';
-        $this->tertiary_filter_column2 = '';
+        //$this->tertiary_filter_column2 = '';
         $this->tertiary_filter_text = '';
         $this->ref_number_filter_old = '';
         $this->quaternary_filter = '';
         $this->quaternary_filter_column = '';
-        $this->quaternary_filter_column2 = '';
+        //$this->quaternary_filter_column2 = '';
         $this->quaternary_filter_text = '';
         $this->customer_name_filter_old = '';
         $this->quinary_filter = '';
         $this->quinary_filter_column = '';
-        $this->quinary_filter_column2 = '';
+        //$this->quinary_filter_column2 = '';
         $this->quinary_filter_text = '';
         $this->account_number_filter_old = '';
         $this->senary_filter = '';
         $this->senary_filter_column = '';
-        $this->senary_filter_column2 = '';
+        //$this->senary_filter_column2 = '';
         $this->senary_filter_text = '';
         $this->product_description_filter_old = '';
         $this->dispatch_report_jobcard_list = [];
@@ -156,32 +156,32 @@ class DispatchLivewire extends Component
                     $this->primary_filter = 'job';
                     $this->primary_filter_column = 'job_id';
                     $this->primary_filter_text = $this->job_number_filter;
-                    $this->primary_filter_column2 = '';
+                    //$this->primary_filter_column2 = '';
                 } elseif ($this->secondary_filter == ''){
                     $this->secondary_filter = 'job';
                     $this->secondary_filter_column = 'job_id';
                     $this->secondary_filter_text = $this->job_number_filter;
-                    $this->secondary_filter_column2 = '';
+                    //$this->secondary_filter_column2 = '';
                 } elseif ($this->tertiary_filter == ''){
                     $this->tertiary_filter = 'job';                
                     $this->tertiary_filter_column = 'job_id';
                     $this->tertiary_filter_text = $this->job_number_filter;
-                    $this->tertiary_filter_column2 = '';
+                    //$this->tertiary_filter_column2 = '';
                 } elseif ($this->quaternary_filter == ''){
                     $this->quaternary_filter = 'job';                
                     $this->quaternary_filter_column = 'job_id';
                     $this->quaternary_filter_text = $this->job_number_filter;
-                    $this->quaternary_filter_column2 = '';
+                    //$this->quaternary_filter_column2 = '';
                 } elseif ($this->quinary_filter == ''){
                     $this->quinary_filter = 'job';                
                     $this->quinary_filter_column = 'job_id';
                     $this->quinary_filter_text = $this->job_number_filter;
-                    $this->quinary_filter_column2 = '';
+                    //$this->quinary_filter_column2 = '';
                 } elseif ($this->senary_filter == ''){
                     $this->senary_filter = 'job';                
                     $this->senary_filter_column = 'job_id';
                     $this->senary_filter_text = $this->job_number_filter;
-                    $this->senary_filter_column2 = '';
+                    //$this->senary_filter_column2 = '';
                 }
             }
         } else {
@@ -1282,34 +1282,34 @@ class DispatchLivewire extends Component
             } else {
                 if($this->primary_filter == ''){
                     $this->primary_filter = 'product';
-                    $this->primary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->primary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->primary_filter_text = $this->product_description_filter;
-                    $this->primary_filter_column2 = 'manufacture_product_transactions.product_id';                    
+                    $this->primary_filter_column = 'manufacture_product_transactions.product_id';                    
                 } elseif ($this->secondary_filter == ''){
                     $this->secondary_filter = 'product';
-                    $this->secondary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->secondary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->secondary_filter_text = $this->product_description_filter;
-                    $this->secondary_filter_column2 = 'manufacture_product_transactions.product_id';
+                    $this->secondary_filter_column = 'manufacture_product_transactions.product_id';
                 } elseif ($this->tertiary_filter == ''){
                     $this->tertiary_filter = 'product';                
-                    $this->tertiary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->tertiary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->tertiary_filter_text = $this->product_description_filter;
-                    $this->tertiary_filter_column2 = 'manufacture_product_transactions.product_id';
+                    $this->tertiary_filter_column = 'manufacture_product_transactions.product_id';
                 } elseif ($this->quaternary_filter == ''){
                     $this->quaternary_filter = 'product';                
-                    $this->quaternary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->quaternary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->quaternary_filter_text = $this->product_description_filter;
-                    $this->quaternary_filter_column2 = 'manufacture_product_transactions.product_id';
+                    $this->quaternary_filter_column = 'manufacture_product_transactions.product_id';
                 } elseif ($this->quinary_filter == ''){
                     $this->quinary_filter = 'product';                
-                    $this->quinary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->quinary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->quinary_filter_text = $this->product_description_filter;
-                    $this->quinary_filter_column2 = 'manufacture_product_transactions.product_id';
+                    $this->quinary_filter_column = 'manufacture_product_transactions.product_id';
                 } elseif ($this->senary_filter == ''){
                     $this->senary_filter = 'product';                
-                    $this->senary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
+                    // $this->senary_filter_column = 'manufacture_jobcard_product_dispatches.product_id';
                     $this->senary_filter_text = $this->product_description_filter;
-                    $this->senary_filter_column2 = 'manufacture_jobcard_product_transactions.product_id';
+                    $this->senary_filter_column = 'manufacture_product_transactions.product_id';
                 }
             }
         } else {            
@@ -1319,64 +1319,64 @@ class DispatchLivewire extends Component
                     $this->primary_filter = $this->secondary_filter;
                     $this->primary_filter_column = $this->secondary_filter_column;
                     $this->primary_filter_text = $this->secondary_filter_text;
-                    $this->primary_filter_column2 = $this->secondary_filter_column2;
+                    // $this->primary_filter_column2 = $this->secondary_filter_column2;
                     //promote tertiary if populated
                     if ($this->tertiary_filter != ''){
                         $this->secondary_filter = $this->tertiary_filter;                
                         $this->secondary_filter_column = $this->tertiary_filter_column;
                         $this->secondary_filter_text = $this->tertiary_filter_text;
-                        $this->secondary_filter_column2 = $this->tertiary_filter_column2;                      
+                        // $this->secondary_filter_column2 = $this->tertiary_filter_column2;                      
                     
                         //promote quaternary if populated
                         if ($this->quarternary_filter != ''){
                             $this->tertiary_filter = $this->quarternary_filter;                
                             $this->tertiary_filter_column = $this->quarternary_filter_column;
                             $this->tertiary_filter_text = $this->quarternary_filter_text;
-                            $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                                
+                            // $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                                
                         
                             //promote quinary if populated
                             if ($this->quinary_filter != ''){
                                 $this->quaternary_filter = $this->quinary_filter;                
                                 $this->quaternary_filter_column = $this->quinary_filter_column;
                                 $this->quaternary_filter_text = $this->quinary_filter_text;
-                                $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                                
+                                // $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                                
                             
                                     //promote senary if populated
                                     if ($this->senary_filter != ''){
                                         $this->quinary_filter = $this->senary_filter;                
                                         $this->quinary_filter_column = $this->senary_filter_column;
                                         $this->quinary_filter_text = $this->senary_filter_text;
-                                        $this->quinary_filter_column2 = $this->senary_filter_column2;
+                                        // $this->quinary_filter_column2 = $this->senary_filter_column2;
                                         
                                         //clear senary filter
                                         $this->senary_filter = '';                
                                         $this->senary_filter_column = '';
                                         $this->senary_filter_text = '';
-                                        $this->senary_filter_column2 = '';
+                                        // $this->senary_filter_column2 = '';
                                     }
                             } else {
                                 $this->quaternary_filter = '';                
                                 $this->quaternary_filter_column = '';
                                 $this->quaternary_filter_text = '';
-                                $this->quaternary_filter_column2 = '';    
+                                // $this->quaternary_filter_column2 = '';    
                             }    
                         } else {
                             $this->tertiary_filter = '';                
                             $this->tertiary_filter_column = '';
                             $this->tertiary_filter_text = ''; 
-                            $this->tertiary_filter_column2 = '';   
+                            // $this->tertiary_filter_column2 = '';   
                         }
                     } else {
                         $this->secondary_filter = '';                
                         $this->secondary_filter_column = '';
                         $this->secondary_filter_text = '';
-                        $this->secondary_filter_column2 = '';    
+                        // $this->secondary_filter_column2 = '';    
                     }
                 } else {
                     $this->primary_filter = '';
                     $this->primary_filter_column = '';
                     $this->primary_filter_text = '';
-                    $this->primary_filter_column2 = '';
+                    // $this->primary_filter_column2 = '';
                 }
                                 
             } elseif ($this->secondary_filter == 'product'){                
@@ -1385,51 +1385,51 @@ class DispatchLivewire extends Component
                     $this->secondary_filter = $this->tertiary_filter;                
                     $this->secondary_filter_column = $this->tertiary_filter_column;
                     $this->secondary_filter_text = $this->tertiary_filter_text; 
-                    $this->secondary_filter_column2 = $this->tertiary_filter_column2;                   
+                    // $this->secondary_filter_column2 = $this->tertiary_filter_column2;                   
                 
                     //promote quaternary if populated
                     if ($this->quarternary_filter != ''){
                         $this->tertiary_filter = $this->quarternary_filter;                
                         $this->tertiary_filter_column = $this->quarternary_filter_column;
                         $this->tertiary_filter_text = $this->quarternary_filter_text;
-                        $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                                
+                        // $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                                
                     
                         //promote quinary if populated
                         if ($this->quinary_filter != ''){
                             $this->quaternary_filter = $this->quinary_filter;                
                             $this->quaternary_filter_column = $this->quinary_filter_column;
                             $this->quaternary_filter_text = $this->quinary_filter_text;
-                            $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                                
+                            // $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                                
                         
                             //promote senary if populated
                             if ($this->senary_filter != ''){
                                 $this->quinary_filter = $this->senary_filter;                
                                 $this->quinary_filter_column = $this->senary_filter_column;
                                 $this->quinary_filter_text = $this->senary_filter_text; 
-                                $this->quinary_filter_column2 = $this->senary_filter_column2;
+                                // $this->quinary_filter_column2 = $this->senary_filter_column2;
                                 //clear senary filter
                                 $this->senary_filter = '';                
                                 $this->senary_filter_column = '';
                                 $this->senary_filter_text = '';
-                                $this->senary_filter_column2 = '';
+                                // $this->senary_filter_column2 = '';
                             }
                         } else {
                             $this->quaternary_filter = '';
                             $this->quaternary_filter_column = '';
                             $this->quaternary_filter_text = ''; 
-                            $this->quaternary_filter_column2 = '';                   
+                            // $this->quaternary_filter_column2 = '';                   
                         }    
                     } else {
                         $this->tertiary_filter = '';
                         $this->tertiary_filter_column = '';
                         $this->tertiary_filter_text = '';
-                        $this->tertiary_filter_column2 = '';                    
+                        // $this->tertiary_filter_column2 = '';                    
                     }                           
                 } else {
                     $this->secondary_filter = '';
                     $this->secondary_filter_column = '';
                     $this->secondary_filter_text = '';     
-                    $this->secondary_filter_column2 = '';               
+                    // $this->secondary_filter_column2 = '';               
                 }               
             } elseif ($this->tertiary_filter == 'product'){
                 //promote quaternary if populated
@@ -1437,38 +1437,38 @@ class DispatchLivewire extends Component
                     $this->tertiary_filter = $this->quarternary_filter;                
                     $this->tertiary_filter_column = $this->quarternary_filter_column;
                     $this->tertiary_filter_text = $this->quarternary_filter_text;    
-                    $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                           
+                    // $this->tertiary_filter_column2 = $this->quarternary_filter_column2;                                           
                 
                     //promote quinary if populated
                     if ($this->quinary_filter != ''){
                         $this->quaternary_filter = $this->quinary_filter;                
                         $this->quaternary_filter_column = $this->quinary_filter_column;
                         $this->quaternary_filter_text = $this->quinary_filter_text;  
-                        $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                              
+                        // $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                              
                     
                         //promote senary if populated
                         if ($this->senary_filter != ''){
                             $this->quinary_filter = $this->senary_filter;                
                             $this->quinary_filter_column = $this->senary_filter_column;
                             $this->quinary_filter_text = $this->senary_filter_text; 
-                            $this->quinary_filter_column2 = $this->senary_filter_column2;
+                            // $this->quinary_filter_column2 = $this->senary_filter_column2;
                             //clear senary filter
                             $this->senary_filter = '';                
                             $this->senary_filter_column = '';
                             $this->senary_filter_text = '';
-                            $this->senary_filter_column2 = '';
+                            //$this->senary_filter_column2 = '';
                         }
                     } else {                        
                         $this->quaternary_filter = '';                
                         $this->quaternary_filter_column = '';
                         $this->quaternary_filter_text = '';
-                        $this->quaternary_filter_column2 = '';
+                        //$this->quaternary_filter_column2 = '';
                         }                           
                 } else {                
                     $this->tertiary_filter = '';                
                     $this->tertiary_filter_column = '';
                     $this->tertiary_filter_text = '';
-                    $this->tertiary_filter_column2 = '';
+                    //$this->tertiary_filter_column2 = '';
                 }
             } elseif ($this->quaternary_filter == 'product'){                
                 //promote quinary if populated
@@ -1476,25 +1476,25 @@ class DispatchLivewire extends Component
                     $this->quaternary_filter = $this->quinary_filter;                
                     $this->quaternary_filter_column = $this->quinary_filter_column;                    
                     $this->quaternary_filter_text = $this->quinary_filter_text;    
-                    $this->quaternary_filter_column2 = $this->quinary_filter_column2;                                            
+                    //$this->quaternary_filter_column2 = $this->quinary_filter_column2;                                            
                 
                     //promote senary if populated
                     if ($this->senary_filter != ''){
                         $this->quinary_filter = $this->senary_filter;
                         $this->quinary_filter_column = $this->senary_filter_column;
                         $this->quinary_filter_text = $this->senary_filter_text;
-                        $this->quinary_filter_column2 = $this->senary_filter_column2; 
+                        //$this->quinary_filter_column2 = $this->senary_filter_column2; 
                         //clear senary filter
                         $this->senary_filter = '';                
                         $this->senary_filter_column = '';
                         $this->senary_filter_text = '';
-                        $this->senary_filter_column2 = '';                        
+                        //$this->senary_filter_column2 = '';                        
                     }
                 } else {                
                     $this->quaternary_filter = '';                
                     $this->quaternary_filter_column = '';
                     $this->quaternary_filter_text = '';
-                    $this->quaternary_filter_column2 = '';
+                    //$this->quaternary_filter_column2 = '';
                 }
             } elseif ($this->quinary_filter == 'product'){                
                 //promote senary if populated
@@ -1502,24 +1502,24 @@ class DispatchLivewire extends Component
                     $this->quinary_filter = $this->senary_filter;                
                     $this->quinary_filter_column = $this->senary_filter_column;
                     $this->quinary_filter_text = $this->senary_filter_text; 
-                    $this->quinary_filter_column2 = $this->senary_filter_column2;
+                    //$this->quinary_filter_column2 = $this->senary_filter_column2;
                     //clear senary filter
                     $this->senary_filter = '';                
                     $this->senary_filter_column = '';                    
                     $this->senary_filter_text = '';  
-                    $this->senary_filter_column2 = '';                     
+                    //$this->senary_filter_column2 = '';                     
                 } else {                
                     $this->quinary_filter = '';                
                     $this->quinary_filter_column = '';                    
                     $this->quinary_filter_text = '';
-                    $this->quinary_filter_column2 = '';
+                    //$this->quinary_filter_column2 = '';
                 }
             } elseif ($this->senary_filter == 'product'){                                
                 //clear senary filter
                 $this->senary_filter = '';                
                 $this->senary_filter_column = '';
                 $this->senary_filter_text = '';
-                $this->senary_filter_column2 = '';                
+                //$this->senary_filter_column2 = '';                
             }
         } 
         // dd($this->product_description_filter);       
@@ -1708,27 +1708,27 @@ class DispatchLivewire extends Component
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
                         $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')                        
-                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
+                        /* ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%') */->where
                         (function($query){
                             if($this->secondary_filter != ''){
                                 $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
-                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
+                                /* ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%') */->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
                                         $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
-                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
+                                        /* ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%') */->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
                                                 $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
-                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
+                                                /* ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%') */->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
                                                         $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
-                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
+                                                        /* ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%') */->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
                                                                 $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
-                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
+                                                                /* ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%') */;
                                                             }
                                                         });
                                                     }                                                    
@@ -1761,27 +1761,27 @@ class DispatchLivewire extends Component
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
                         $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')
-                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
+                        /* ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%') */->where
                         (function($query){
                             if($this->secondary_filter != ''){
                                 $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
-                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
+                                /* ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%') */->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
                                         $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
-                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
+                                        /* ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%') */->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
                                                 $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
-                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
+                                                /* ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%') */->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
                                                         $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
-                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
+                                                        /* ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%') */->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
                                                                 $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
-                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
+                                                                /* ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%') */;
                                                             }
                                                         });
                                                     }                                                    
@@ -1814,27 +1814,27 @@ class DispatchLivewire extends Component
                     if($this->primary_filter != ''){
                         // dd($this->primary_filter.' '.$this->primary_filter_column.' '.$this->primary_filter_text);
                         $query->where($this->primary_filter_column, 'like', '%'.$this->primary_filter_text.'%')
-                        ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%')->where
+                        /* ->orWhere($this->primary_filter_column2, 'like', '%'.$this->primary_filter_text.'%') */->where
                         (function($query){
                             if($this->secondary_filter != ''){
                                 $query->where($this->secondary_filter_column, 'like', '%'.$this->secondary_filter_text.'%')
-                                ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%')->where
+                                /* ->orWhere($this->secondary_filter_column2, 'like', '%'.$this->secondary_filter_text.'%') */->where
                                 (function($query){
                                     if($this->tertiary_filter != ''){
                                         $query->where($this->tertiary_filter_column, 'like', '%'.$this->tertiary_filter_text.'%')
-                                        ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%')->where
+                                        /* ->orWhere($this->tertiary_filter_column2, 'like', '%'.$this->tertiary_filter_text.'%') */->where
                                         (function($query){
                                             if($this->quaternary_filter != ''){
                                                 $query->where($this->quaternary_filter_column, 'like', '%'.$this->quaternary_filter_text.'%')
-                                                ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%')->where
+                                                /* ->orWhere($this->quaternary_filter_column2, 'like', '%'.$this->quaternary_filter_text.'%') */->where
                                                 (function($query){
                                                     if($this->quinary_filter != ''){
                                                         $query->where($this->quinary_filter_column, 'like', '%'.$this->quinary_filter_text.'%')
-                                                        ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%')->where
+                                                        /* ->orWhere($this->quinary_filter_column2, 'like', '%'.$this->quinary_filter_text.'%') */->where
                                                         (function($query){
                                                             if($this->senary_filter != ''){
                                                                 $query->where($this->senary_filter_column, 'like', '%'.$this->senary_filter_text.'%')
-                                                                ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%');
+                                                                /* ->orWhere($this->senary_filter_column2, 'like', '%'.$this->senary_filter_text.'%') */;
                                                             }
                                                         });
                                                     }                                                    
@@ -1848,7 +1848,7 @@ class DispatchLivewire extends Component
                     }
                 })  
                 // ->with('linked_transactions')                                              
-                ->get();
+                ->get() ;
                 /* $query = str_replace(array('?'), array('\'%s\''), $dispatch_list->toSql());
                 $query = vsprintf($query, $dispatch_list->getBindings());
                 dd($query); */                

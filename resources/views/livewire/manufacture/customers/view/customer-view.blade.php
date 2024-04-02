@@ -12,13 +12,13 @@
             </div>
             
             <div class="col-md-6">
-                <x-form.checkbox name="credit_set" label="Has an account?" />
-                <x-form.hidden wire=0 name="credit" :value="$credit_set" />
-            </div>
-            <div class="col-md-6">
+                <x-form.checkbox name="credit_set" label="Has an account?" />                
                 @if($credit_set)                
                     <x-form.input wire=0 :value="$customer['account_number']" name="account_number" label="Account No." />
                 @endif
+            </div>
+            <div class="col-md-6">
+                <x-form.hidden wire=0 name="credit" :value="$credit_set" />                
             </div>            
             <div class="col-md-6">
                 <x-form.input wire=0 :value="$customer['contact_name']" name="contact_name" label="Contact Name" />

@@ -106,8 +106,8 @@ class ManufactureReportsController extends Controller
             })
             ->where('dispatches.job_id','!=', '0')
             // ->groupBy('dispatches.job_id')
-            ->groupBy('dispatches.dispatch_number')
-            ->orderBy('dispatches.dispatch_number', 'asc')
+            ->groupBy('dispatches.id') //no longer by dispatch_number to enable proper display on Transfer / Returns
+            ->orderBy('dispatches.id', 'asc') //no longer by dispatch_number to enable proper display on Transfer / Returns
             ->get();
             /* $query = str_replace(array('?'), array('\'%s\''), $the_report_dispatches->toSql());
             $query = vsprintf($query, $the_report_dispatches->getBindings());
@@ -172,8 +172,8 @@ class ManufactureReportsController extends Controller
             })
             ->where('dispatches.customer_id','!=', '0')
             // ->groupBy('dispatches.customer_id')
-            ->groupBy('dispatches.dispatch_number')            
-            ->orderBy('dispatches.dispatch_number', 'asc')            
+            ->groupBy('dispatches.id') //no longer by dispatch_number to enable proper display on Transfer / Returns            
+            ->orderBy('dispatches.id', 'asc') //no longer by dispatch_number to enable proper display on Transfer / Returns            
             ->get();
 
             $report_title = 'Transaction Report - Cash Clients - from '.$request['from_date'].' to '.$request['to_date'];
@@ -228,8 +228,8 @@ class ManufactureReportsController extends Controller
             })
             // ->where('dispatches.customer_id','!=', '0')                        
             // ->groupBy('dispatches.customer_id')
-            ->groupBy('dispatches.dispatch_number')
-            ->orderBy('dispatches.dispatch_number', 'asc')
+            ->groupBy('dispatches.id') //no longer by dispatch_number to enable proper display on Transfer / Returns
+            ->orderBy('dispatches.id', 'asc') //no longer by dispatch_number to enable proper display on Transfer / Returns
             ->get();
             $report_title = 'Transaction Report - All Dispatches - from '.$request['from_date'].' to '.$request['to_date'];
 

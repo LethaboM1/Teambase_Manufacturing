@@ -81,8 +81,8 @@
                                         <th width="10%">Qty</th>
                                         <th width="15%">Actions</th>
                                         <th>
-                                            @if ($add_extra_item_show == '0')
-                                                <a wire:click="AddExtraItemShow" class="btn btn-primary btn-sm"
+                                            @if ($add_extra_item_show == false)
+                                                <a wire:click="$set('add_extra_item_show', true)" class="btn btn-primary btn-sm"
                                                     title="Add Item">
                                                     <i class="fas fa-plus"></i>
                                                 </a>
@@ -114,14 +114,22 @@
                                         </div>
                                     @endif
                                 @endif
-                                @if ($add_extra_item_show == '1')
+                                @if ($add_extra_item_show == true)
                                     <tr>
                                         {{-- <td><x-form.input name="extra_product_weight_in_date" value="{{$extra_product_weight_in_date}}" wire=0 disabled=1/></td> --}}
                                         @if ($customer_dispatch == 1)
-                                            <td><x-form.select name="extra_product_id" :list="$products_list" /></td>
+                                            <td>{{-- <x-form.select name="extra_product_id" :list="$products_list" /> --}}
+                                                <livewire:components.search-livewire name='extra_product_id' 
+                                                :value="$extra_product_id" :weighedlist="0"/>
+                                            </td>
                                         @else
-                                            <td><x-form.select name="manufacture_jobcard_product_id"
-                                                    :list="$manufacture_jobcard_products_list" /></td>
+                                            <td>
+                                                {{-- <x-form.select name="manufacture_jobcard_product_id"
+                                                    :list="$manufacture_jobcard_products_list" /> --}}
+                                                <livewire:components.search-livewire key="{{ now() }}"
+                                                name='extra_manufacture_jobcard_product_id' :value="$manufacture_jobcard_product_id"
+                                                :jobid="$job_id" :weighedlist="0"/>
+                                            </td>
                                         @endif
                                         <td><x-form.input name="extra_product_unit_measure"
                                                 value="{{ $extra_product_unit_measure }}" wire=0 disabled=1 /></td>
@@ -133,7 +141,7 @@
                                                 title="Add Item">
                                                 <i class="fas fa-plus"></i>
                                             </a>
-                                            <a wire:click="AddExtraItemShow" class="btn btn-primary btn-sm modal-basic"
+                                            <a wire:click="$set('add_extra_item_show', false)" class="btn btn-primary btn-sm modal-basic"
                                                 title="Cancel Add Item">
                                                 <i class="fas fa-ban"></i>
                                             </a>

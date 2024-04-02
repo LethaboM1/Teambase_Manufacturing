@@ -34,9 +34,9 @@ class AddDispatchAdditionalModal extends Component
         $delivery_zone,
         $dispatchaction;
 
-    public $customer_dispatch, $customer_id, $product_id, $job_id, $add_extra_item_show = 0, $extra_item_error = false, $extra_item_message, $extraproduct;
+    public $customer_dispatch, $customer_id, $product_id, $job_id, $add_extra_item_show = false, $extra_item_error = false, $extra_item_message, $extraproduct;
 
-    public $extra_items = [], $extra_product_id, $extra_product_unit_measure, $extra_product_qty, $extra_product_weight_in_date, $manufacture_jobcard_product_id;
+    public $extra_items = [], $extra_product_id, $extra_product_unit_measure, $extra_product_qty, $extra_product_weight_in_date, $manufacture_jobcard_product_id/* , $extra_manufacture_jobcard_product_id */;
 
     protected $listeners = ['emitSet'];
 
@@ -48,7 +48,6 @@ class AddDispatchAdditionalModal extends Component
                 // dd( $this->plant_id);
                 break;
 
-
             case 'customer_id':
                 $this->customer_id = $value;
                 break;
@@ -59,7 +58,17 @@ class AddDispatchAdditionalModal extends Component
                 break;
 
             case 'manufacture_jobcard_product_id':
+                $this->manufacture_jobcard_product_id = $value;                
+                break;
+
+            case 'extra_manufacture_jobcard_product_id':
                 $this->manufacture_jobcard_product_id = $value;
+                self::updatedExtraManufactureJobcardProductId($value);
+                break;    
+        
+            case 'extra_product_id':
+                $this->extra_product_id = $value;
+                self::updatedExtraProductId($value);
                 break;
         }
     }
@@ -80,13 +89,8 @@ class AddDispatchAdditionalModal extends Component
     }
 
     function AddExtraItemShow()
-    {
-        if ($this->add_extra_item_show == '0') {
-            //Show the Insert Line
-            $this->add_extra_item_show = '1';
-        } else {
-            //Hide the Insert Line            
-            $this->add_extra_item_show = '0';
+    {        
+        if($this->add_extra_item_show == false){
             // Clear the Inputs
             $this->extra_product_id = '';
             $this->extra_product_unit_measure = '';
@@ -131,8 +135,6 @@ class AddDispatchAdditionalModal extends Component
         $this->extra_item_error = false;
         $this->extra_item_message = '';
 
-
-
         $form_fields = [
             // "dispatch_id" => $dispatch_id,
             // "reference_number" => $this->reference,
@@ -147,9 +149,19 @@ class AddDispatchAdditionalModal extends Component
             "user_id" => auth()->user()->user_id,
         ];
 
-        $form_fields['qty'] = $this->extra_product_qty;
+        $form_fields['qty'] = number_format($this->extra_product_qty, 3);        
 
-        $form_fields['product_id'] = $this->extra_product_id;
+        if($this->customer_dispatch == 1){
+            $form_fields['type'] = 'CDISP';
+            $form_fields['comment'] = 'Dispatched for ' . ManufactureCustomers::where('id', $this->customer_id)->first()->name;
+            $form_fields['product_id'] = $this->extra_product_id;
+        } elseif($this->job_id > 0){
+            $form_fields['type'] = 'JDISP';
+            $form_fields['comment'] = 'Dispatched for ' . ManufactureJobcards::where('id', $this->job_id)->first()->jobcard_number;
+            $form_fields['type_id'] = $this->manufacture_jobcard_product_id;
+            $jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();
+            $form_fields['product_id'] = $jobcard_product->product()->id;
+        }
 
         if ($form_fields['product_id'] == '') {
             $this->extra_item_error = true;
@@ -166,6 +178,13 @@ class AddDispatchAdditionalModal extends Component
         $product = ManufactureProducts::where('id', $form_fields['product_id'])->first();
         $form_fields['description'] = "{$product['code']} {$product['description']}";
         $form_fields['unit_measure'] = "{$product['unit_measure']}";
+
+        //Check extra_items array for duplicate and add to it for accurate qty calc        
+        $key = -1;
+        $key = array_search($form_fields['description'], array_column($this->extra_items, 'description'), false);        
+        if($key > -1){                       
+            $form_fields['qty'] = $form_fields['qty'] + Functions::negate($this->extra_items[$key]['qty']);
+        }        
 
         $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();
 
@@ -185,26 +204,34 @@ class AddDispatchAdditionalModal extends Component
         if ($this->extra_item_error == false) {
 
             //Insert new line             
-            // ManufactureJobcardProductDispatches::insert($form_fields);
+            // ManufactureJobcardProductDispatches::insert($form_fields);            
             $form_fields['qty'] = Functions::negate($form_fields['qty']);
             // ManufactureProductTransactions::insert($form_fields);
-
-            $this->extra_items[] = $form_fields;
+            if($key > -1){
+                //Line already exists in the array. Add to Qty
+                $this->extra_items[$key]['qty'] = number_format($form_fields['qty'], 3);
+            } else {
+                //Line does not exist in array. Add new Line from $form_fields
+                $this->extra_items[] = $form_fields;
+            }            
 
             // Clear Extra Item Line after add
             $this->extra_product_id = '';
+            $this->manufacture_jobcard_product_id = '';
             $this->extra_product_unit_measure = '';
             $this->extra_product_qty = 0;
             $this->extra_product_weight_in_date = '';
-            $this->add_extra_item_show = '0';
+            $this->add_extra_item_show = false;
             //Set error to blank
             $this->extra_item_error = false;
             $this->extra_item_message = '';
+
         }
     }
 
     function dispatch()
     {
+        //Transfer & Return Notes changes 2024-03-12
         $form_fields['plant_id'] = $this->plant_id;
         $form_fields['outsourced_contractor'] = $this->outsourced_contractor;        
         $form_fields['job_id'] = ($this->job_id == null ? 0 : $this->job_id);
@@ -289,10 +316,11 @@ class AddDispatchAdditionalModal extends Component
         $this->registration_number = '';
 
         $this->extra_product_id = '';
+        $this->manufacture_jobcard_product_id = '';
         $this->extra_product_unit_measure = '';
         $this->extra_product_qty = 0;
         $this->extra_product_weight_in_date = '';
-        $this->add_extra_item_show = '0';
+        $this->add_extra_item_show = false;
         //Set error to blank
         $this->extra_item_error = false;
         $this->extra_item_message = '';
@@ -329,21 +357,22 @@ class AddDispatchAdditionalModal extends Component
     function updatedExtraProductId($extra_product_id)
     {
         $this->manufacture_jobcard_product_id = 0;
-        $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->get()->toArray();
-        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
+        $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->first();
+        $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
         // $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
+        // dd($this->extraproduct);
     }
 
-    function updatedManufactureJobcardProductId($value)
+    function updatedExtraManufactureJobcardProductId($value)
     {
         $this->extra_product_id = 0;
         $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
-        $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->get()->toArray();
+        $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->first();
         $this->extra_product_id = $jobcard->product_id;
-        $this->extra_product_unit_measure = $this->extraproduct['0']['unit_measure'];
+        $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
         // $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
-    }
-
+        // dd($this->extraproduct);
+    }    
 
     public function render()
     {
@@ -420,6 +449,19 @@ class AddDispatchAdditionalModal extends Component
         ->get()
         ->toArray();
 
+        //Updated variables based on Extra Item Show
+        if($this->add_extra_item_show == false){
+            // Clear the Inputs
+            $this->extra_product_id = '';
+            $this->extra_product_unit_measure = '';
+            $this->extra_product_qty = 0;
+            $this->extra_product_weight_in_date = '';
+            //Set error to blank
+            $this->manufacture_jobcard_product_id = 0;
+            $this->extra_item_message = '';
+        }
+
+        
         return view('livewire.manufacture.dispatch.add-dispatch-additional-modal', [
             'plant_list' => $plant_list,
             'jobcard_list' => $jobcard_list,

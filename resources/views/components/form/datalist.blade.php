@@ -12,6 +12,7 @@
         value="{{$value}}"
         list="{{$name}}_datalist"
         autocomplete="off"
+        placeholder="{{$placeholder}}"
 
         @if($disabled)
             disabled="{{$disabled}}" 

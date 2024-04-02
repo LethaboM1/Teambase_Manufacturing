@@ -1,5 +1,5 @@
  <div class="row">
-     @if (auth()->user()->role == 'manager')
+     @if (auth()->user()->role == 'manager'||auth()->user()->role == 'system')
          <div class="col-lg-12 mb-3">
              <form method="post" action="products/add" id="addplant">
                  @csrf
@@ -40,7 +40,7 @@
                          </div>
                      </div>
                      <footer class="card-footer text-end">
-                         <button class="btn btn-primary">Add Products</button>
+                         <button class="btn btn-primary">Add Product</button>
                          <button type="reset" class="btn btn-default">Reset</button>
                      </footer>
                  </section>
@@ -106,7 +106,7 @@
                                      <th width="15%">Date</th>
                                      <th width="15%">Product Code</th>
                                      <th width="40%">Description</th>
-                                     <th width="15%">Opening Value</th>
+                                     <th width="15%">On Hand</th>
                                      <th width="15%">Action</th>
                                  </tr>
                              </thead>
@@ -145,7 +145,7 @@
                                      <th width="15%">Date</th>
                                      <th width="15%">Product Code</th>
                                      <th width="40%">Description</th>
-                                     <th width="15%">Opening Value</th>
+                                     <th width="15%">On Hand</th>
                                      <th width="15%">Action</th>
                                  </tr>
                              </thead>
@@ -184,7 +184,7 @@
                                      <th width="15%">Date</th>
                                      <th width="15%">Product Code</th>
                                      <th width="40%">Description</th>
-                                     <th width="15%">Opening Value</th>
+                                     <th width="15%">On Hand</th>
                                      <th width="15%">Action</th>
                                  </tr>
                              </thead>

@@ -58,14 +58,14 @@ class ManufactureJobcardProducts extends Model
 
     function getQtyFilledAttribute()
     {
-        $qty =  $this->transactions()->sum('qty');
-        $qty_dispatch =  $this->dispatches()->sum('qty');
+        $qty =  $this->transactions()->sum('qty');        
+        // $qty_dispatch =  $this->dispatches()->sum('qty');
 
         if (!is_numeric($qty)) $qty = 0;
-        if (!is_numeric($qty_dispatch)) $qty_dispatch = 0;
+        // if (!is_numeric($qty_dispatch)) $qty_dispatch = 0;
 
         $qty = Functions::negate($qty);
-        $qty = $qty + $qty_dispatch;
+        // $qty = $qty + $qty_dispatch;
         return round($qty, 3);
     }
 

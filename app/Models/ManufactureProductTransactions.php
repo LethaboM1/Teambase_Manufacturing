@@ -11,6 +11,7 @@ class ManufactureProductTransactions extends Model
     protected $table = 'manufacture_product_transactions', $guard = [], $dates = ['updated_at', 'created_at'];
     protected $casts = [
         'created_at'  => 'date:Y-m-d',
+        'updated_at'  => 'date:Y-m-d @ H:i:s',
     ];
 
     function user()

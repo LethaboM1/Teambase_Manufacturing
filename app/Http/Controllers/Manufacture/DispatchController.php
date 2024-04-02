@@ -17,6 +17,7 @@ use function PHPSTORM_META\elementType;
 use App\Models\ManufactureJobcardProducts;
 use App\Models\ManufactureProductTransactions;
 use App\Models\ManufactureJobcardProductDispatches;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class DispatchController extends Controller
 {
@@ -46,7 +47,9 @@ class DispatchController extends Controller
 
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
     {
-// dd($request);
+        //Transfer & Return Notes changes 2024-03-12        
+        // dd($request);
+        // dd(json_decode(base64_decode($request->over_under_variance, true), true));
         $error = false;
 
         if ($dispatch->weight_in > 0) {
@@ -55,8 +58,7 @@ class DispatchController extends Controller
 
         if ($request->customer_dispatch == 0) {
             //check non-weight or weight
-
-
+            //It's a Jobcard!
 
             if ($dispatch->weight_in == 0) {
                 $form_fields = $request->validate([
@@ -71,7 +73,7 @@ class DispatchController extends Controller
                 $form_fields = $request->validate([
                     "job_id" => "required|exists:manufacture_jobcards,id",
                     "weight_out_datetime" => "date",
-                    "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", //Moved to Lines 2023-11-13 *Update 2024-03-05 Returned for weighed products
+                    // "manufacture_jobcard_product_id" => "required|exists:manufacture_jobcard_products,id", //Moved to Lines 2023-11-13
                     "delivery_zone" => "required",
                     "reference" => 'nullable',
                     'dispatch_temp' => 'required|gt:-1',
@@ -118,6 +120,7 @@ class DispatchController extends Controller
             $job = ManufactureJobcards::select('delivery_address')->where('id', $form_fields['job_id'])->first();
             $form_fields['delivery_address'] = $job->delivery_address;
         } elseif ($request->customer_dispatch == 1) {
+            //It's a Cash Client!
             //check non-weight or weight
             if ($dispatch->weight_in == '0') {
                 $form_fields = $request->validate([
@@ -163,7 +166,7 @@ class DispatchController extends Controller
         //dd($request);
         if (!$error) {
             if ($request->customer_dispatch == 0) {
-
+                //It's a Jobcard!
                 if ($dispatch->weight_in == 0) {
                     $form_fields = [
                         // "job_id" => $form_fields['job_id'],
@@ -191,6 +194,7 @@ class DispatchController extends Controller
                     ];
                 }
             } elseif ($request->customer_dispatch == 1) {
+                //It's a Cash Client!
                 if ($dispatch->weight_in == '0') {
                     $form_fields = [
                         // "job_id" => $form_fields['job_id'],
@@ -226,9 +230,8 @@ class DispatchController extends Controller
 
             $form_fields = ['status' => 'Dispatched'];
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
-
-
-            return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id]);
+            
+            return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id, 'over_under_variance' => $request->over_under_variance]);
         }
     }
 
@@ -324,6 +327,7 @@ class DispatchController extends Controller
 
 
         $form_fields['type'] = 'RET';
+        $form_fields['comment'] = 'Goods returned to Supplier';
         $form_fields['status'] = 'Completed';
         $form_fields['user_id'] = auth()->user()->user_id;
         $form_fields['qty'] = Functions::negate($form_fields['qty']);
@@ -359,20 +363,47 @@ class DispatchController extends Controller
         ]);
     }
 
-    function print_dispatch(ManufactureJobcardProductDispatches $dispatch)
-    {
-        //dd($dispatch);
+    function print_dispatch(ManufactureJobcardProductDispatches $dispatch, $overundervariance = '', Request $request)
+    {                
+        
+        // dd('Type:'.$request->type.', ID:'.$request->extraitemid);        
+        // dd($request->type);        
+        // dd($extra_item_id);
         $dispatch_lines = [];
         $dispatch_lines = ManufactureProductTransactions::select(
             DB::raw('(select code from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as code'),
             DB::raw('(select description from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as description'),
-            'qty'
+            'qty',
+            'manufacture_jobcard_product_id',
+            'status',
+            'updated_at'
         )
             ->where('dispatch_id', $dispatch->id)
+            ->when($request->type == 'dispatch', function($query){return $query->where('status', 'Dispatched');})
+            ->when($request->type == 'return', function($query) use ($request){return $query->where('id',$request->extraitemid)->where(function ($query) {
+                    $query->where('status', 'Returned')->orWhere('status','Partial Return');
+                });
+            })
+            ->when($request->type == 'transfer', function($query) use ($request){return $query->where('id',$request->extraitemid)->where(function ($query) {
+                    $query->where('status', 'Transferred')->orWhere('status','Partial Transfer');
+                });
+            })
             ->get()
             ->toArray();
 
+           /*  $query = str_replace(array('?'), array('\'%s\''), $dispatch_lines->toSql());
+            $query = vsprintf($query, $dispatch_lines->getBindings());
+            dd($query);*/
+
         $company_details = Settings::first()->toArray();
+        if($overundervariance!==''){
+            $overundervariance = (base64_decode($overundervariance, true));
+            $overundervariance = json_decode($overundervariance, true);
+        } else {
+            $overundervariance = [];
+        }
+
+        // dd($dispatch_lines);
 
         $pdf = "<table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\"> 
                     <tr>
@@ -388,7 +419,7 @@ class DispatchController extends Controller
                 <br>
                 <table style=\"width: 760px; border-collapse: collapse; table-layout: fixed;\">        
                     <tr>
-                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">Dispatch Note</th>
+                        <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: left; border: none;\">" . ($request->type == 'dispatch' ? 'Dispatch Note': ($request->type == 'return' ? 'Return Note':($request->type == 'transfer' ? 'Transfer Note':''))) . "</th>
                         <th style=\"width: 50%; font-weight: bold; font-size: 18px; text-align: right; border: none;\">No.{$dispatch['dispatch_number']}</th>
                     </tr> 
                 </table>
@@ -474,17 +505,17 @@ class DispatchController extends Controller
         //Multiple Lines if they exist from Transactions 2023-11-15
         if ($dispatch->product_id > 0 && $dispatch->qty > 0) {
             $pdf .= "<tr>
-                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product_()->code}</td>
-                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->product_()->description}</td>
-                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch->qty}</td>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">{$dispatch->product_()->code}</td>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">{$dispatch->product_()->description}</td>
+                        <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">{$dispatch->qty}</td>
                     </tr>";
         }
 
         foreach ($dispatch_lines as $dispatch_line) {
             $pdf .= "<tr>";
-            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['code']}</td>
-                                    <td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">{$dispatch_line['description']}</td>";
-            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 10px;\">" . \App\Http\Controllers\Functions::negate($dispatch_line['qty']) . "</td>";
+            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">{$dispatch_line['code']}</td>";
+            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">". (array_key_exists($dispatch_line['manufacture_jobcard_product_id'], $overundervariance) == true ? ($dispatch_line['description'] . "<br><small><small><small><strong>*" . $overundervariance[$dispatch_line['manufacture_jobcard_product_id']] . "</strong></small></small></small>") : ($request->type=='return' ? $dispatch_line['description'] . "<br><small><small><small><strong>*Returned on " . $dispatch_line['updated_at'] . "</strong></small></small></small>" : ($request->type=='transfer' ? $dispatch_line['description'] . "<br><small><small><small><strong>*Transferred on " . $dispatch_line['updated_at'] . "</strong></small></small></small>" : $dispatch_line['description'])))."</td>";            
+            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">" . number_format(\App\Http\Controllers\Functions::negate($dispatch_line['qty']),3) . "</td>";
             $pdf .= "</tr>";
         }
 
@@ -568,8 +599,8 @@ class DispatchController extends Controller
                         </tr>
                     </tfoot>
                 </table>  ";
-
-        Functions::printPDF($pdf, 'dispatch-' . $dispatch->id, false, true, 'P', 'A4');
+        $filename = $request->type == 'dispatch' ? 'dispatch-' : ($request->type == 'return' ? 'dispatch-return-' : ($request->type == 'transfer' ? 'dispatch-transfer-':'unknown-'));
+        Functions::printPDF($pdf, $filename . $dispatch->id, false, true, 'P', 'A4');
     }
 
     function print_return(ManufactureProductTransactions $transaction)

@@ -1,6 +1,6 @@
  
     <div class="row">
-        @if(auth()->user()->role == 'manager')
+        @if(auth()->user()->role == 'manager'||auth()->user()->role == 'system')
             {{-- <div class="col-lg-12 mb-3">
                 <form method="post" action="jobcards/add" id="addplant">
                     @csrf

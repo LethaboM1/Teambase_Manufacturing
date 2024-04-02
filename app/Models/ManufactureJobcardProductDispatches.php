@@ -14,6 +14,7 @@ class ManufactureJobcardProductDispatches extends Model
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d',
     ];
+    protected $guarded = ['id'];
 
     function jobcard_product()
     {

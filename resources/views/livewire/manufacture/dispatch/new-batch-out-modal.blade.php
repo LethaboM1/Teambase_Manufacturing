@@ -4,7 +4,7 @@
         <header id='editDispatch_{{ $dispatch->id }}header' class='card-header'>
             <h2 class='card-title'>Dispatch No. {{ $dispatch->dispatch_number }}</h2>
         </header>
-        <div class='card-body'>
+        <div class='card-body'>            
             <div class='modal-wrapper'>
                 <div class='modal-text'>
                     <div class="row">
@@ -91,18 +91,16 @@
                                     {{-- <x-form.select name="job_id" label="Job card" :list="$jobcard_list" /> --}}
                                 @endif
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 @if ($customer_dispatch == 1)
                                     <livewire:components.search-livewire name='product_id' label="Product"
-                                        :value="$product_id" />
-                                    {{-- <x-form.select name="product_id" label="Product" :list="$products_list" /> --}}
+                                        :value="$product_id" />                                    
                                 @else
                                     <livewire:components.search-livewire key="{{ now() }}"
                                         name='manufacture_jobcard_product_id' label="Product" :value="$manufacture_jobcard_product_id"
-                                        :jobid="$job_id" />
-                                    {{-- <x-form.select name="manufacture_jobcard_product_id" label="Product" :list="$manufacture_jobcard_products_list" /> --}}
+                                        :jobid="$job_id" />                                    
                                 @endif
-                            </div>
+                            </div> --}} {{-- Moved to Lines 2024-03-13 --}}
                             <div class="col-md-6">
                                 <x-form.select name="delivery_zone" label="Delivery Zone" :list="$delivery_zone_list" />
                             </div>
@@ -117,33 +115,36 @@
                                     <x-form.number name="dispatch_temp" label="Dispatched Temperature" step="0.01"
                                         value={{ $dispatch_temp }} />
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <b>Nett Weight</b><br><br>
                                     <h3>{{ $qty }}</h3>                                                                        
                                     {{-- <h3>{{ $qty_due }}</h3>  --}}
+                                </div>                                
+                                {{-- <div class="col-md-4">                      
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">                                    
+                                </div>
+                                <div class="col-md-4">
                                     <br><br>                                    
-                                    <small class="text-danger"><strong>{{$over_under_variance}}</strong></small>
-                                    {{-- <h3>{{ $qty_due }}</h3>  --}}
-                                </div>
+                                    <small class="text-danger"><strong>{{$over_under_variance}}</strong></small>                                    
+                                </div>--}}  {{-- Moved to Lines 2024-03-13 --}}
                             @endif
 
-                            <div class='col-md-10'><br></div>
+                            <div class='col-md-12'><br></div>
 
                             <hr>
                             <form class="form-horizontal form-bordered" method="get">
                                 <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
                                         <tr>
-                                            <th width="20%">Date</th>
+                                           {{--  <th width="20%">Date</th> --}}
                                             <th width="40%">Description</th>
                                             <th width="15%">Unit</th>
-                                            <th width="10%">Qty</th>
+                                            <th width="15%">Qty</th>
                                             <th width="15%">Actions</th>
-                                            <th>
-                                                @if ($add_extra_item_show == '0')
-                                                    <a wire:click="AddExtraItemShow" class="btn btn-primary btn-sm"
+                                            <th width="15%">
+                                                @if ($add_extra_item_show == false)
+                                                    <a wire:click="$set('add_extra_item_show', true)" class="btn btn-primary btn-sm"
                                                         title="Add Item">
                                                         <i class="fas fa-plus"></i>
                                                     </a>
@@ -168,28 +169,42 @@
                                             </div>
                                         @endif
                                     @endif
-                                    @if ($add_extra_item_show == '1')
-                                        <tr>
-                                            <td><x-form.input name="extra_product_weight_in_date"
+                                    @if ($add_extra_item_show == true)
+                                        <td>
+                                           {{--  <td><x-form.input name="extra_product_weight_in_date"
                                                     value="{{ $extra_product_weight_in_date }}" wire=0 disabled=1 />
-                                            </td>
+                                            </td> --}}
                                             @if ($customer_dispatch == 1)
-                                                <td><x-form.select name="extra_product_id" :list="$products_list_unweighed" /></td>
+                                                {{-- <td><x-form.select name="extra_product_id" :list="$products_list_unweighed" /></td> --}}
+                                                <livewire:components.search-livewire name='extra_product_id' 
+                                                :value="$extra_product_id" :weighedlist="$weighedlist"/>
                                             @else
-                                                <td><x-form.select name="extra_manufacture_jobcard_product_id"
-                                                        :list="$manufacture_jobcard_products_list_unweighed" /></td>
+                                                {{-- <td><x-form.select name="extra_manufacture_jobcard_product_id"
+                                                        :list="$manufacture_jobcard_products_list_unweighed" /></td> --}}
+                                                <livewire:components.search-livewire key="{{ now() }}"
+                                                name='extra_manufacture_jobcard_product_id' :value="$manufacture_jobcard_product_id"
+                                                :jobid="$job_id" :weighedlist="$weighedlist"/>
                                             @endif
                                             <td><x-form.input name="extra_product_unit_measure"
                                                     value="{{ $extra_product_unit_measure }}" wire=0 disabled=1 /></td>
-                                            <td><x-form.number wire:model="extra_product_qty"
+                                            
+                                                {{-- @dd($extra_product_weighed) --}}
+                                                @if($extra_product_weighed > 0)
+                                                <td>
+                                                   <h3 class="mt-2"> {{ $qty }}</h3>
+                                                @else
+                                                <td>
+                                                    <x-form.number wire:model="extra_product_qty"
                                                     value="{{ $extra_product_qty }}" name="extra_product_qty"
-                                                    step="0.001" /></td>
+                                                    step="0.001" />                                                
+                                                @endif                                                                                       
+                                            </td>
                                             <td>
                                                 <a wire:click="AddExtraItem('{{ $dispatch->id }}')"
                                                     class="btn btn-primary btn-sm" title="Add Item">
                                                     <i class="fas fa-plus"></i>
                                                 </a>
-                                                <a wire:click="AddExtraItemShow"
+                                                <a wire:click="$set('add_extra_item_show', false)"
                                                     class="btn btn-primary btn-sm modal-basic"
                                                     title="Cancel Add Item">
                                                     <i class="fas fa-ban"></i>
@@ -199,9 +214,11 @@
                                     @endif
 
                                     @if (count($extra_items) > 0)
-                                        @foreach ($extra_items as $extra_item)
+                                        @foreach ($extra_items as $extra_item)                                                                                    
                                             <livewire:manufacture.dispatch.new-batch-out-extra-items-livewire
-                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction" />
+                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction"
+                                                overundervariance="{{array_key_exists($extra_item['manufacture_jobcard_product_id'], $over_under_variance) == true ? $over_under_variance[$extra_item['manufacture_jobcard_product_id']] : ''}}"
+                                                />                                                 
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -219,14 +236,11 @@
                                 </table>
 
                             </form>
-
-
-
-
                             <div class="col-md-4">
-                                <x-form.hidden wire=0 name="customer_dispatch" value="{{ $customer_dispatch }}" />
+                                <x-form.hidden wire=0 name="customer_dispatch" value="{{ $customer_dispatch }}" />                                
                                 <x-form.hidden wire=0 name="qty" value="{{ $qty }}" />
-                                <x-form.hidden wire=0 name="qty_due" value="{{ $qty_due }}" />
+                                <x-form.hidden wire=0 name="qty_due" value="{{ $qty_due }}" />                                
+                                <x-form.hidden wire=0 name="over_under_variance" value="{{ $over_under_variance_encoded }}" />
                             </div>
                         @else
                             <div class="col-md-6">
@@ -283,7 +297,7 @@
                                 </div>
                             @endif
                             <hr>
-                            <div class="col-md-6"><label>Product</label><br>
+                            {{-- <div class="col-md-6"><label>Product</label><br>
                                 @if ($customer_dispatch == 1)
                                     @if ($dispatch->customer_weighed_product())
                                         <h4>{{ $dispatch->customer_weighed_product()->code }}
@@ -299,8 +313,8 @@
                             <div class="col-md-2">
                                 <label>Qty</label><br>
                                 <h4>{{ $dispatch->qty }}</h4>
-                            </div>
-                            @if ($dispatchaction == 'view' && $dispatch->qty > '0')
+                            </div> --}} {{-- Moved to Lines 2024-03-15 --}}
+                            {{-- @if ($dispatchaction == 'view' && $dispatch->qty > '0')
                                 <div class="col-md-2">
                                     <label></label><br>
                                 </div>
@@ -367,8 +381,7 @@
                                         <i class="fas fa-ban"></i>
                                     </a>
                                 </div>
-                            @endif
-                            {{-- @dd($return_item_success) --}}
+                            @endif                             
                             <div class='col-md-10'><br></div>
                             @if ($return_item_success == true)
                                 <div class='alert alert-success alert-dismissible fade show' role='alert'
@@ -381,22 +394,22 @@
 
                             <div class='col-md-10'><br></div>
 
-                            <hr>
+                            <hr> --}} {{-- Moved to Lines 2024-03-15 --}}
                             {{-- Line Items 2023-11-10 --}}
                             <form class="form-horizontal form-bordered" method="get">
                                 <table width="100%" class="table table-hover table-responsive-md mb-0">
                                     <thead>
                                         <tr>
-                                            <th width="20%">Date</th>
-                                            <th width="31%">Description</th>
-                                            <th width="8%">Unit</th>
-                                            <th width="10%">Qty</th>
-                                            <th width="15%"></th>
-                                            <th width="16%">Actions</th>
+                                            {{-- <th width="20%">Date</th> --}}
+                                            <th width="40%">Description</th>
+                                            <th width="15%">Unit</th>
+                                            <th width="12%">Qty</th>
+                                            <th width="22%"></th>
+                                            <th width="11%">Actions</th>
                                         </tr>
                                     </thead>
 
-                                    @if (count($extra_items) > 0)
+                                    @if (count($extra_items) > 0)                                    
                                         @if ($return_extraitem_success == true)
                                             <div class='alert alert-success alert-dismissible fade show'
                                                 role='alert' id='alertReturn'>
@@ -404,10 +417,19 @@
                                                 <button type='button' class='btn-close' data-bs-dismiss='alert'
                                                     aria-hidden='true' aria-label='Close'></button>
                                             </div>
+                                        @elseif ($transfer_extraitem_success == true)
+                                            <div class='alert alert-success alert-dismissible fade show'
+                                                role='alert' id='alertTransfer'>
+                                                <strong>Success!</strong>&nbsp;{{ $transfer_extraitem_message }}
+                                                <button type='button' class='btn-close' data-bs-dismiss='alert'
+                                                    aria-hidden='true' aria-label='Close'></button>
+                                            </div>
                                         @endif
                                         @foreach ($extra_items as $extra_item)
                                             <livewire:manufacture.dispatch.new-batch-out-extra-items-livewire
-                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction" />
+                                                key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction"
+                                                overundervariance="{{array_key_exists($extra_item['manufacture_jobcard_product_id'], $over_under_variance) == true ? $over_under_variance[$extra_item['manufacture_jobcard_product_id']] : ''}}"
+                                                />                                            
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
                                         <script>
@@ -472,7 +494,7 @@
                             </form>
                         </div>
                     @else
-                        <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}") }}"
+                        <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}?type=dispatch") }}"
                             class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>
                         <button class='btn btn-primary modal-dismiss'
                             id='closeModalBtn_{{ $dispatch->id }}'>Close</button>
@@ -481,5 +503,19 @@
                 </div>
             </div>
         </footer>
-    </section>
+    </section>    
 </form>
+{{-- @if(Session::get('print_return'))                        
+    <script>
+        console.log(window.open('{{url("dispatches/print_return/".Session::get('print_return_dispatch_id')."?type=return&extraitemid=".Session::get('print_return'))}}','_blank'));
+    </script>
+@endif --}}
+{{-- @dd(Session::get('print_return')); --}}
+
+{{-- @if(Session::get('print_return'))                        
+    <script>
+        var $printurl = '{{url("dispatches/print_return/".Session::get('print_return_dispatch_id')."?extraitemid=".Session::get('print_return')."&type=return")}}';
+        window.open($printurl.replace('&amp;', '&'),'_blank');
+    </script>
+@endif --}}
+

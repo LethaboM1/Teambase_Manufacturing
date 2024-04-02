@@ -13,14 +13,15 @@ class Datalist extends Component
         $wire,
         $list,
         $class,
-        $id;
+        $id,
+        $placeholder;
     
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($name, $label = '', /* $id = '', */ $wire = true, $value = '', $class = '', $disabled = false, $list=[])
+    public function __construct($name, $label = '', /* $id = '', */ $wire = true, $value = '', $class = '', $disabled = false, $list=[], $placeholder='')
     {
         $this->name = $name;
         $this->label = $label;
@@ -28,6 +29,7 @@ class Datalist extends Component
         $this->wire = $wire;
         $this->value = $value;
         $this->class = $class;
+        $this->placeholder=$placeholder;
         /* $this->id = $id; */
         $this->list = $list;        
     }

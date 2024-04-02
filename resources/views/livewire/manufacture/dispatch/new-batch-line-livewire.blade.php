@@ -19,7 +19,12 @@
     @endif
 
     <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">
-        {{ $dispatch->plant() !== null ? "{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}" : ($dispatch->outsourced_contractor !== '' && $dispatch->customer_id !== '0'  ?  "{$dispatch->outsourced_contractor}-{$dispatch->registration_number}" : $dispatch->registration_number)}}
+        {{ $dispatch->plant() !== null ? 
+            "{$dispatch->plant()->plant_number}-{$dispatch->plant()->make}-{$dispatch->plant()->reg_number}"
+            : ($dispatch->outsourced_contractor !== '' && $dispatch->customer_id !== '0'  ?  
+                "{$dispatch->outsourced_contractor}-{$dispatch->registration_number}"
+                : $dispatch->registration_number)
+        }}
     </td>
 
     <td onclick="$('#edit_btn_{{ $dispatch->id }}').click()">{{ $dispatch->status }}</td>

@@ -5,7 +5,7 @@
     <td>{{$item->description}}</td>
     <td>{{$item->qty}}</td>
     <td class="actions">
-        @if(auth()->user()->role == 'manager')
+        @if(auth()->user()->role == 'manager'||auth()->user()->role == 'system')
             
         <!-- Modal Edit Product -->
         <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalviewProduct_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Edit Product"><i class="fas fa-pencil-alt"></i></a>
@@ -175,7 +175,7 @@
         <!-- Modal Edit recipe End -->            
         @endif
 
-        @if(auth()->user()->role == 'manager')
+        @if(auth()->user()->role == 'manager'||auth()->user()->role == 'system')
             <!-- Modal Delete -->
             <a class="mb-1 mt-1 mr-1 modal-basic" href="#modalHeader_{{$item->id}}" data-bs-toggle="tooltip" data-bs-animation="false" data-bs-placement="top" title="" data-bs-original-title="Delete Product"><i class="fas fa-trash-alt"></i></a>
             <!-- Modal Delete -->

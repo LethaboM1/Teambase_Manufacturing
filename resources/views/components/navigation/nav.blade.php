@@ -2,7 +2,7 @@
 	<div class="nano-content">
 	    <nav id="menu" class="nav-main" role="navigation">
 			@if(auth()->user()->depart=='manufacture')
-				@if(auth()->user()->role=='manager'||auth()->user()->role=='job admin')
+				@if(auth()->user()->role=='manager'||auth()->user()->role=='job admin'||auth()->user()->role=='system')
 					<x-navigation.manufacture.manager />
 				@endif
 
