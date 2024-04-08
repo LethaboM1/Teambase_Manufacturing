@@ -163,6 +163,11 @@ class DispatchController extends Controller
             return back()->with('alertError', 'Cannot Complete Dispatch. Dispatch Temperature cannot be blank.');
         }
 
+        if (ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->count() <= 0) {
+            $error = true;
+            return back()->with('alertError', 'Cannot Complete Dispatch. There are no Products added.');
+        }
+
         //dd($request);
         if (!$error) {
             if ($request->customer_dispatch == 0) {
