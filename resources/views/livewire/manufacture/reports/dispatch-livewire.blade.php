@@ -69,6 +69,35 @@
                     <br>    
                 </div>
             </div>
+            
+            <div class="form-group row pb-4" style="margin-bottom: 15px;">
+                <div class="col-lg-6">
+                    <label>Group Results By</label><br>
+                    <div class="radio">
+                        <label><input type="radio" name="dispatch_report_group_by" value='dispatch' checked=""
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Dispatch No</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='jobcard'
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Jobcard</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='site'
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Site</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='reference' checked=""
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Reference</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='customer'
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Customer</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='product'
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;Product</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="dispatch_report_group_by" value='none'
+                                wire:model="dispatch_report_group_by">&nbsp;&nbsp;None</label>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="row">
+                <div class="col-md-6 pb-sm-3 pb-md-0">
+                    <br>    
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-12 pb-sm-3 pb-md-0">

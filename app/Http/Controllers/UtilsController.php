@@ -85,8 +85,9 @@ class UtilsController extends Controller
                     if($inserted_transaction>0){
                         //Clear Header Product
                         //dd('delete header'); 
-                        $fields_update = ['customer_id'=>'0',
-                            'job_id'=>'0',
+                        $fields_update = [
+                            // 'customer_id'=>'0',
+                            // 'job_id'=>'0',
                             'product_id'=>'0',
                             'manufacture_jobcard_product_id'=>'0'
                         ];

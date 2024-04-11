@@ -13,6 +13,7 @@ class DispatchLivewire extends Component
 {
     
     public $dispatch_report_category,
+        $dispatch_report_group_by = 'none',
         $from_date,        
         $to_date,
         $extra_criteria_enabled = false,
@@ -76,6 +77,7 @@ class DispatchLivewire extends Component
     function resetForm (){
         // dd('resettting the form?');
         $this->dispatch_report_category = 0;
+        $this->dispatch_report_group_by = 'none';
         $this->from_date = '';
         $this->to_date = '';
         $this->extra_criteria_enabled = false;

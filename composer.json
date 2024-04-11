@@ -11,6 +11,8 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.12",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.21",
         "spipu/html2pdf": "^5.2"
     },
     "require-dev": {
