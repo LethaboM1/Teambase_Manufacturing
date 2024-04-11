@@ -52,7 +52,7 @@
         </div>
         <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
             
-            <x-form.select label="Role" name="role" value="{{$user['role']}}" :list=" $roles_list" />
+            <x-form.select wire=0 label="Role" name="role" value="{{$user['role']}}" :list=" $roles_list" />
         </div>
         <div class="col-sm-12 col-md-4 pb-sm-12 pb-md-0">
             <label class="col-form-label" for="photo">Photo</label>

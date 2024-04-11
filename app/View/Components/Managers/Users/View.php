@@ -33,7 +33,7 @@ class View extends Component
             ];
         } else {
             $this->user = $user;
-        }
+        }        
 
         $this->roles_list = DefaultsController::roles[auth()->user()->depart];
     }
