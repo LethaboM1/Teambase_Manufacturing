@@ -382,13 +382,20 @@ class ManufactureReportsController extends Controller
                 
         $filename = 'Transaction Report-' . ucfirst($request['dispatch_report_category']) . ' Clients from ' . $request['from_date'] . ' to ' . $request['to_date'].' generated '.date('Ymd his',time()).'.xlsx';
         
-        ob_end_clean();
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$filename.'"');
-        header('Cache-Control: max-age=0');
+        try {
+            ob_end_clean();
+        }
+        finally
+        {
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="'.$filename.'"');
+            header('Cache-Control: max-age=0');
 
-        $xlsxWriter = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        exit($xlsxWriter->save('php://output'));
+            $xlsxWriter = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            exit($xlsxWriter->save('php://output'));
+        }
+
+        
     }    
 
     function report_dispatch()
