@@ -165,7 +165,7 @@ class ManufactureReportsController extends Controller
                 
         //Heading Rows
         $activeWorksheet->setCellValue('A1', '*** '.strtoupper($company_details['trade_name']).' ***');
-        $activeWorksheet->mergeCells('A1:M1');
+        $activeWorksheet->mergeCells('A1:N1');
         $styleArray = [
             'font' => [
                 'bold' => true,
@@ -186,26 +186,26 @@ class ManufactureReportsController extends Controller
                 ],                             
             ]            
         ];
-        $activeWorksheet->getStyle('A1:M1')->applyFromArray($styleArray);
+        $activeWorksheet->getStyle('A1:N1')->applyFromArray($styleArray);
 
         $activeWorksheet->setCellValue('A2', $report_title);        
-        $activeWorksheet->mergeCells('A2:M2');
+        $activeWorksheet->mergeCells('A2:N2');
         $styleArray['font']['size']=12;
         $styleArray['font']['italic']=true;
         $styleArray['font']['bold']=false;
         $styleArray['borders']['top']=[''];
         $styleArray['borders']['bottom']['borderStyle']=Border::BORDER_MEDIUM;
         $styleArray['borders']['bottom']['color']['argb']='#000000';
-        $activeWorksheet->getStyle('A2:M2')->applyFromArray($styleArray);
+        $activeWorksheet->getStyle('A2:N2')->applyFromArray($styleArray);
         
         //Column Headers
-        $header_row_array = ['Document No', 'Type', 'Status', 'Date', 'Reference No', 'Registration No', 'Delivery Zone', 'Customer / Contractor Name', 'Jobcard', 'Product Code', 'Product Name', 'Qty', 'Net Mass'];
+        $header_row_array = ['Document No', 'Type', 'Status', 'Date', 'Reference No', 'Registration No', 'Delivery Zone', 'Customer / Contractor Name', 'Jobcard', 'Site', 'Product Code', 'Product Name', 'Qty', 'Net Mass'];
         $activeWorksheet->fromArray( $header_row_array, NULL, 'A3' );
         $styleArray['font']['size']=11;
         $styleArray['font']['italic']=false;
         $styleArray['font']['bold']=true;
         $styleArray['alignment']['horizontal']=Alignment::HORIZONTAL_LEFT;        
-        $activeWorksheet->getStyle('A3:M3')->applyFromArray($styleArray);                
+        $activeWorksheet->getStyle('A3:N3')->applyFromArray($styleArray);                
         
         //Setting Column Widths
         $activeWorksheet->getColumnDimension('A')->setWidth(10);
@@ -217,11 +217,12 @@ class ManufactureReportsController extends Controller
         $activeWorksheet->getColumnDimension('G')->setWidth(13);
         $activeWorksheet->getColumnDimension('H')->setWidth(41);
         $activeWorksheet->getColumnDimension('I')->setWidth(10);
-        $activeWorksheet->getColumnDimension('J')->setWidth(13);
-        $activeWorksheet->getColumnDimension('K')->setWidth(41);
-        $activeWorksheet->getStyle('L:M')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-        $activeWorksheet->getColumnDimension('L')->setWidth(10);
+        $activeWorksheet->getColumnDimension('J')->setWidth(10);
+        $activeWorksheet->getColumnDimension('K')->setWidth(13);
+        $activeWorksheet->getColumnDimension('L')->setWidth(41);
+        $activeWorksheet->getStyle('M:N')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
         $activeWorksheet->getColumnDimension('M')->setWidth(10);
+        $activeWorksheet->getColumnDimension('N')->setWidth(10);
        
         $previous_group_id = '-1';
 
@@ -231,8 +232,8 @@ class ManufactureReportsController extends Controller
             if($previous_group_id != '-1' && ($dispatch[$this->the_request['dispatch_report_group_by']]  != $previous_group_id && $this->the_request['dispatch_report_group_by'] != 'none')) {                
                 //New Dispatch Group
                 //Insert Group Total Line from Previous Group                
-                $activeWorksheet->setCellValue('L'.$row, number_format($group_qty_sum, 3));
-                $activeWorksheet->setCellValue('M'.$row, number_format($group_mass_sum, 3));
+                $activeWorksheet->setCellValue('M'.$row, number_format($group_qty_sum, 3));
+                $activeWorksheet->setCellValue('N'.$row, number_format($group_mass_sum, 3));
                 $styleArray = [];
                 $styleArray = [
                     'borders' => [
@@ -250,11 +251,11 @@ class ManufactureReportsController extends Controller
                     ],
                 ];      
                       
-                $activeWorksheet->getStyle('A'.$row.':M'.$row)->applyFromArray($styleArray);
+                $activeWorksheet->getStyle('A'.$row.':N'.$row)->applyFromArray($styleArray);
                 $styleArray['borders']['left']=[''];
                 $styleArray['borders']['top']['borderStyle']=Border::BORDER_MEDIUM;
                 $styleArray['borders']['top']['color']['argb']='#000000';
-                $activeWorksheet->getStyle('L'.$row.':M'.$row)->applyFromArray($styleArray);                
+                $activeWorksheet->getStyle('M'.$row.':N'.$row)->applyFromArray($styleArray);                
                 
                 //Reset Group Totals            
                 $group_qty_sum = 0.000;
@@ -284,6 +285,7 @@ class ManufactureReportsController extends Controller
                     ($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:''),
                     ($dispatch['customer_id'] == '0' ? ucfirst($dispatch['contractor_name']):ucfirst($dispatch['customer_name'])),
                     ($dispatch['job_id'] != '0' ? $dispatch['jobcard_number']:''),
+                    ($dispatch['job_id'] != '0' ? $dispatch['site_number']:''),
                     $dispatch['product_code'],
                     $dispatch['product_description'],
                     ($dispatch['weighed_product'] == '0' ? \App\Http\Controllers\Functions::negate($dispatch['qty']):''),
@@ -310,7 +312,7 @@ class ManufactureReportsController extends Controller
                         'wraptext' => true,               
                     ],
                 ];                
-                $activeWorksheet->getStyle('A'.$row.':M'.$row)->applyFromArray($styleArray);
+                $activeWorksheet->getStyle('A'.$row.':N'.$row)->applyFromArray($styleArray);
 
                 $previous_group_id = $dispatch[$this->the_request['dispatch_report_group_by']];
            
@@ -319,8 +321,8 @@ class ManufactureReportsController extends Controller
         //Generate Last Dispatch Group Total Line        
         //Insert Group Total Line from Previous Group
         $row = $activeWorksheet->getHighestRow()+1;                
-        $activeWorksheet->setCellValue('L'.$row, number_format($group_qty_sum, 3));
-        $activeWorksheet->setCellValue('M'.$row, number_format($group_mass_sum, 3));
+        $activeWorksheet->setCellValue('M'.$row, number_format($group_qty_sum, 3));
+        $activeWorksheet->setCellValue('N'.$row, number_format($group_mass_sum, 3));
         $styleArray = [];
         $styleArray = [
             'borders' => [
@@ -341,7 +343,7 @@ class ManufactureReportsController extends Controller
                 'bold' => true,                
             ],
         ];                
-        $activeWorksheet->getStyle('A'.$row.':M'.$row)->applyFromArray($styleArray);                
+        $activeWorksheet->getStyle('A'.$row.':N'.$row)->applyFromArray($styleArray);                
         
         //Reset Group Totals            
         $group_qty_sum = 0.000;
@@ -353,9 +355,9 @@ class ManufactureReportsController extends Controller
         if(count($the_report_dispatches)>0){
             $last_row = $activeWorksheet->getHighestRow()+2;
             $activeWorksheet->insertNewRowBefore($last_row); 
-            $activeWorksheet->setCellValue('K'.$last_row, 'Grand Totals');
-            $activeWorksheet->setCellValue('L'.$last_row, number_format($total_qty_sum, 3));
-            $activeWorksheet->setCellValue('M'.$last_row, number_format($total_mass_sum, 3));
+            $activeWorksheet->setCellValue('L'.$last_row, 'Grand Totals');
+            $activeWorksheet->setCellValue('M'.$last_row, number_format($total_qty_sum, 3));
+            $activeWorksheet->setCellValue('N'.$last_row, number_format($total_mass_sum, 3));
             $styleArray = [];
             $styleArray = [
                 'borders' => [
@@ -365,8 +367,8 @@ class ManufactureReportsController extends Controller
                     ],
                 ],
             ];                
-            $activeWorksheet->getStyle('K'.$last_row.':M'.$last_row)->applyFromArray($styleArray);
-            $activeWorksheet->getStyle('K'.$last_row.':'.'M'.$last_row)->getFont()->setBold( true );                    
+            $activeWorksheet->getStyle('L'.$last_row.':N'.$last_row)->applyFromArray($styleArray);
+            $activeWorksheet->getStyle('L'.$last_row.':'.'N'.$last_row)->getFont()->setBold( true );                    
         } else {
             $last_row = $activeWorksheet->getHighestRow()+1;
             $activeWorksheet->insertNewRowBefore($last_row);
@@ -376,9 +378,9 @@ class ManufactureReportsController extends Controller
         //Footer Row
         $footer_row = $activeWorksheet->getHighestRow()+2;
         $activeWorksheet->insertNewRowBefore($footer_row);
-        $activeWorksheet->getStyle('A'.$footer_row.':M'.$footer_row)->getFont()->setSize(8);
+        $activeWorksheet->getStyle('A'.$footer_row.':N'.$footer_row)->getFont()->setSize(8);
         $activeWorksheet->setCellValue('A'.$footer_row, '* Outsourced Contractor Used');        
-        $activeWorksheet->setCellValue('M'.$footer_row, 'Report generated @'.date('Y-m-d h:i:s',time()));        
+        $activeWorksheet->setCellValue('N'.$footer_row, 'Report generated @'.date('Y-m-d h:i:s',time()));        
                 
         $filename = 'Transaction Report-' . ucfirst($request['dispatch_report_category']) . ' Clients from ' . $request['from_date'] . ' to ' . $request['to_date'].' generated '.date('Ymd his',time()).'.xlsx';
         
