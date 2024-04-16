@@ -174,7 +174,7 @@ class NewBatchOutModal extends Component
 
     function updatedExtraProductQty()
     {
-        $this->extra_item_error = false;
+        $this->extra_item_error = false;       
     }
 
     function updatingWeightOut($value)
@@ -183,24 +183,59 @@ class NewBatchOutModal extends Component
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
             'weight_out' => 0,
             'qty' => 0
-        ]);        
+        ]);
+
         if($this->dispatch->jobcard_id > 0){
             $this->qty_due = number_format($this->dispatch->jobcard_product()->qty_due, 3);
         }
+
     }
 
     function updatedWeightOut($value)
     {
         
-        if ($value < $this->dispatch->weight_in) return;
+        if ($value < $this->dispatch->weight_in) return;        
 
         if($this->dispatch->jobcard_id > 0){
             $this->validate(['weight_out' => 'gt:0|lte:'.$this->qty_due + 0.5 + $this->dispatch->weight_in]);
         } else {            
             $this->validate(['weight_out' => 'gt:0|gt:'.$this->dispatch->weight_in]);
+        }       
+
+        //check if there are any weighed lines already
+        $existing_weighed = ManufactureProductTransactions::from('manufacture_product_transactions as transactions')        
+        ->join('manufacture_products as products', 'products.id', '=', 'transactions.product_id', 'left outer')
+        ->select('transactions.id as id', 'transactions.dispatch_id as dispatch_id', 'transactions.product_id as product_id'
+        , 'transactions.qty as qty', 'transactions.manufacture_jobcard_product_id as manufacture_jobcard_product_id', 'products.weighed_product as weighed_product')
+        ->where('dispatch_id', $this->dispatch->id)
+        ->where('weighed_product', '1')
+        ->first();
+
+        if(null !== $existing_weighed && strlen($existing_weighed)>0){
+            //Check new Value and update to Max Allowed
+            $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $existing_weighed->manufacture_jobcard_product_id)->first();
+            if ($manufacture_jobcard_product) {                
+                //Apply Variance of 500kg/ton on weighed items            
+                $product_qty = $manufacture_jobcard_product->qty_due - $existing_weighed->qty;
+                $proposed_new_qty = number_format(floatval($value) - floatval($this->dispatch->weight_in), 3);
+                           
+                if (($proposed_new_qty > $product_qty + 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($proposed_new_qty > $product_qty && $manufacture_jobcard_product->product()->weighed_product == 0)) {                    
+                    $this->extra_item_error = true;
+                    $this->extra_item_message = "Qty is not allowed to be more than Qty allocated on Job for this Product (plus Variance for weighed products). Qty will be capped at {$product_qty}. ";
+                    $this->qty_due = number_format(floatval($product_qty), 3);
+                    ManufactureProductTransactions::where('id', $existing_weighed->id)->update(['qty' => number_format(Functions::negate($product_qty), 3),
+                    'weight_out' => number_format($value, 3)]);
+                } else {
+                    $this->extra_item_error = false;
+                    $this->extra_item_message = "";
+                    $this->qty_due = number_format(floatval($proposed_new_qty), 3);
+                    ManufactureProductTransactions::where('id', $existing_weighed->id)->update(['qty' => number_format(Functions::negate($proposed_new_qty), 3),
+                    'weight_out' => number_format($value, 3)]);                    
+                }                
+            }
         }
 
-        $this->qty = number_format($value - $this->dispatch->weight_in, 3);                
+        $this->qty = number_format(floatval($value) - $this->dispatch->weight_in, 3);                
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
             'weight_out' => $value,
             'qty' => $this->qty
@@ -330,7 +365,7 @@ class NewBatchOutModal extends Component
             //Set error to blank
             $this->manufacture_jobcard_product_id = 0;
             $this->extra_item_message = '';
-        }        
+        }               
     }
 
     function removeExtraItem($extra_item_id)
@@ -1441,7 +1476,7 @@ class NewBatchOutModal extends Component
             $this->extra_product_weight_in_date = '';
             //Set error to blank
             $this->manufacture_jobcard_product_id = 0;
-            $this->extra_item_message = '';
+            // $this->extra_item_message = '';
         }
 
         // dd('render');        

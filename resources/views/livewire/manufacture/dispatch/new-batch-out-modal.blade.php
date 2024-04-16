@@ -518,4 +518,3 @@
         window.open($printurl.replace('&amp;', '&'),'_blank');
     </script>
 @endif --}}
-

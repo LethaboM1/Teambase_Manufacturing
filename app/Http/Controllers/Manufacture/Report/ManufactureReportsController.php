@@ -76,7 +76,7 @@ class ManufactureReportsController extends Controller
         'dispatches.outsourced_contractor as outsourced_contractor',
         'jobs.jobcard_number as jobcard_number','jobs.site_number as site_number','jobs.contractor as contractor_name',
         'customers.name as customer_name','customers.account_number as account_number',
-        'transactions.product_id as transactions_product_id','transactions.status as transactions_status','transactions.qty as qty','plant.reg_number as plant_registration_number',
+        'transactions.product_id as transactions_product_id','transactions.status as transactions_status','transactions.qty as qty','plant.reg_number as plant_number',
         'products.code as product_code', 'products.description as product_description', 'products.weighed_product as weighed_product')
         ->where('dispatches.status', 'Dispatched')
         ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
@@ -280,7 +280,7 @@ class ManufactureReportsController extends Controller
                     $dispatch['status'],
                     $dispatch['weight_out_datetime'],
                     $dispatch['reference'],
-                    (strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch['plant_registration_number'] : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number'])),
+                    (strlen($dispatch['registration_number']) == 0 && $dispatch['plant_id'] > 0 ? $dispatch['plant_number'] : (strlen($dispatch['outsourced_contractor']) != 0 ?  $dispatch['registration_number']."*" : $dispatch['registration_number'])),
                     ($dispatch['delivery_zone'] != '0' ? $dispatch['delivery_zone']:''),
                     ($dispatch['customer_id'] == '0' ? ucfirst($dispatch['contractor_name']):ucfirst($dispatch['customer_name'])),
                     ($dispatch['job_id'] != '0' ? $dispatch['jobcard_number']:''),
