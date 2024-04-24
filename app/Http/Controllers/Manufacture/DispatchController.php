@@ -230,10 +230,13 @@ class DispatchController extends Controller
             }
 
             $form_fields['dispatch_temp'] = $dispatch_temperature;
+            //Assign Dispatch No before post. 2024-04-24 No longer added on weigh in
+            $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
 
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
-            $form_fields = ['status' => 'Dispatched'];
+            $form_fields = ['status' => 'Dispatched'];           
+
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
             
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id, 'over_under_variance' => $request->over_under_variance]);
@@ -272,13 +275,14 @@ class DispatchController extends Controller
         $form_fields['weight_in_user_id'] = auth()->user()->user_id;
         $form_fields['weight_in_datetime'] = $form_fields['weight_in_datetime']; //date("Y-m-d\TH:i");
 
-        $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
+        // $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch'); Moved to Confirmation of Load: Loading -> Dispatched 2024-04-24
+        $form_fields['dispatch_number'] = 'Pending...';
         unset($form_fields['job_id']);
 
         // dd($form_fields);
         ManufactureJobcardProductDispatches::insert($form_fields);
 
-        return back()->with('alertMessage', "{$plant}, loading, Dispatch No. {$form_fields['dispatch_number']}");
+        return back()->with('alertMessage', "{$plant}, loading.");
     }
 
     function archive()
