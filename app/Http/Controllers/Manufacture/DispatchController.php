@@ -38,8 +38,11 @@ class DispatchController extends Controller
     function delete_dispatch(ManufactureJobcardProductDispatches $dispatch)
     {
         if ($dispatch !== null && $dispatch->id > 0) {
-            ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->delete();
-            $dispatch->delete();
+            $form_fields = ['status' => 'Deleted'];
+            // ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->delete();
+            ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
+            // $dispatch->delete();
+            $dispatch->update($form_fields);
         }
 
         return back()->with('alertMessage', 'Dispatch deleted!');
@@ -231,7 +234,8 @@ class DispatchController extends Controller
 
             $form_fields['dispatch_temp'] = $dispatch_temperature;
             //Assign Dispatch No before post. 2024-04-24 No longer added on weigh in
-            $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
+            $dispatch_number = Functions::get_doc_number('dispatch');
+            $form_fields['dispatch_number'] =  $dispatch_number;
 
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
 
@@ -239,7 +243,7 @@ class DispatchController extends Controller
 
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
             
-            return back()->with(['alertMessage' => "Dispatch No. {$dispatch->dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id, 'over_under_variance' => $request->over_under_variance]);
+            return back()->with(['alertMessage' => "Dispatch No. {$dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id, 'over_under_variance' => $request->over_under_variance]);
         }
     }
 

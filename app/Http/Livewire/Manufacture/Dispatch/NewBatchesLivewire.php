@@ -84,6 +84,7 @@ class NewBatchesLivewire extends Component
         ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')       
         ->select('dispatches.*','jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
         ->where('dispatches.status', '!=', 'Loading')
+        ->where('dispatches.status', '!=', 'Deleted')
         ->when($this->search_arc, function ($query, $term) {
             $term = "%{$term}%";
             $query
