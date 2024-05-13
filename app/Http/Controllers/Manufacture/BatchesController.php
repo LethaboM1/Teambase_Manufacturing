@@ -41,7 +41,7 @@ class BatchesController extends Controller
 
         $form_fields['status'] = 'Open';
         $form_fields['batch_number'] = Functions::get_doc_number('batch');
-        if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Coul dnot generate batch number.');
+        if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Could not generate batch number.');
 
         $recipe = ManufactureProductRecipe::where('product_id', $form_fields['product_id'])->get();
 

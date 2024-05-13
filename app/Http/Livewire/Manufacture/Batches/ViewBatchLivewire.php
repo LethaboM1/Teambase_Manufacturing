@@ -2,12 +2,13 @@
 
 namespace App\Http\Livewire\Manufacture\Batches;
 
-use App\Http\Controllers\SelectLists;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\ManufactureBatches;
 use Illuminate\Support\Facades\DB;
 use App\Models\ManufactureProducts;
+use App\Http\Controllers\SelectLists;
+use Illuminate\Support\Facades\Session;
 use App\Models\ManufactureProductRecipe;
 use App\Models\ManufactureJobcardProducts;
 
@@ -15,7 +16,7 @@ class ViewBatchLivewire extends Component
 {
     use WithPagination;
 
-    public $batch, $batch_product, $recipe, $status_list, $status, $notes, $saved = 0, $qty;
+    public $batch, $batch_product, $recipe, $status_list, $status, $notes, $changed = 0, $qty;
 
     function mount($batch)
     {
@@ -29,17 +30,38 @@ class ViewBatchLivewire extends Component
 
     function updatedNotes()
     {
-        ManufactureBatches::where('id', $this->batch->id)->update(['notes' => $this->notes]);
+        // ManufactureBatches::where('id', $this->batch->id)->update(['notes' => $this->notes]); 2024-05-09 Moved to a Save Click instead
+        $this->changed = 1;
     }
 
     function updatedStatus()
-    {
-        ManufactureBatches::where('id', $this->batch->id)->update(['status' => $this->status]);
+    {        
+        // ManufactureBatches::where('id', $this->batch->id)->update(['status' => $this->status]); 2024-05-09 Moved to a Save Click instead
+        $this->changed = 1;
     }
 
     function updatedQty()
     {
-        ManufactureBatches::where('id', $this->batch->id)->update(['qty' => $this->qty]);
+        // ManufactureBatches::where('id', $this->batch->id)->update(['qty' => $this->qty]); 2024-05-09 Moved to a Save Click instead
+        $this->changed = 1;
+    }
+
+    function save_batch()
+    {        
+        if ($this->qty <= 0) return back()->with('alertError', 'Quantity cannot be Zero.'); 
+
+        $form_fields = ['notes' => $this->notes, 
+                        'status' => $this->status,
+                        'qty' => $this->qty 
+        ];
+
+        if (ManufactureBatches::where('id', $this->batch->id)->update($form_fields)){
+            $this->changed = 0;
+            return back()->with('alertMessage', 'Changes Saved!');
+        } else {
+            $this->changed = 1;            
+            return back()->with('alertError', 'Changes could not be saved.');
+        }        
     }
 
     public function render()
