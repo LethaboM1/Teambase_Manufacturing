@@ -36,16 +36,18 @@ class DispatchController extends Controller
     }
 
     function delete_dispatch(ManufactureJobcardProductDispatches $dispatch)
-    {
-        if ($dispatch !== null && $dispatch->id > 0) {
+    {        
+        if ($dispatch !== null && $dispatch->id > 0 && $dispatch->status == 'Loading') {
             $form_fields = ['status' => 'Deleted'];
             // ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->delete();
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
             // $dispatch->delete();
             $dispatch->update($form_fields);
-        }
 
-        return back()->with('alertMessage', 'Dispatch deleted!');
+            return back()->with('alertMessage', 'Dispatch deleted!');
+        } else return back()->with('alertError', 'Dispatch cannot be deleted.');
+
+        
     }
 
     function out_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request)
