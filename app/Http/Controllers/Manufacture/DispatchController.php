@@ -57,8 +57,16 @@ class DispatchController extends Controller
         // dd(json_decode(base64_decode($request->over_under_variance, true), true));
         $error = false;
 
+        if ($dispatch->status != 'Loading') {
+            $error = true;
+            return back()->with('alertError', 'Dispatch is no longer status "Loading".');
+        }
+
         if ($dispatch->weight_in > 0) {
-            if ($dispatch->weight_in > $request->weight_out) return back()->with('alertError', 'Your weight is lower than when weighed in.');
+            if ($dispatch->weight_in > $request->weight_out) {
+                $error = true;
+                return back()->with('alertError', 'Your weight is lower than when weighed in.');
+            }
         }
 
         if ($request->customer_dispatch == 0) {
@@ -237,15 +245,21 @@ class DispatchController extends Controller
             $form_fields['dispatch_temp'] = $dispatch_temperature;
             //Assign Dispatch No before post. 2024-04-24 No longer added on weigh in
             $dispatch_number = Functions::get_doc_number('dispatch');
+            // if ($dispatch_number != 0) {
             $form_fields['dispatch_number'] =  $dispatch_number;
-
+            // $check_dispatch = ManufactureJobcardProductDispatches::where('id', $dispatch->id)->first();
+            // if($check_dispatch['dispatch_number'] == 'Pending...'){
+                
             ManufactureJobcardProductDispatches::where('id', $dispatch->id)->update($form_fields);
-
             $form_fields = ['status' => 'Dispatched'];           
-
             ManufactureProductTransactions::where('dispatch_id', $dispatch->id)->update($form_fields);
-            
+
             return back()->with(['alertMessage' => "Dispatch No. {$dispatch_number} is now Out for Delivery", 'print_dispatch' => $dispatch->id, 'over_under_variance' => $request->over_under_variance]);
+
+            // } else error_log("Dispatch: {$dispatch->id}, Could not assign Dispatch Number {$form_fields['dispatch_number']} as it was already assigned {$check_dispatch['dispatch_number']}.");
+                
+            // } else return back()->with(['alertError' => "There was an error assigning a Dispatch No. Please try again."]);
+            
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ManufactureJobcardProductDispatches;
 use App\Models\ManufactureProducts;
 use DateTime;
 use Illuminate\Http\Request;
@@ -97,6 +98,8 @@ class Functions extends Controller
                 $settings = ManufactureSettings::first();
 
                 DB::table('manufacture_settings')->update(['dispatch_number' => DB::raw("@doc_number := dispatch_number+1")]);
+                
+                // if ($updated_rows > 0){
                 $number = DB::select(DB::raw("select @doc_number as number"));
                 $number = $number[0]->number;
 
@@ -112,6 +115,7 @@ class Functions extends Controller
                 $number = $settings->dispatch_prefix . $number;
 
                 return $number;
+                // } else return 0;
                 break;
         }
     }

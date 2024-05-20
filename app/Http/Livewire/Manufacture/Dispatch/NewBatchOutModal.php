@@ -131,7 +131,7 @@ class NewBatchOutModal extends Component
 
     function updatedJobId($value)
     {
-        if ($value > 0) {
+        if ($value > 0 && $this->dispatch->status == 'Loading') {
             ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
                 'job_id' => $value,
                 'customer_id' => 0,
@@ -147,7 +147,7 @@ class NewBatchOutModal extends Component
 
     function updatedCustomerId($value)
     {
-        if ($value > 0) {
+        if ($value > 0 && $this->dispatch->status == 'Loading') {
             ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
                 'job_id' => 0,
                 'customer_id' => $value,
@@ -159,16 +159,22 @@ class NewBatchOutModal extends Component
 
     function updatedReference($value)
     {
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'reference' => $value
-        ]);
+        if($this->dispatch->status == 'Loading'){
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'reference' => $value
+            ]);  
+        }
+        
     }
 
     function updatedDeliveryZone($value)
     {
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'delivery_zone' => $value
-        ]);
+        if($this->dispatch->status == 'Loading'){
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'delivery_zone' => $value
+            ]);    
+        }
+        
     }
 
 
@@ -179,22 +185,22 @@ class NewBatchOutModal extends Component
 
     function updatingWeightOut($value)
     {
-                
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'weight_out' => 0,
-            'qty' => 0
-        ]);
+        if($this->dispatch->status == 'Loading'){
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'weight_out' => 0,
+                'qty' => 0
+            ]);
 
-        if($this->dispatch->jobcard_id > 0){
-            $this->qty_due = number_format($this->dispatch->jobcard_product()->qty_due, 3);
+            if($this->dispatch->jobcard_id > 0){
+                $this->qty_due = number_format($this->dispatch->jobcard_product()->qty_due, 3);
+            }    
         }
-
     }
 
     function updatedWeightOut($value)
     {
         
-        if ($value < $this->dispatch->weight_in) return;        
+        if ($value < $this->dispatch->weight_in || $this->dispatch->status != 'Loading') return;        
 
         if($this->dispatch->jobcard_id > 0){
             $this->validate(['weight_out' => 'gt:0|lte:'.$this->qty_due + 0.5 + $this->dispatch->weight_in]);
@@ -264,7 +270,7 @@ class NewBatchOutModal extends Component
 
     function updatedDispatchTemp($value)
     {
-        if ($value < 0) return;
+        if ($value < 0 || $this->dispatch->status != 'Loading') return;
         $this->dispatch_temp = $value;
         ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
             'dispatch_temp' => $value
@@ -274,52 +280,59 @@ class NewBatchOutModal extends Component
 
     function updatedCustomerDispatch($value)
     {
-        $this->manufacture_jobcard_product_id = 0;
-        $this->customer_id = 0;
-        $this->job_id = 0;
+        if ($this->dispatch->status == 'Loading'){
+            $this->manufacture_jobcard_product_id = 0;
+            $this->customer_id = 0;
+            $this->job_id = 0;
 
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'customer_id' => 0,
-            'job_id' => 0,
-            'manufacture_jobcard_product_id' => 0,
-            'product_id' => 0
-        ]);
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'customer_id' => 0,
+                'job_id' => 0,
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);    
+        }        
     }
 
     function updatedExtraProductId($extra_product_id)
     {        
-        $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->first();
-        $this->extra_product_weighed = $this->extraproduct->weighed_product;
-        
-        $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
-        $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
+        if($this->dispatch->status == 'Loading'){
+            $this->extraproduct = ManufactureProducts::where('id', $extra_product_id)->first();
+            $this->extra_product_weighed = $this->extraproduct->weighed_product;
+            
+            $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
+            $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
 
-        $this->manufacture_jobcard_product_id = 0;
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'manufacture_jobcard_product_id' => 0,
-            'product_id' => 0
-        ]);
+            $this->manufacture_jobcard_product_id = 0;
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);    
+        }
+        
     }
 
     function updatedExtraManufactureJobcardProductId($value)
     {        
-        $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
-        $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->first();
-        $this->extra_product_weighed = $this->extraproduct->weighed_product;
-        
-        $this->extra_product_id = $jobcard->product_id;
-        $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
-        $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
+        if($this->dispatch->status == 'Loading'){
+            $jobcard = ManufactureJobcardProducts::where('id', $value)->first();
+            $this->extraproduct = ManufactureProducts::where('id', $jobcard->product_id)->first();
+            $this->extra_product_weighed = $this->extraproduct->weighed_product;
+            
+            $this->extra_product_id = $jobcard->product_id;
+            $this->extra_product_unit_measure = $this->extraproduct->unit_measure;
+            $this->extra_product_weight_in_date = $this->dispatch->weight_in_datetime;
 
-        if ($value > 0) {
-            $this->product_id = $jobcard->product_id;
-            $this->qty_due = number_format($jobcard->qty_due, 3);            
-        } 
-        
-        ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
-            'manufacture_jobcard_product_id' => 0,
-            'product_id' => 0
-        ]);
+            if ($value > 0) {
+                $this->product_id = $jobcard->product_id;
+                $this->qty_due = number_format($jobcard->qty_due, 3);            
+            } 
+            
+            ManufactureJobcardProductDispatches::where('id', $this->dispatch->id)->update([
+                'manufacture_jobcard_product_id' => 0,
+                'product_id' => 0
+            ]);    
+        }       
         
     }
 
@@ -370,31 +383,33 @@ class NewBatchOutModal extends Component
 
     function removeExtraItem($extra_item_id)
     {
+        if($this->dispatch->status == 'Loading'){
+            $extra_item = ManufactureProductTransactions::where('id', $extra_item_id)->first();
+            $manufacture_jobcard_product_id = $extra_item->manufacture_jobcard_product_id;
 
-        $extra_item = ManufactureProductTransactions::where('id', $extra_item_id)->first();
-        $manufacture_jobcard_product_id = $extra_item->manufacture_jobcard_product_id;
+            //Delete Extra Item
+            ManufactureProductTransactions::where('id', $extra_item_id)->delete();
 
-        //Delete Extra Item
-        ManufactureProductTransactions::where('id', $extra_item_id)->delete();
+            $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->first();
+            if ($manufacture_jobcard_product) {
 
-        $manufacture_jobcard_product = ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->first();
-        if ($manufacture_jobcard_product) {
-
-            $product_qty = $manufacture_jobcard_product->qty_due;
-            //Apply Variance of 500kg/ton on weighed items
-            // if ($product_qty > 0) { 2024-02-28 Variances
-            if (($product_qty > 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($product_qty > 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {
-                
-                ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->update(['filled' => 0]);
-                                
-                //Set job card as Open if filled <> 1
-                if (ManufactureJobcardProducts::where('job_id', $this->dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
-                    unset($this->over_under_variance[$manufacture_jobcard_product_id]);
-                    ManufactureJobcards::where('id', $this->dispatch->jobcard()->id)->update(['status' => 'Open']);
+                $product_qty = $manufacture_jobcard_product->qty_due;
+                //Apply Variance of 500kg/ton on weighed items
+                // if ($product_qty > 0) { 2024-02-28 Variances
+                if (($product_qty > 0.5 && $manufacture_jobcard_product->product()->weighed_product > 0)||($product_qty > 0 && $manufacture_jobcard_product->product()->weighed_product == 0)) {
+                    
+                    ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->update(['filled' => 0]);
+                                    
+                    //Set job card as Open if filled <> 1
+                    if (ManufactureJobcardProducts::where('job_id', $this->dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+                        unset($this->over_under_variance[$manufacture_jobcard_product_id]);
+                        ManufactureJobcards::where('id', $this->dispatch->jobcard()->id)->update(['status' => 'Open']);
+                    }
+                    
                 }
-                
             }
         }
+        
     }
 
     public function messages()
@@ -1284,7 +1299,7 @@ class NewBatchOutModal extends Component
         }
 
 
-        if ($this->extra_item_error == false) {
+        if ($this->extra_item_error == false && $this->dispatch->status == 'Loading') {
 
             //Insert new line
             $form_fields['qty'] = Functions::negate($form_fields['qty']);

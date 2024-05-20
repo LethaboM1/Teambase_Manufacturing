@@ -272,6 +272,7 @@ class AddDispatchAdditionalModal extends Component
 
         $form_fields['dispatch_number'] =  Functions::get_doc_number('dispatch');
 
+        // if($form_fields['dispatch_number'] != 0){
         // dd($form_fields);
         $dispatch_id = ManufactureJobcardProductDispatches::insertGetId($form_fields);
 
@@ -329,6 +330,10 @@ class AddDispatchAdditionalModal extends Component
         $this->weight_in_datetime = date("Y-m-d\TH:i");
         $this->customer_dispatch = 0;
         $this->delivery_zone = 0;
+
+        // } else return back()->with(['alertError' => "There was an error assigning a Dispatch No. Please try again."]);
+
+        
     }
 
     function updatedCustomerDispatch()
