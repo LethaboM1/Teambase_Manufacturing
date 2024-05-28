@@ -96,7 +96,7 @@
                                             <th width="10%">Supplier</th>
                                             <th width="15%">Reg Number</th>
                                             <th width="15%">Product</th>
-                                            <th width="5%">Weigh In</th>
+                                            <th width="10%">Weight In</th>
                                             <th width="10%">Status</th>
                                             <th width="10%">Action</th>
                                         </tr>
@@ -138,7 +138,7 @@
                                             <th width="10%">Supplier</th>
                                             <th width="15%">Reg Number</th>
                                             <th width="15%">Product</th>
-                                            <th width="5%">Weigh In</th>
+                                            <th width="10%">Qty</th>
                                             <th width="10%">Status</th>
                                             <th width="10%">Action</th>
                                         </tr>

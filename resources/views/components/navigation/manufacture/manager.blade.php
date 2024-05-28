@@ -89,7 +89,7 @@
         </a>
         <ul class="nav nav-children">
           <li><a class="nav-link" href="{{url('report/stock-reports')}}">Stock Report</a></li>
-          <li><a class="nav-link" href="{{url('report/order-reports')}}">Order Reports</a></li>
+          {{-- <li><a class="nav-link" href="{{url('report/order-reports')}}">Order Reports</a></li> --}}
           <li><a class="nav-link" href="{{url('report/lab-reports')}}">Lab Reports</a></li>
           <li><a class="nav-link" href="{{url('report/dispatch-reports')}}">Dispatch Reports</a></li>
         </ul>

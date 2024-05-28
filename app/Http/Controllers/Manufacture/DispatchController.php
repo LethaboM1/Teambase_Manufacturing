@@ -371,8 +371,9 @@ class DispatchController extends Controller
 
     function received_goods(Request $request, ManufactureProductTransactions $transaction)
     {
+    //  dd($transaction);
         $form_fields = $request->validate([
-            "weight_out" => 'required|gt:0',
+            "weight_out" => 'required|gt:0|lte:'.$transaction->weight_in,
             "comment" => 'nullable'
         ]);
 

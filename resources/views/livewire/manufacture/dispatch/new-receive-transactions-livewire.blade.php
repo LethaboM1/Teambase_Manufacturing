@@ -4,7 +4,7 @@
     <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->supplier()->name}}</td>
     <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->registration_number}}</td>
     <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->product()->code}} - {{$transaction->product()->description}}</td>
-    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->weight_in}}</td>
+    <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$archive ? $transaction->qty:$transaction->weight_in}}</td>
     <td onclick="$('#complete_{{$transaction->id}}_btn').click()">{{$transaction->status}}</td>
     <td>
         <button id="complete_{{$transaction->id}}_btn" href="#complete_receive_{{$transaction->id}}" class="btn btn-warning modal-sizes"><i class="fa fa-edit"></i></button>
