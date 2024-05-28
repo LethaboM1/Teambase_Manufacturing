@@ -371,7 +371,7 @@ class DispatchController extends Controller
 
     function received_goods(Request $request, ManufactureProductTransactions $transaction)
     {
-    //  dd($transaction);
+     
         $form_fields = $request->validate([
             "weight_out" => 'required|gt:0|lte:'.$transaction->weight_in,
             "comment" => 'nullable'
@@ -384,10 +384,11 @@ class DispatchController extends Controller
         $form_fields['weight_out_datetime'] = date("Y-m-d\TH:i:s");
         $form_fields['status'] = 'Completed';
         $form_fields['qty'] = $qty;
-
+        $form_fields['comment'] = 'Stock Intake'.($transaction->reference_number != '' ? ' on Ref: '.$transaction->reference_number.($transaction->registration_number != '' ? ', received on Reg: '.$transaction->registration_number.'. ':'. '):'. ').$form_fields['comment'];
+        
         ManufactureProductTransactions::where('id', $transaction->id)->update($form_fields);
         return back()->with([
-            'alertMessage' => 'Good Received.',
+            'alertMessage' => 'Goods Received.',
             'tab' => 'receiving',
             // 'print_receipt' => $transaction->id
         ]);
