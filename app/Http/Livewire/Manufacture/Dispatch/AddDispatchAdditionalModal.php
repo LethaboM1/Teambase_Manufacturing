@@ -153,11 +153,16 @@ class AddDispatchAdditionalModal extends Component
 
         if($this->customer_dispatch == 1){
             $form_fields['type'] = 'CDISP';
-            $form_fields['comment'] = 'Dispatched for ' . ManufactureCustomers::where('id', $this->customer_id)->first()->name;
+            // dd($this->customer_id);
+            if($this->customer_id){$the_name = ManufactureCustomers::where('id', $this->customer_id)->first()->name;}
+            else {$the_name = 'Customer';}
+            $form_fields['comment'] = 'Dispatched for ' . /* $this->customer_id != '' ? ManufactureCustomers::where('id', $this->customer_id)->first()->name:'Customer' */$the_name;
             $form_fields['product_id'] = $this->extra_product_id;
         } elseif($this->job_id > 0){
             $form_fields['type'] = 'JDISP';
-            $form_fields['comment'] = 'Dispatched for ' . ManufactureJobcards::where('id', $this->job_id)->first()->jobcard_number;
+            if($this->job_id){$the_name = ManufactureJobcards::where('id', $this->job_id)->first()->jobcard_number;}
+            else {$the_name = 'Jobcard';}
+            $form_fields['comment'] = 'Dispatched for ' . /* $this->job_id != '' ? ManufactureJobcards::where('id', $this->job_id)->first()->jobcard_number:'Jobcard' */$the_name;
             $form_fields['type_id'] = $this->manufacture_jobcard_product_id;
             $jobcard_product = ManufactureJobcardProducts::where('id', $this->manufacture_jobcard_product_id)->first();
             $form_fields['product_id'] = $jobcard_product->product()->id;
@@ -231,7 +236,7 @@ class AddDispatchAdditionalModal extends Component
 
     function dispatch()
     {
-        //Transfer & Return Notes changes 2024-03-12
+        //Transfer & Return Notes changes 2024-03-12plant_number
         $form_fields['plant_id'] = $this->plant_id;
         $form_fields['outsourced_contractor'] = $this->outsourced_contractor;        
         $form_fields['job_id'] = ($this->job_id == null ? 0 : $this->job_id);
@@ -260,6 +265,13 @@ class AddDispatchAdditionalModal extends Component
             $plant = Plants::where('plant_id', $form_fields['plant_id'])->first();
             $form_fields['registration_number'] = $plant['reg_number'];
         }
+
+        //No Items
+        if (!count($this->extra_items)) return back()->with('alertError', 'No Items Loaded on this Dispatch.');
+
+        //No Job or Customer Selected
+        if ($form_fields['job_id']==0 && $form_fields['customer_id']==0) return back()->with('alertError', 'No Customer / Jobcard selected for this Dispatch.');
+
 
         $form_fields['status'] = 'Dispatched';
         $form_fields['weight_in'] = '0';

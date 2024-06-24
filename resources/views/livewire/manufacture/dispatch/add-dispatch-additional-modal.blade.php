@@ -187,7 +187,9 @@
         <footer class='card-footer'>
             <div class='row'>
                 <div class='col-md-12 text-right'>
-                    <button type='submit' class='btn btn-primary'>Confirm</button>
+                    {{-- @if (count($extra_items) > 0) --}}
+                        <button type='submit' class='btn btn-primary'>Confirm</button>
+                    {{-- @endif --}}
                     <button wire:click="refreshNewDispatchModal" id="cancel_dispatch" class='btn btn-default modal-dismiss'>Cancel</button>
                 </div>
             </div>
