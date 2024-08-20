@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ManufactureJobcardProductDispatches;
-use App\Models\ManufactureProducts;
+use Illuminate\Support\Facades\Log;
 use DateTime;
+use App\Mail\Sms;
+use App\Mail\InternalMail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\ManufactureSettings;
-
 use Spipu\Html2Pdf\Html2Pdf;
+use PHPMailer\PHPMailer\SMTP;
+use Illuminate\Support\Facades\DB;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use App\Models\ManufactureProducts;
+use App\Models\ManufactureSettings;
+use Illuminate\Support\Facades\Mail;
 use Spipu\Html2Pdf\Exception\Html2PdfException;
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+use App\Models\ManufactureJobcardProductDispatches;
 
 class Functions extends Controller
 {
@@ -34,6 +40,24 @@ class Functions extends Controller
             }
         }
         return $log;
+    }
+
+    static function console_log($output, $with_script_tags = true)
+    {
+        $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . ');';
+        if ($with_script_tags) {
+            $js_code = '<script>' . $js_code . '</script>';
+        }
+        echo $js_code;
+    }
+
+    static function clean_no($contact_no)
+    {
+        
+        $contact_no = str_replace(SelectLists::special_chars, '', $contact_no);        
+
+        if (!is_numeric($contact_no)) $contact_no = '';
+        return $contact_no;
     }
 
     static function negate($number)
@@ -200,5 +224,46 @@ class Functions extends Controller
         $incremented = (($factor * $number) + 1) / $factor;
       
         return $incremented;
+    }
+
+    static function sms_($number, $message, $username, $password){
+    	
+        if(env('SMS_ACTIVE')=='true'){
+            $to = Self::clean_no($number) . env('SMS_PROVIDER_HOST', '@e-mail2sms.co.za');     //Add a recipient         
+            $username = env('SMS_USERNAME', 'mashia@polokwanesurfacing.co.za');
+            $password = env('SMS_PASSWORD', 'P0LSURF$$');                      	
+            $body = ['message'=>$message,
+                'username'=>$username,
+                'password'=>$password,
+            ];
+        
+        
+            try {
+                Mail::to($to)->send(new Sms($body));
+            } catch (\Exception $e) {
+                Log::channel('mail')->error($e);
+            }            
+        }
+        
+        
+    }
+
+    static function intmail_($recipient, $message, $sender, $subject, $links=[]){
+    	
+        $to = $recipient;     //Add a recipient  
+                                        	
+    	$body = ['sender'=>$sender,
+            'recipient'=>$recipient,
+            'message'=>$message,
+            'subject'=>$subject,
+            'links'=>$links
+        ];       
+        
+        try {
+            Mail::to($to)->send(new InternalMail($body));
+        } catch (\Exception $e) {
+            Log::channel('mail')->error($e);
+        }
+                
     }
 }

@@ -2,7 +2,7 @@
     @csrf
     <section class='card'>
         <header id='editDispatch_{{ $dispatch->id }}header' class='card-header'>
-            <h2 class='card-title'>Dispatch No. {{ $dispatch->dispatch_number }}</h2>
+            <h2 class='card-title'>@if ($dispatch->status == 'Returned') Return Note @else Dispatch @endif No. {{ $dispatch->dispatch_number }}</h2>
         </header>
         <div class='card-body'>            
             <div class='modal-wrapper'>
@@ -54,7 +54,7 @@
                                 <h4>{{ $dispatch->weight_in_datetime }}</h4>
                             </div>
                             <div class="col-md-6">
-                            </div>
+                            </div>                            
                         @endif
 
                         <hr>
@@ -218,6 +218,7 @@
                                             <livewire:manufacture.dispatch.new-batch-out-extra-items-livewire
                                                 key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction"
                                                 overundervariance="{{array_key_exists($extra_item['manufacture_jobcard_product_id'], $over_under_variance) == true ? $over_under_variance[$extra_item['manufacture_jobcard_product_id']] : ''}}"
+                                                :dispatch="$dispatch"
                                                 />                                                 
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
@@ -244,8 +245,36 @@
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label>Reference</label><br>
-                                <h4>{{ $dispatch->reference }}</h4>
+                                <div class="row">
+                                <div class="col-md-9">
+                                    @if ($changingReferenceNo=='false')
+                                        <label>Reference</label><br>
+                                        <h4>{{ $dispatch->reference }}</h4>
+                                    @elseif ($changingReferenceNo=='true')
+                                        <x-form.input name="reference" label="Reference" />
+                                    @endif
+                                </div>
+                                <div class="col-md-3 {{$changingReferenceNo=='true'?'my-4':''}}">                                   
+
+                                    @if (Auth::user()->getSec()->dispatch_admin_value || Auth::user()->getSec()->global_admin_value)
+                                        @if ($changingReferenceNo=='false')
+                                            <a wire:click="$set('changingReferenceNo', 'true')" class="btn btn-primary btn-xs float-end mt-3 mx-1" title="Edit Reference">
+                                                <i class="fa-regular fa-pen-to-square"></i>                    
+                                            </a>
+                                        @elseif ($changingReferenceNo=='true')                                        
+                                                                                        
+                                            <a wire:click="changeReferenceNo('cancel')" class="btn btn-danger btn-xs float-end mt-3 mx-1" title="Cancel Change">
+                                                <i class="fas fa-ban"></i>                                                                    
+                                            </a>
+
+                                            <a wire:click="changeReferenceNo('commit')" class="btn btn-success btn-xs float-end mt-3 mx-1" title="Commit Change">
+                                                <i class="fas fa-check"></i>                    
+                                            </a>
+
+                                        @endif
+                                    @endif
+                                </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 @if ($customer_dispatch == 1 || $dispatch->customer() !== null)
@@ -402,10 +431,10 @@
                                         <tr>
                                             {{-- <th width="20%">Date</th> --}}
                                             <th width="40%">Description</th>
-                                            <th width="15%">Unit</th>
+                                            <th width="12%">Unit</th>
                                             <th width="12%">Qty</th>
-                                            <th width="22%"></th>
-                                            <th width="11%">Actions</th>
+                                            <th width="20%"></th>
+                                            <th width="16%">Actions</th>
                                         </tr>
                                     </thead>
 
@@ -429,6 +458,7 @@
                                             <livewire:manufacture.dispatch.new-batch-out-extra-items-livewire
                                                 key="{{ Str::random() }}" :extraitem="$extra_item" :dispatchaction="$dispatchaction"
                                                 overundervariance="{{array_key_exists($extra_item['manufacture_jobcard_product_id'], $over_under_variance) == true ? $over_under_variance[$extra_item['manufacture_jobcard_product_id']] : ''}}"
+                                                :dispatch="$dispatch"
                                                 />                                            
                                         @endforeach
                                         {{-- Refresh listeners on Modals --}}
@@ -463,7 +493,7 @@
                 <div class='col-md-12 text-right'>
                     @if ($dispatchaction == 'new')
                         <button type='submit'class='btn btn-primary'>Confirm</button>
-                        <a id="edit_btn_{{ $dispatch->id }}" href="#delete_{{ $dispatch->id }}"
+                        <a id="delete_btn_{{ $dispatch->id }}" href="#delete_{{ $dispatch->id }}"
                             class="btn btn-danger modal-basic" title="View Archived Dispatch">Delete</a>
                         <button class='btn btn-default modal-dismiss'>Cancel</button>
 
@@ -494,10 +524,15 @@
                             </form>
                         </div>
                     @else
-                        <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}?type=dispatch") }}"
-                            class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>
+                        @if ($dispatch->status != 'Returned')
+                            <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}?type=dispatch") }}"
+                                class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print</a>                            
+                        @endif
+                        
                         <button class='btn btn-primary modal-dismiss'
-                            id='closeModalBtn_{{ $dispatch->id }}'>Close</button>
+                            id='closeModalBtn_{{ $dispatch->id }}'>Close</button>                         
+                            
+                            
                     @endif
 
                 </div>

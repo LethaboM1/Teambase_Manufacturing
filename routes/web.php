@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ManagersController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Manufacture\JobsController;
 use App\Http\Controllers\Manufacture\LabsController;
 use App\Http\Controllers\Manufacture\BatchesController;
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'view']);
 
+    //Users
+    Route::get('user/view/{id}', [UserProfileController::class, 'profile']);
+    Route::post('user/ooo/{id}', [UserProfileController::class, 'outofoffice_user']);
 
     Route::middleware('is_manager')->group(function () {
         Route::get('users', [ManagersController::class, 'users']);
@@ -76,7 +80,7 @@ Route::middleware('auth')->group(function () {
             Route::get('products', [ProductsController::class, 'products']);
             Route::post('products/add', [ProductsController::class, 'add_product']);
             Route::post('products/save', [ProductsController::class, 'save_product']);
-            Route::post('products/adjust', [ProductsController::class, 'adjust_product']);
+            Route::post('products/adjust', [ProductsController::class, 'adjust_product']);            
             Route::post('products/delete', [ProductsController::class, 'delete_product']);
 
             /* Job Cards */
@@ -130,12 +134,13 @@ Route::middleware('auth')->group(function () {
             //Route::get('dispatches/archive', [DispatchController::class, 'archive']);
             // Route::get('dispatch/{batch}', [DispatchController::class, 'batch_dispatch']);
 
-            /* Reports */
-            Route::get('report/stock-reports', [ManufactureReportsController::class, 'report_stock']);
+            /* Reports */            
             Route::get('report/order-reports', [ManufactureReportsController::class, 'report_order']);
             Route::get('report/lab-reports', [ManufactureReportsController::class, 'report_lab']);
             Route::get('report/dispatch-reports', [ManufactureReportsController::class, 'report_dispatch']);
             Route::post('report/dispatch-reports/print', [ManufactureReportsController::class, 'dispatchByDateReport']);
+            Route::get('report/stock-reports', [ManufactureReportsController::class, 'report_stock']);
+            Route::post('report/stock-reports/print', [ManufactureReportsController::class, 'stockByDateReport']);
         });
     });    
 });

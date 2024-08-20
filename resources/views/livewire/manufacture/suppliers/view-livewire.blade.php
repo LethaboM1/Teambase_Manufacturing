@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col-sm-12 col-md-12 pb-sm-12 pb-md-0">
-        <button href="#modalAddSupplier" class="mb-1 mt-1 mr-1 modal-sizes btn btn-primary">Add Supplier</button>
+        @if (Auth::user()->getSec()->getCRUD('supplier_crud')['create'] || Auth::user()->getSec()->global_admin_value) 
+            <button href="#modalAddSupplier" class="mb-1 mt-1 mr-1 modal-sizes btn btn-primary">Add Supplier</button>
+        @endif
         <div class="header-right">
             <div class="input-group">
                 <input type="text" class="form-control" wire:model.600ms="search" name="search"

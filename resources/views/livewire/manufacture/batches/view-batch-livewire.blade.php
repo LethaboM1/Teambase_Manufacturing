@@ -39,11 +39,13 @@
 					</div>
 					<div class="row">						
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">							
-							<button type="button"
-								class="btn btn-primary m-2"
-								wire:click="save_batch"
-								@if (($changed == 0) || $batch['status'] == 'Completed' || $batch['status'] == 'Ready for dispatch') disabled="disabled" @endif>Save Batch
-							</button>                                
+							@if (Auth::user()->getSec()->getCRUD('production_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+								<button type="button"
+									class="btn btn-primary m-2"
+									wire:click="save_batch"
+									@if (($changed == 0) || $batch['status'] == 'Completed' || $batch['status'] == 'Ready for dispatch') disabled="disabled" @endif>Save Batch
+								</button>
+							@endif                                
 						</div>										
 					</div>
 					<hr>

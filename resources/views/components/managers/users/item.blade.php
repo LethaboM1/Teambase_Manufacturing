@@ -14,12 +14,16 @@
             @endif
         </td>
         <td class='actions'>
-            <a class="modal-sizes" href="#edit_user{{$item['user_id']}}"><i class='fas fa-pencil-alt pointer'></i></a>
-            <a class="modal-sizes" href="#view_user{{$item['user_id']}}"><i class='fa-solid fa-magnifying-glass pointer'></i></a>
-            <a class="modal-sizes" href="#delete_user{{$item['user_id']}}"><i class='far fa-trash-alt pointer'></i></a>
+            @if (Auth::user()->getSec()->getCRUD('user_man_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+                <a class="modal-sizes" href="#edit_user{{$item['user_id']}}"><i class='fas fa-pencil-alt pointer'></i></a>
+            
+                <a class="modal-sizes" href="#view_user{{$item['user_id']}}"><i class='fa-solid fa-magnifying-glass pointer'></i></a>
+            @endif
+            @if (Auth::user()->getSec()->getCRUD('user_man_crud')['delete'] || Auth::user()->getSec()->global_admin_value)
+                <a class="modal-sizes" href="#delete_user{{$item['user_id']}}"><i class='far fa-trash-alt pointer'></i></a>            
+            @endif
             
             
-
             <div id='delete_user{{$item['user_id']}}' class='modal-block modal-block-lg mfp-hide'>
                 <form action="users/delete" method='post' enctype='multipart/form-data'>
                     @csrf
@@ -49,11 +53,11 @@
                 <form action="users/save" method='post' enctype='multipart/form-data'>
                     @csrf
                     <section class='card'>
-                        <header id='edit_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'>Edit User</h2></header>
+                        <header id='edit_user{{$item['user_id']}}header' class='card-header'><h2 class='card-title'>Edit User {{$item['name'] . ' ' . $item['last_name']}}'s Profile</h2></header>
                             <div class='card-body'>
                                 <div class='modal-wrapper'>
-                                    <div class='modal-text'>
-                                        <x-managers.users.view :user="$item" />
+                                    <div class='modal-text'>                                        
+                                        <x-managers.users.view :user="$item" :cruditems="$crud_items" :seclevels="$sec_levels" />
                                     </div>
                                 </div>
                             </div>

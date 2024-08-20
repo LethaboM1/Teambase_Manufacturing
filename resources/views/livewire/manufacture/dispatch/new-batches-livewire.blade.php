@@ -6,16 +6,18 @@
                     <h2 class="card-title">Dispatches</h2>
                 </header>
                 <div class="card-body">                   
-                    <div class="dropdown open mb-2">
-                        <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                    Actions
-                                </a>
-                        <div class="dropdown-menu" aria-labelledby="btnActions">
-                            <a class="dropdown-item modal-basic" href="#addDispatch" >Weigh In</a> 
-                            <a class="dropdown-item modal-basic" href="#addDispatchAdditional">Dispatch</a>                                    
+                    @if (Auth::user()->getSec()->getCRUD('dispatch_crud')['create'] || Auth::user()->getSec()->global_admin_value)
+                        <div class="dropdown open mb-2">
+                            <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                        Actions
+                                    </a>
+                            <div class="dropdown-menu" aria-labelledby="btnActions">
+                                <a class="dropdown-item modal-basic" href="#addDispatch" >Weigh In</a> 
+                                <a class="dropdown-item modal-basic" href="#addDispatchAdditional">Dispatch</a>                                    
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     {{-- Collection / Dispatch --}}
                     <div id='addDispatchAdditional' class='modal-block modal-block-lg mfp-hide'>
@@ -130,9 +132,7 @@
                                         <th width="10%">Job Card</th>
                                         <th width="10%">Site Number</th>
                                         <th width="25%">Contractor / Customer</th>
-                                        <th width="15%">Vehicle</th>
-                                        {{-- <th width="15%">Product</th>
-                                        <th width="5%">Qty</th> --}} {{-- Moved into Lines 2023-11-10 --}}
+                                        <th width="15%">Vehicle</th>                                        
                                         <th width="10%">Status</th>
                                         <th width="5%">Action</th>
                                     </tr>

@@ -38,7 +38,9 @@
         </div>
     </div>
     <footer class="card-footer text-end">
-        <button type="submit" name="add_user" class="btn btn-primary">{{($customer_id>0?"Save":"Add")}} Customer</button>
+        @if (Auth::user()->getSec()->getCRUD('customer_crud')['update'] || Auth::user()->getSec()->getCRUD('customer_crud')['create'] || Auth::user()->getSec()->global_admin_value)
+            <button type="submit" name="add_user" class="btn btn-primary">{{($customer_id>0?"Save":"Add")}} Customer</button>
+        @endif
         <button class="btn btn-default modal-dismiss">Cancel</button>
     </footer>
 </div>

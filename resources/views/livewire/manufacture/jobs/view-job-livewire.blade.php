@@ -88,54 +88,58 @@
                         <div class="col-lg-12">
                             @if ($jobcard['status'] != 'Completed' && $jobcard['status'] != 'Cancelled')
                                 
-                                <button type="button"
+                                @if (Auth::user()->getSec()->getCRUD('jobcards_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+                                    <button type="button"
                                     class="btn btn-primary m-2"
                                     wire:click="save_jobcard"
                                     @if (!$edit) disabled="disabled" @endif>Save Job
                                     Card</button>                            
                             
-                                @if(!$confirmclose)
-                                    <button type="button"
-                                        class="btn btn-secondary"                                        
-                                        wire:click="close_jobcard"                                   
-                                                                            
-                                        @if (auth()->user()->role != 'manager') disabled="disabled" @endif
-                                        >Close Job
-                                        Card</button>
-                                @else
-                                    <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
-                                    <button type="button"
-                                        class="btn btn-success m-2"                                       
-                                        wire:click="confirmed_close_jobcard"                                                                           
-                                        ><i class="fas fa-check"></i></button>
-                                    <button type="button"
-                                        class="btn btn-danger"                                        
-                                        wire:click="decline_jobcard_change"
-                                        ><i class="fas fa-xmark"></i></button>
+                                    @if(!$confirmclose)
+                                        <button type="button"
+                                            class="btn btn-secondary"                                        
+                                            wire:click="close_jobcard"                                   
+                                                                                
+                                            @if (auth()->user()->role != 'manager') disabled="disabled" @endif
+                                            >Close Job
+                                            Card</button>
+                                    @else
+                                        <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
+                                        <button type="button"
+                                            class="btn btn-success m-2"                                       
+                                            wire:click="confirmed_close_jobcard"                                                                           
+                                            ><i class="fas fa-check"></i></button>
+                                        <button type="button"
+                                            class="btn btn-danger"                                        
+                                            wire:click="decline_jobcard_change"
+                                            ><i class="fas fa-xmark"></i></button>
+                                    @endif
                                 @endif
                                 
 
                                    
                             @else
-                                @if(!$confirmopen)
-                                    <button type="button"
-                                        class="btn btn-primary m-2"
-                                        wire:click="reopen_jobcard"                                                                       
-                                                                        
-                                        @if (auth()->user()->role != 'manager') disabled="disabled" @endif>Re-open Job
-                                        Card</button>
-                                @else
-                                    
-                                    <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
-                                    <button type="button"
-                                        class="btn btn-success m-2"                                       
-                                        wire:click="confirmed_reopen_jobcard"                                                                           
-                                        ><i class="fas fa-check"></i></button>
-                                    <button type="button"
-                                        class="btn btn-danger"                                        
-                                        wire:click="decline_jobcard_change"
-                                        ><i class="fas fa-xmark"></i></button>
+                                @if (Auth::user()->getSec()->getCRUD('jobcards_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+                                    @if(!$confirmopen)
+                                        <button type="button"
+                                            class="btn btn-primary m-2"
+                                            wire:click="reopen_jobcard"                                                                       
+                                                                            
+                                            @if (auth()->user()->role != 'manager') disabled="disabled" @endif>Re-open Job
+                                            Card</button>
+                                    @else
+                                        
+                                        <strong><em>Are you Sure?</em>&nbsp;&nbsp;</strong>
+                                        <button type="button"
+                                            class="btn btn-success m-2"                                       
+                                            wire:click="confirmed_reopen_jobcard"                                                                           
+                                            ><i class="fas fa-check"></i></button>
+                                        <button type="button"
+                                            class="btn btn-danger"                                        
+                                            wire:click="decline_jobcard_change"
+                                            ><i class="fas fa-xmark"></i></button>
 
+                                    @endif
                                 @endif
                                 
 
@@ -158,11 +162,13 @@
                         <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                             <x-form.number name="qty" label="Qty {{ strtoupper($unit_measure) }}" step="0.001" />
                         </div>
-                        <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-                            <br>
-                            <button wire:click="add_product" class="btn  btn-primary"><i
-                                    class="fa fa-plus"></i></button>
-                        </div>
+                        @if (Auth::user()->getSec()->getCRUD('jobcards_crud')['create'] || Auth::user()->getSec()->getCRUD('jobcards_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+                            <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                                <br>
+                                <button wire:click="add_product" class="btn  btn-primary mt-2"><i
+                                        class="fa fa-plus"></i></button>
+                            </div>
+                        @endif
                     </div>
                 @endif
                 <div class="row">

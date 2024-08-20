@@ -35,7 +35,7 @@ class ManufactureJobcardProducts extends Model
 
     function product()
     {
-        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();
+        return $this->hasOne(ManufactureProducts::class, 'id', 'product_id')->first();        
     }
 
     function dispatches()
@@ -44,10 +44,15 @@ class ManufactureJobcardProducts extends Model
         // return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
     }
 
-    function weighed_transactions()
-    {
-        return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); //2023-11-09 Moved to Transactions Table
-        //return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
+    // function weighed_transactions()
+    // {
+    //     return $this->hasMany(ManufactureJobcardProductDispatches::class, 'manufacture_jobcard_product_id', 'id')->get(); //2023-11-09 Moved to Transactions Table
+    //     //return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->get();
+    // }
+
+    function ordered_transactions()
+    {   
+        return $this->hasMany(ManufactureProductTransactions::class, 'manufacture_jobcard_product_id', 'id')->orderBy('weight_out_datetime')->get();
     }
 
     function transactions()

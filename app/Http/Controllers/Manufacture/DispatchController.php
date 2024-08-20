@@ -357,7 +357,9 @@ class DispatchController extends Controller
 
         $form_fields['type'] = 'RET';
         $form_fields['comment'] = 'Goods returned to Supplier';
-        $form_fields['status'] = 'Completed';
+        $form_fields['weight_out_user'] = auth()->user()->user_id;
+        $form_fields['weight_out_datetime'] = date("Y-m-d\TH:i:s");
+        $form_fields['status'] = 'Completed';        
         $form_fields['user_id'] = auth()->user()->user_id;
         $form_fields['qty'] = Functions::negate($form_fields['qty']);
 
@@ -396,10 +398,14 @@ class DispatchController extends Controller
 
     function print_dispatch(ManufactureJobcardProductDispatches $dispatch, Request $request, $overundervariance = '')
     {                
-        
         // dd('Type:'.$request->type.', ID:'.$request->extraitemid);        
         // dd($request->type);        
         // dd($extra_item_id);
+        if ($dispatch->customer_id == 0) {
+            //if jobcard dispatch
+            $accumulated_tonnages = $dispatch->accum_tonnage($dispatch->weight_out_datetime);
+        } else $accumulated_tonnages = 0;
+        // dd($accumulated_tonnages);
         $dispatch_lines = [];
         $dispatch_lines = ManufactureProductTransactions::select(
             DB::raw('(select code from manufacture_products where manufacture_products.id= manufacture_product_transactions.product_id) as code'),
@@ -407,6 +413,7 @@ class DispatchController extends Controller
             'qty',
             'manufacture_jobcard_product_id',
             'status',
+            'product_id',
             'updated_at'
         )
             ->where('dispatch_id', $dispatch->id)
@@ -513,8 +520,9 @@ class DispatchController extends Controller
                         </tr>
                         <tr style=\"background-color: rgb(85, 85, 85);\">
                             <th style=\"width: 12%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Code</th>
-                            <th style=\"width: 78%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Description</th>
+                            <th style=\"width: 63%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Description</th>
                             <th style=\"width: 10%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Qty</th>
+                            <th style=\"width: 15%;font-weight: bold; font-size: 13px; color: #FFFFFF; text-align: left; padding: 10px;\">Accum. Qty</th>
                         </tr>
                     </thead>
                     <tbody>";
@@ -547,6 +555,7 @@ class DispatchController extends Controller
             $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">{$dispatch_line['code']}</td>";
             $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">". (array_key_exists($dispatch_line['manufacture_jobcard_product_id'], $overundervariance) == true ? ($dispatch_line['description'] . "<br><small><small><small><strong>*" . $overundervariance[$dispatch_line['manufacture_jobcard_product_id']] . "</strong></small></small></small>") : ($request->type=='return' ? $dispatch_line['description'] . "<br><small><small><small><strong>*Returned on " . $dispatch_line['updated_at'] . "</strong></small></small></small>" : ($request->type=='transfer' ? $dispatch_line['description'] . "<br><small><small><small><strong>*Transferred on " . $dispatch_line['updated_at'] . "</strong></small></small></small>" : $dispatch_line['description'])))."</td>";            
             $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: left; padding: 5px;\">" . number_format(\App\Http\Controllers\Functions::negate($dispatch_line['qty']),3) . "</td>";
+            $pdf .= "<td style=\"font-weight: normal; font-size: 13px; text-align: right; padding: 5px;\">" . (0 != $accumulated_tonnages && $accumulated_tonnages['product_id']==$dispatch_line['product_id'] ? number_format($accumulated_tonnages['accum_qty'],3):'0') . "</td>";
             $pdf .= "</tr>";
         }
 

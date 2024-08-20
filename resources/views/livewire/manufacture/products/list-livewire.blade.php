@@ -1,5 +1,6 @@
  <div class="row">
-     @if (auth()->user()->role == 'manager'||auth()->user()->role == 'system')
+     {{-- @if (auth()->user()->role == 'manager' || auth()->user()->role == 'system') --}}
+     @if (Auth::user()->getSec()->getCRUD('products_crud')['create'] || Auth::user()->getSec()->global_admin_value)
          <div class="col-lg-12 mb-3">
              <form method="post" action="products/add" id="addplant">
                  @csrf
@@ -9,23 +10,23 @@
                      </header>
                      <div class="card-body">
                          <div class="row">
-                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-3">
                                  <x-form.input wire=0 name="code" label="Product Code" :value="old('code')" />
                              </div>
-                             <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-0">
+                             <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-3">
                                  <x-form.input wire=0 name="description" label="Product Description"
                                      :value="old('description')" />
                              </div>
-                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-3">
                                  <x-form.number wire=0 step="0.001" name="opening_balance" label="Opening Balance"
                                      :value="old('opening_balance')" />
                              </div>
-                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-0">
+                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-3">
                                  <x-form.select wire=0 name="unit_measure" label="Unit Measure" :value="old('unit_measure')"
                                      :list="$unit_measure_list" />
                              </div>
-                             <br>
-                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                             <br>                             
+                             <div class="col-sm-12 col-md-2 pb-sm-3 pb-md-2">
                                  {{-- <div class="checkbox-custom checkbox-default">
                                         <input id="checkbox1" name="has_recipe" type="checkbox" value="1">
                                         <label for="checkbox1">Requires recipe</label>
@@ -33,7 +34,7 @@
                                  <x-form.checkbox wire=0 name="has_recipe" label="Has a recipe?" :toggle="old('has_recipe')"
                                      :value="1" />
                              </div>
-                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
+                             <div class="col-sm-12 col-md-4 pb-sm-3 pb-md-2">
                                  <x-form.checkbox wire=0 name="weighed_product" label="Product Weighed when Sold"
                                      :toggle="old('weighed_product')" :value="1" />
                              </div>
@@ -54,34 +55,41 @@
                  <h2 class="card-title">Products</h2>
              </header>
              <div class="card-body">
-                 <button type="button" class="btn btn-primary" wire:click="fix_items"><i
-                         class="fa fa-gear"></i>&nbsp;Fix Weighed Items</button><br><br>
-                 @if (Session::get('alertMessage'))
+                @if (Auth::user()->getSec()->getCRUD('products_crud')['update'] || Auth::user()->getSec()->global_admin_value) 
+                    <button type="button" class="btn btn-primary" wire:click="fix_items"><i
+                         class="fa fa-gear"></i>&nbsp;Fix Weighed Items</button>
+                         <br><br>
+                @endif
+                
+                @if (Session::get('alertMessage'))
                      <div class="alert alert-success alert-dismissible fade show" role="alert">
                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 
                          <strong>Success</strong> {{ Session::get('alertMessage') }}
                      </div>
-                 @endif
+                @endif
                  <!-- Nav tabs -->
                  <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                      <li class="nav-item {{ $tab == 'all' ? 'active' : '' }}" role="presentation">
                          <button class="nav-link {{ $tab == 'all' ? 'active' : '' }}" id="all-tab"
                              data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab"
-                             aria-controls="all" aria-selected="{{ $tab == 'all' ? 'true' : 'false' }}">All
+                             aria-controls="all" aria-selected="{{ $tab == 'all' ? 'true' : 'false' }}"
+                             wire:click="$set('tab','all')">All
                              Products</button>
                      </li>
                      <li class="nav-item {{ $tab == 'recipe' ? 'active' : '' }}" role="presentation">
                          <button class="nav-link {{ $tab == 'recipe' ? 'active' : '' }}" id="recipe-tab"
                              data-bs-toggle="tab" data-bs-target="#recipe" type="button" role="tab"
-                             aria-controls="recipe" aria-selected="{{ $tab == 'recipe' ? 'true' : 'false' }}">Products
+                             aria-controls="recipe" aria-selected="{{ $tab == 'recipe' ? 'true' : 'false' }}"
+                             wire:click="$set('tab','recipe')">Products
                              with
                              Recipes</button>
                      </li>
                      <li class="nav-item {{ $tab == 'raw' ? 'active' : '' }}" role="presentation">
                          <button class="nav-link {{ $tab == 'raw' ? 'active' : '' }}" id="raw-tab"
                              data-bs-toggle="tab" data-bs-target="#raw" type="button" role="tab"
-                             aria-controls="raw" aria-selected="{{ $tab == 'raw' ? 'true' : 'false' }}">Raw Material
+                             aria-controls="raw" aria-selected="{{ $tab == 'raw' ? 'true' : 'false' }}"
+                             wire:click="$set('tab','raw')">Raw Material
                              Products</button>
                      </li>
                  </ul>

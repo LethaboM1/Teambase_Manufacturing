@@ -38,6 +38,17 @@ class SelectLists extends Controller
         ['name' => 'Jobcards', 'value' => 'jobcard'],
         ['name' => 'Customers', 'value' => 'cash'],        
     ];
+
+    public const stock_report_categories = [
+        ['name' => 'All', 'value' => 'all'],
+        ['name' => 'Raw', 'value' => 'raw'],
+        ['name' => 'Manufactured', 'value' => 'manufactured'],        
+    ];
+
+    public const special_chars = [
+        ',', ' ', ';', "'", "`", "~", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", 
+        "{", "}", "[", "]", "-", "=", "?", ".", ':', '*', '/', '\\', '"', '>', '<'        
+    ];
 }
 
 

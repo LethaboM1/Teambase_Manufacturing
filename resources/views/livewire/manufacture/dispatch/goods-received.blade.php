@@ -6,16 +6,22 @@
                     <h2 class="card-title">Goods Receiving</h2>
                 </header>
                 <div class="card-body">                   
-                    <div class="dropdown open mb-2">
-                        <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                    Actions
-                                </a>
-                        <div class="dropdown-menu" aria-labelledby="btnActions">
-                            <a class="dropdown-item modal-basic" href="#receiveGoods" >Goods Received</a>
-                            <a class="dropdown-item modal-basic" href="#returnGoods" >Return to Supplier</a>
+                    @if (Auth::user()->getSec()->receive_stock_value || Auth::user()->getSec()->return_stock_value || Auth::user()->getSec()->global_admin_value)
+                        <div class="dropdown open mb-2">
+                            <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                        Actions
+                                    </a>
+                            <div class="dropdown-menu" aria-labelledby="btnActions">
+                                @if (Auth::user()->getSec()->receive_stock_value || Auth::user()->getSec()->global_admin_value)
+                                    <a class="dropdown-item modal-basic" href="#receiveGoods" >Goods Received</a>
+                                @endif
+                                @if (Auth::user()->getSec()->return_stock_value || Auth::user()->getSec()->global_admin_value)
+                                    <a class="dropdown-item modal-basic" href="#returnGoods" >Return to Supplier</a>
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    @endif
                     
                     {{-- Return to Supplier --}}
                     <div id='returnGoods' class='modal-block modal-block-lg mfp-hide'>

@@ -18,8 +18,8 @@
                         <h2 class="card-title">Add New User</h2>
                         <p class="card-subtitle">Add new users. Photo should be in .jpg or .png format and not larger than 2MB.</p>
                     </header>
-                    <div class="card-body">
-                        <x-managers.users.view :user="null" />
+                    <div class="card-body">                        
+                        <x-managers.users.view :user="null" :cruditems="null" :seclevels="null" />
                     </div>
                     <footer class="card-footer text-end">
                         <button type="submit" name="add_user" class="btn btn-primary">Add User</button>

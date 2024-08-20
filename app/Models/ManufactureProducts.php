@@ -56,6 +56,23 @@ class ManufactureProducts extends Model
         return ($qty + $qty_batch - $qty_dispatches);
     }
 
+    function getQtyByDate($start_date)
+    {
+        //Get Qty filtered before $Start Date for Opening Balance          
+        $start_date = date('Y-m-d', strtotime($start_date . ' - 1 days'));                
+       
+        // $start_date=date($start_date);
+        $qty_batch = $this->batches()->where('created_at', '<=', $start_date . ' 23:59:59')->sum('qty');
+        $qty = $this->transactions()->where('weight_out_datetime', '<=', $start_date . ' 23:59:59')->sum('qty');
+        $qty_dispatches = $this->dispatches()->where('weight_out_datetime', '<=', $start_date . ' 23:59:59')->sum('qty');
+
+        $qty_dispatches = (!is_numeric($qty_dispatches) ? 0 : $qty_dispatches);
+        $qty_batch = (!is_numeric($qty_batch) ? 0 : $qty_batch);
+        $qty = (!is_numeric($qty) ? 0 : $qty);
+
+        return ($qty + $qty_batch - $qty_dispatches);
+    }
+
     function getBatchQtyAttribute()
     {
         $debit = ManufactureBatches::where('product_id', $this->id)->sum('qty');
@@ -64,7 +81,6 @@ class ManufactureProducts extends Model
         $credit = (!is_numeric($credit) ? 0 : $credit);
 
         $qty = $debit - $credit;
-
         return $qty;
     }
 }
