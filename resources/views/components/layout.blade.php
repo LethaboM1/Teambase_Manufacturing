@@ -221,7 +221,7 @@
 								<li class="divider"></li>
 								
 								<li>
-									<a role="menuitem" tabindex="-1" href="{{env('APP_URL').'/logout'}}"><i class="bx bx-power-off"></i> Logout</a>
+									<a role="menuitem" tabindex="-1" href="{{env('APP_URL').'logout'}}"><i class="bx bx-power-off"></i> Logout</a>
 								</li>
 							</ul>
 						</div>
