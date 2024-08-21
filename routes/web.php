@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::middleware('is_manufacture')->group(function () {
-        Route::middleware('is_manager')->group(function () {
+        // Route::middleware('is_manager')->group(function () {
             /* Suppliers */
             Route::get('suppliers', [SupplierController::class, 'suppliers']);
             Route::post('suppliers/add', [SupplierController::class, 'add_supplier']);
@@ -67,15 +67,22 @@ Route::middleware('auth')->group(function () {
             Route::post('customers/add', [CustomerController::class, 'add_customer']);
             Route::post('customers/save', [CustomerController::class, 'save_customer']);
             Route::post('customers/delete', [CustomerController::class, 'delete_customer']);
-        });
+        // });
 
         Route::middleware('is_super')->group(function () {
             /* Utils Route */
             Route::get('system/utils', [UtilsController::class, 'view']);            
             Route::post('system/headerproducts/transfer', [UtilsController::class, 'transfer_header_products_to_lines']);
+            Route::get('system/send-test-email', function () {
+                \Illuminate\Support\Facades\Mail::raw('This is a test email', function ($message) {
+                    $message->to('connie@platinumlake.co.za')->subject('Test Email');                 
+                });
+                return 'Test email sent!';                 
+            }); 
+                
         });
 
-        Route::middleware('is_products')->group(function () {
+        // Route::middleware('is_products')->group(function () {
             /* */
             Route::get('products', [ProductsController::class, 'products']);
             Route::post('products/add', [ProductsController::class, 'add_product']);
@@ -141,6 +148,6 @@ Route::middleware('auth')->group(function () {
             Route::post('report/dispatch-reports/print', [ManufactureReportsController::class, 'dispatchByDateReport']);
             Route::get('report/stock-reports', [ManufactureReportsController::class, 'report_stock']);
             Route::post('report/stock-reports/print', [ManufactureReportsController::class, 'stockByDateReport']);
-        });
+        // });
     });    
 });

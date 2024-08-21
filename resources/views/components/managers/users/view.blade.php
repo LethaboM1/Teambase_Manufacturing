@@ -100,10 +100,27 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-2 mb-3"><strong>Status : </strong>{{$user['active'] == 1 ? 'Active':'Disabled'}}</div>
-                        <div class="col-md-4 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" name="active" id="activeSwitchCheckChecked" {{$user['active'] == 1 ? 'checked':''}}>                            
+                        <div class="col-md-2 mb-3"><strong>Status : </strong>
+                            <label id="status_{{(isset($user['user_id'])==true ? $user['user_id']:'')}}" >{{$user['active'] == 1 ? 'Active':'Disabled'}}</label>
                         </div>
+                        <div class="col-md-4 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" name="active" id="activeSwitchCheckChecked_{{(isset($user['user_id'])==true ? $user['user_id']:'')}}" {{$user['active'] == 1 ? 'checked':''}}>                            
+                        </div>
+                        @push('scripts')
+                            <script>
+                                $("#activeSwitchCheckChecked_{{(isset($user['user_id'])==true ? $user['user_id']:'')}}").click(function (){                                     
+                                    let label = document.getElementById("status_{{(isset($user['user_id'])==true ? $user['user_id']:'')}}");
+                                    let toggle = document.getElementById("activeSwitchCheckChecked_{{(isset($user['user_id'])==true ? $user['user_id']:'')}}");
+                                    if (toggle.checked == true) {
+                                        console.log('Active');
+                                        label.innerHTML = "Active";
+                                    } else {
+                                        console.log('Disabled');
+                                        label.innerHTML = "Disabled";
+                                    }
+                                });
+                            </script>
+                        @endpush
                     </div>
 
                 @else
@@ -170,10 +187,5 @@
                 @endif
             </div>
         </div>
-
-
-
-
-
-    
+  
 </div>
