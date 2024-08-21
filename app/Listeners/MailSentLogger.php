@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class MailLogger
+class MailSentLogger
 {
     /**
      * Create the event listener.
@@ -22,10 +22,10 @@ class MailLogger
     /**
      * Handle the event.
      *
-     * @param  \Illuminate\Mail\Events\MessageSending  $event
+     * @param  \Illuminate\Mail\Events\MessageSent  $event
      * @return void
      */
-    public function handle(MessageSending $event)
+    public function handle(MessageSent $event)
     {
         //Log Mails to Log file
         $message = $event->message;
@@ -36,7 +36,7 @@ class MailLogger
         $subject = $message->getSubject();
         // $body = $message->getBody();
 
-        Log::info("Email sending to: $to; CC: $cc; BCC: $bcc; Subject: $subject");
+        Log::info("Email sent to: $to; CC: $cc; BCC: $bcc; Subject: $subject");
         // dd($message);
-    }    
+    }
 }

@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Approvals;
 use App\Listeners\MailLogger;
+use App\Listeners\MailSentLogger;
 use App\Observers\ApprovalsObserver;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -24,6 +26,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         MessageSending::class => [
             MailLogger::class,
+        ],
+        MessageSent::class => [
+            MailSentLogger::class,
         ],
     ];
 
