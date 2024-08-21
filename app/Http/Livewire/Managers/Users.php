@@ -22,7 +22,7 @@ class Users extends Component
             $query->where('name', 'LIKE', $term)
                 ->orWhere('last_name', 'LIKE', $term)
                 ->orwhere('company_number', 'LIKE', $term);
-        })->orderBy('name')->paginate(10);
+        })->orderBy('name')->paginate(15);
 
         return view('livewire.managers.users', [
             'users_list' => $users_list
