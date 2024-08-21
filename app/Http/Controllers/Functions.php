@@ -241,7 +241,8 @@ class Functions extends Controller
             try {
                 Mail::to($to)->send(new Sms($body));
             } catch (\Exception $e) {
-                Log::channel('mail')->error($e);
+                // Log::channel('mail')->error($e);
+                Log::error("Email failed: ".$e);
             }            
         }
         
@@ -262,7 +263,8 @@ class Functions extends Controller
         try {
             Mail::to($to)->send(new InternalMail($body));
         } catch (\Exception $e) {
-            Log::channel('mail')->error($e);
+            // Log::channel('mail')->error($e);
+            Log::error("Email failed: ".$e);
         }
                 
     }
