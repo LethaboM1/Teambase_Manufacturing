@@ -268,7 +268,8 @@ class Functions extends Controller
         try {
             //Code for Self Hosted Server
             //Mail::to($to)->send(new InternalMail($body));
-            //Temp workaround using testsrv.co.za                
+            //Temp workaround using testsrv.co.za
+            dd($body['message']);                
             Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
                 $mailmessage->to($to)->subject($body['subject']);                 
             });

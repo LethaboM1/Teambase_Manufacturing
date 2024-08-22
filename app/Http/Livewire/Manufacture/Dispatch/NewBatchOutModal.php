@@ -847,14 +847,14 @@ class NewBatchOutModal extends Component
         
         foreach($approval_users as $user){
             //SMS Transfer request Notification.
-            if($user['contact_number'] != '') Functions::sms_($user['contact_number'], '['.date("Y-m-d\TH:i").'] Transfer Requested on Dispatch '.$this->dispatch->dispatch_number.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. Please review at your earliest convenience'/* temp removed at '.env('APP_URL','').'/dispatches/new' */, '', '');
+            if($user['contact_number'] != '') Functions::sms_($user['contact_number'], '['.date("Y-m-d\TH:i").'] Transfer Requested on Dispatch '.$this->dispatch->dispatch_number.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. Please review at your earliest convenience', '', '');
             
             if($user['email'] != '')Functions::intmail_($user['email'], 
             date("Y-m-d\TH:i").': Transfer Requested on Dispatch '.$this->dispatch->dispatch_number.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. Please review at your earliest convenience by clicking the link below.',
             env('MAIL_FROM_ADDRESS', Auth::user()->email), 
             'Dispatch Transfer Request - Dispatch No '.$this->dispatch->dispatch_number,
-            /* temp removed ['link'=>['url'=>env('APP_URL','').'/dispatches/new',
-            'description'=>'Review Transfer Request on '.$this->dispatch->dispatch_number]] */);
+            /* temp removed */['link'=>['url'=>env('APP_URL','').'/dispatches/new',
+            'description'=>'Review Transfer Request on '.$this->dispatch->dispatch_number]] );
         }
 
         $this->transfer_extraitem_message = "Transfer Requested.";

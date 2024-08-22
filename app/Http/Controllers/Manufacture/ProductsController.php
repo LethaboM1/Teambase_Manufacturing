@@ -53,14 +53,14 @@ class ProductsController extends Controller
                 
                 foreach($approval_users as $user){
                     //SMS Transfer request Notification.
-                    if($user['contact_number'] != '') Functions::sms_($user['contact_number'], '['.date("Y-m-d\TH:i").'] Product Adjustment Requested on Product '.$product_description.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. Please review at your earliest convenience.'/* temp removed at '.env('APP_URL','').'/products' */, '', '');
+                    if($user['contact_number'] != '') Functions::sms_($user['contact_number'], '['.date("Y-m-d\TH:i").'] Product Adjustment Requested on Product '.$product_description.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. Please review at your earliest convenience.', '', '');
                     
                     if($user['email'] != '')Functions::intmail_($user['email'], 
                     date("Y-m-d\TH:i").': Product Adjustment Requested on Product '.$product_description.' by '.Auth::user()->name.' '.Auth::user()->last_name.'. The Reason for the Request is noted as: "'.$request->comment.'". Please review at your earliest convenience by clicking the link below.',
                     env('MAIL_FROM_ADDRESS', Auth::user()->email), 
                     'Product Adjustment Request - Product '.$product_description,
-                    /* temp removed ['link'=>['url'=>env('APP_URL','').'/products',
-                    'description'=>'Review Product Adjustment Request on '.$product_description] ]*/);
+                    /* temp removed */['link'=>['url'=>env('APP_URL','').'/products',
+                    'description'=>'Review Product Adjustment Request on '.$product_description] ]);
                 }   
 
                 return back()->with('alertMessage', 'Product Adjustment has been requested for Approval.');
