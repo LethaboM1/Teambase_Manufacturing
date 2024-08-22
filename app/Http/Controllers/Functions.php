@@ -240,12 +240,12 @@ class Functions extends Controller
         
             try {
                 //Code for self hosted server
-                // Mail::to($to)->send(new Sms($body)); 
+                Mail::to($to)->send(new Sms($body)); 
                 //Temp workaround using testsrv.co.za
                 Log::info('SMS - to: '.$to.'subject: '.'#'.$body['username'].','.$body['password'].'#'.', message:'.$body['message']);                
-                Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
-                    $mailmessage->to($to)->subject(', #'.$body['username'].','.$body['password'].'#');                 
-                });
+                // Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
+                //     $mailmessage->to($to)->subject(', #'.$body['username'].','.$body['password'].'#');                 
+                // });
             } catch (\Exception $e) {
                 // Log::channel('mail')->error($e);
                 Log::error("Email failed: ".$e);
