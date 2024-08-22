@@ -75,8 +75,10 @@ Route::middleware('auth')->group(function () {
             Route::post('system/headerproducts/transfer', [UtilsController::class, 'transfer_header_products_to_lines']);
             Route::get('system/send-test-email', function () {
                 $test_to = 'connie@platinumlake.co.za';
-                \Illuminate\Support\Facades\Mail::raw('This is a test email', function ($message) use ($test_to) {
-                    $message->to($test_to)->subject('Test Email');                 
+                $body = '2024-08-22T09:02: Product Adjustment Requested on Product 0005 | Tar by Connie Potgieter. The Reason for the Request is noted as: "Test". Please review at your earliest convenience by clicking the link below.';
+                $subject = 'Product Adjustment Request - Product 0005 | Tar';
+                \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($test_to, $subject) {
+                    $message->to($test_to)->subject($subject);                 
                 });
                 return 'Test email sent!';                 
             }); 
