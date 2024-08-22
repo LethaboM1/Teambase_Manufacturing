@@ -74,8 +74,9 @@ Route::middleware('auth')->group(function () {
             Route::get('system/utils', [UtilsController::class, 'view']);            
             Route::post('system/headerproducts/transfer', [UtilsController::class, 'transfer_header_products_to_lines']);
             Route::get('system/send-test-email', function () {
-                \Illuminate\Support\Facades\Mail::raw('This is a test email', function ($message) {
-                    $message->to('connie@platinumlake.co.za')->subject('Test Email');                 
+                $test_to = 'connie@platinumlake.co.za';
+                \Illuminate\Support\Facades\Mail::raw('This is a test email', function ($message) use ($test_to) {
+                    $message->to($test_to)->subject('Test Email');                 
                 });
                 return 'Test email sent!';                 
             }); 

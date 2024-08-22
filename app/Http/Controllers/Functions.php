@@ -226,7 +226,7 @@ class Functions extends Controller
         return $incremented;
     }
 
-    static function sms_($number, $message, $username, $password){
+    public static function sms_($number, $message, $username, $password){
     	
         if(env('SMS_ACTIVE')=='true'){
             $to = Self::clean_no($number) . env('SMS_PROVIDER_HOST', '@e-mail2sms.co.za');     //Add a recipient         
@@ -239,7 +239,12 @@ class Functions extends Controller
         
         
             try {
-                Mail::to($to)->send(new Sms($body));
+                //Code for self hosted server
+                // Mail::to($to)->send(new Sms($body)); 
+                //Temp workaround using testsrv.co.za                
+                Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
+                    $mailmessage->to($to)->subject('#'.$body['username'].','.$body['password'].'#');                 
+                });
             } catch (\Exception $e) {
                 // Log::channel('mail')->error($e);
                 Log::error("Email failed: ".$e);
@@ -261,7 +266,12 @@ class Functions extends Controller
         ];       
         
         try {
-            Mail::to($to)->send(new InternalMail($body));
+            //Code for Self Hosted Server
+            //Mail::to($to)->send(new InternalMail($body));
+            //Temp workaround using testsrv.co.za                
+            Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
+                $mailmessage->to($to)->subject($body['subject']);                 
+            });
         } catch (\Exception $e) {
             // Log::channel('mail')->error($e);
             Log::error("Email failed: ".$e);
