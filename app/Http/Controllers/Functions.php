@@ -268,13 +268,13 @@ class Functions extends Controller
         
         try {
             //Code for Self Hosted Server
-            //Mail::to($to)->send(new InternalMail($body));
+            Mail::to($to)->send(new InternalMail($body));
             //Temp workaround using testsrv.co.za
             // dd($body['message']);
             Log::info('Mail - to: '.$to.', subject: '.$body['subject'].', message:'.$body['message']);                
-            Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
-                $mailmessage->to($to)->subject($body['subject']);                 
-            });
+            // Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
+            //     $mailmessage->to($to)->subject($body['subject']);                 
+            // });
         } catch (\Exception $e) {
             // Log::channel('mail')->error($e);
             Log::error("Email failed: ".$e);
