@@ -241,9 +241,10 @@ class Functions extends Controller
             try {
                 //Code for self hosted server
                 // Mail::to($to)->send(new Sms($body)); 
-                //Temp workaround using testsrv.co.za                
+                //Temp workaround using testsrv.co.za
+                Log::info('SMS - to: '.$to.'subject: '.'#'.$body['username'].','.$body['password'].'#'.', message:'.$body['message']);                
                 Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
-                    $mailmessage->to($to)->subject('#'.$body['username'].','.$body['password'].'#');                 
+                    $mailmessage->to($to)->subject(', #'.$body['username'].','.$body['password'].'#');                 
                 });
             } catch (\Exception $e) {
                 // Log::channel('mail')->error($e);
@@ -269,7 +270,8 @@ class Functions extends Controller
             //Code for Self Hosted Server
             //Mail::to($to)->send(new InternalMail($body));
             //Temp workaround using testsrv.co.za
-            // dd($body['message']);                
+            // dd($body['message']);
+            Log::info('Mail - to: '.$to.', subject: '.$body['subject'].', message:'.$body['message']);                
             Mail::raw($body['message'], function ($mailmessage) use ($to, $body) {                    
                 $mailmessage->to($to)->subject($body['subject']);                 
             });
