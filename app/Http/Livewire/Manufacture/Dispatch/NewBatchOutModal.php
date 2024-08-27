@@ -145,6 +145,23 @@ class NewBatchOutModal extends Component
                 'product_id' => 0
             ]);
 
+            $linked_transactions = ManufactureProductTransactions::where('dispatch_id', $this->dispatch->id)->get();
+            //Remove any transactions that may be loaded already
+            if(count($linked_transactions)>0){
+                foreach ($linked_transactions as $transaction => $transaction_value){                    
+                    if($transaction_value->manufacture_jobcard_product_id>0){
+                        //Process remove by item to update jobs
+                        Self::removeExtraItem($transaction_value->id);
+                    } else {
+                        //Delete Extra Item
+                        ManufactureProductTransactions::where('id', $transaction_value->id)->delete();
+                    }
+                    
+                }
+
+            }
+            
+
             $this->jobcard = ManufactureJobcards::where('id', $value)->first();
             $this->delivery = $this->jobcard->delivery;
             // Manufact
@@ -160,6 +177,21 @@ class NewBatchOutModal extends Component
                 'manufacture_jobcard_product_id' => 0,
                 'product_id' => 0
             ]);
+
+            $linked_transactions = ManufactureProductTransactions::where('dispatch_id', $this->dispatch->id)->get();
+            //Remove any transactions that may be loaded already
+            if(count($linked_transactions)>0){
+                foreach ($linked_transactions as $transaction => $transaction_value){                    
+                    if($transaction_value->manufacture_jobcard_product_id>0){
+                        //Process remove by item to update jobs
+                        Self::removeExtraItem($transaction_value->id);
+                    } else {
+                        //Delete Extra Item
+                        ManufactureProductTransactions::where('id', $transaction_value->id)->delete();
+                    }                    
+                }
+
+            }
         }
     }
 
@@ -407,9 +439,9 @@ class NewBatchOutModal extends Component
                     ManufactureJobcardProducts::where('id', $manufacture_jobcard_product_id)->update(['filled' => 0]);
                                     
                     //Set job card as Open if filled <> 1
-                    if (ManufactureJobcardProducts::where('job_id', $this->dispatch->jobcard()->id)->where('filled', '0')->count() > 0) {
+                    if (ManufactureJobcardProducts::where('job_id', $manufacture_jobcard_product->jobcard()->id)->where('filled', '0')->count() > 0) {
                         unset($this->over_under_variance[$manufacture_jobcard_product_id]);
-                        ManufactureJobcards::where('id', $this->dispatch->jobcard()->id)->update(['status' => 'Open']);
+                        ManufactureJobcards::where('id', $manufacture_jobcard_product->jobcard()->id)->update(['status' => 'Open']);
                     }
                     
                 }
