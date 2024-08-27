@@ -526,10 +526,10 @@
                     @else
                         @if ($dispatch->status != 'Returned')
                             <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}?type=dispatch") }}"
-                                class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print Dispatch</a>
+                                class="btn btn-outline-light"><i class="fa fa-print"></i>&nbsp;Print Dispatch</a>
                         @elseif ($dispatch->status == 'Returned')
                             <a target="_blank" href="{{ url("dispatches/print_return/{$dispatch->id}?extraitemid={$extra_items[0]['id']}?type=return") }}"
-                                class="btn btn-default"><i class="fa fa-print"></i>&nbsp;Print Return</a>
+                                class="btn btn-outline-light"><i class="fa fa-print"></i>&nbsp;Print Return</a>
                         @endif
                         
                         <button class='btn btn-primary modal-dismiss'
