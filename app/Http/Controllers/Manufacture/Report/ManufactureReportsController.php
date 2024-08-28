@@ -690,6 +690,7 @@ class ManufactureReportsController extends Controller
         $previous_group_id = '-1';
 
         foreach ($the_report_dispatches as $dispatch) {
+            // dd($dispatch);
             $row = $activeWorksheet->getHighestRow()+1;
 
             if($previous_group_id != '-1' && ($dispatch[$this->the_request['dispatch_report_group_by']]  != $previous_group_id && $this->the_request['dispatch_report_group_by'] != 'none')) {                
@@ -740,7 +741,7 @@ class ManufactureReportsController extends Controller
                 
                 $insert_array = [
                     $dispatch['dispatch_number'],
-                    'Dispatch',
+                    ($dispatch['status'] == 'Dispatched' ? 'Dispatch':($dispatch['status'] == 'Returned' ? 'Return':'')),
                     $dispatch['status'],
                     $dispatch['weight_out_datetime'],
                     $dispatch['reference'],
