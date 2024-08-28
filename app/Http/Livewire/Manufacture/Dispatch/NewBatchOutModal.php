@@ -714,7 +714,7 @@ class NewBatchOutModal extends Component
                     $new_transaction_form_fields['user_id']=Auth::user()->user_id;
                     $new_transaction_form_fields['weight_out_user'] = auth()->user()->user_id;
                     $new_transaction_form_fields['weight_out_datetime'] = date("Y-m-d\TH:i:s");
-                    $new_transaction_form_fields['status'] = 'Completed';
+                    $new_transaction_form_fields['status'] = 'Returned';
                     
                     $new_return_line_id = ManufactureProductTransactions::insertGetId($new_transaction_form_fields);
 
@@ -786,7 +786,7 @@ class NewBatchOutModal extends Component
                     $new_transaction_form_fields['user_id']=Auth::user()->user_id;
                     $new_transaction_form_fields['weight_out_user'] = auth()->user()->user_id;
                     $new_transaction_form_fields['weight_out_datetime'] = date("Y-m-d\TH:i:s");
-                    $new_transaction_form_fields['status'] = 'Completed';
+                    $new_transaction_form_fields['status'] = 'Returned';
                     
                     $new_return_line_id = ManufactureProductTransactions::insertGetId($new_transaction_form_fields);
                     

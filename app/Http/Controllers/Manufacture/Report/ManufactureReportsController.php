@@ -536,7 +536,12 @@ class ManufactureReportsController extends Controller
         'customers.name as customer_name','customers.account_number as account_number',
         'transactions.product_id as transactions_product_id','transactions.status as transactions_status','transactions.qty as qty','plant.plant_number as plant_number',
         'products.code as product_code', 'products.description as product_description', 'products.weighed_product as weighed_product')
-        ->where('dispatches.status', 'Dispatched')
+        ->where(function($query){$query->where('dispatches.status', 'Dispatched')
+            ->orWhere('dispatches.status', 'Returned')
+            ->orWhere('dispatches.status', 'Partial Return')
+            ->orWhere('dispatches.status', 'Transferred')
+            ->orWhere('dispatches.status', 'Partial Transfer');
+        })
         ->where('dispatches.weight_out_datetime', '>=', $request['from_date'].' 00:00:01')
         ->where('dispatches.weight_out_datetime', '<=', $request['to_date'].' 23:59:59')
         ->where (function($query){                

@@ -528,7 +528,7 @@
                             <a target="_blank" href="{{ url("dispatches/print/{$dispatch->id}?type=dispatch") }}"
                                 class="btn btn-outline-light"><i class="fa fa-print"></i>&nbsp;Print Dispatch</a>
                         @elseif ($dispatch->status == 'Returned')
-                            <a target="_blank" href="{{ url("dispatches/print_return/{$dispatch->id}?extraitemid={$extra_items[0]['id']}?type=return") }}"
+                            <a target="_blank" href="{{ url("dispatches/print_return/{$dispatch->id}?extraitemid={$extra_items[0]['id']}&type=return") }}"
                                 class="btn btn-outline-light"><i class="fa fa-print"></i>&nbsp;Print Return</a>
                         @endif
                         
