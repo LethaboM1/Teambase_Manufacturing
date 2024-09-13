@@ -167,16 +167,37 @@ class ViewJobLivewire extends Component
         $chk = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->where('product_id', $this->product_id)->first();
 
         if (isset($chk) && $chk->count() > 0) {
-            $qty = $this->qty +  $chk->qty;
+            $qty = $this->qty +  $chk->qty;            
+            //Update Existing Line Qty
             ManufactureJobcardProducts::where('id', $chk->id)->update([
                 'qty' => $qty
             ]);
+
         } else {
+            //Insert New Line
             ManufactureJobcardProducts::insert([
                 'job_id' => $this->jobcard['id'],
                 'product_id' => $this->product_id,
                 'qty' => $this->qty
             ]);
+           
+        }
+
+        //Get Inserted/Updated Record for Qty Calcs
+        $chk = ManufactureJobcardProducts::where('job_id', $this->jobcard['id'])->where('product_id', $this->product_id)->first();
+
+        //Calc Filled from Transactions Update Line
+        if (($chk->qty_due <= 0.5 && $chk->product()->weighed_product > 0)||($chk->qty_due == 0 && $chk->product()->weighed_product == 0)) {
+            ManufactureJobcardProducts::where('id', $chk->id)->update(['filled' => 1]);
+        } else {
+            ManufactureJobcardProducts::where('id', $chk->id)->update(['filled' => 0]);
+        }
+        
+        //Set job card as Filled/Open based on filled in product lines
+        if (ManufactureJobcardProducts::where('job_id', $chk->jobcard()->id)->where('filled', '0')->count() == 0) {
+            ManufactureJobcards::where('id', $chk->jobcard()->id)->update(['status' => 'Filled']);
+        } else {
+            ManufactureJobcards::where('id', $chk->jobcard()->id)->update(['status' => 'Open']);
         }
 
         $this->product_id = 0;
