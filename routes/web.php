@@ -27,11 +27,11 @@ use App\Http\Controllers\Manufacture\Report\ManufactureReportsController;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
-Route::get('logout', [AuthController::class, 'logout']);
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('dashboard', [DashboardController::class, 'view']);
+    Route::get('dashboard', [DashboardController::class, 'view'])->name('dashboard');
 
 
     Route::middleware('is_manager')->group(function () {
@@ -40,13 +40,12 @@ Route::middleware('auth')->group(function () {
         Route::post('users/save', [ManagersController::class, 'save_user']);
         Route::post('users/delete', [ManagersController::class, 'delete_user']);
         Route::post('users/outofoffice', [ManagersController::class, 'outofoffice_user']);
-        Route::get('settings', [ManagersController::class, 'setting']);
+        Route::get('settings', [ManagersController::class, 'setting'])->name('settings');
         Route::post('settings/save', [ManagersController::class, 'save_settings']);
     });
 
     Route::middleware('is_workshop')->group(function () {
-        Route::middleware('is_manager')->group(function () {
-        });
+        Route::middleware('is_manager')->group(function () {});
     });
 
     Route::middleware('is_manufacture')->group(function () {

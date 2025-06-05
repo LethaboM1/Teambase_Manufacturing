@@ -134,14 +134,14 @@
 							<ul class="list-unstyled mb-2">
 								@if (strtoupper(auth()->user()->role) == 'MANAGER')
 									<li>
-										<a role="menuitem" tabindex="-1" href="{{env('APP_URL').'settings'}}"><i class="fa-regular fa-compass"></i> Settings</a>
+										<a role="menuitem" tabindex="-1" href="{{route('settings')}}"><i class="fa-regular fa-compass"></i> Settings</a>
 									</li>
 								@endif
 								
 								<li class="divider"></li>
 								
 								<li>
-									<a role="menuitem" tabindex="-1" href="{{env('APP_URL').'logout'}}"><i class="bx bx-power-off"></i> Logout</a>
+									<a role="menuitem" tabindex="-1" href="{{route('logout') }}"><i class="bx bx-power-off"></i> Logout</a>
 								</li>
 							</ul>
 						</div>
