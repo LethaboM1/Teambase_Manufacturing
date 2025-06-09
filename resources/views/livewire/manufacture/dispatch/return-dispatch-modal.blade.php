@@ -1,4 +1,5 @@
-<div class="row">
+{{-- No Longer in Use 2024-07-18
+ <div class="row">
     <div class="col-md-6">
         <x-form.select name="manufacture_jobcard_dispatches_id" label="Dispatch" :list="$manufacture_jobcard_dispatches" />
     </div>
@@ -21,4 +22,4 @@
             </div>
         @endif
     @endif
-</div>
+</div> --}}

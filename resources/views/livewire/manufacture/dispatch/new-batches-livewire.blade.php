@@ -6,16 +6,18 @@
                     <h2 class="card-title">Dispatches</h2>
                 </header>
                 <div class="card-body">                   
-                    <div class="dropdown open mb-2">
-                        <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                    Actions
-                                </a>
-                        <div class="dropdown-menu" aria-labelledby="btnActions">
-                            <a class="dropdown-item modal-basic" href="#addDispatch" >Weigh In</a> 
-                            <a class="dropdown-item modal-basic" href="#addDispatchAdditional">Dispatch</a>                                    
+                    @if (Auth::user()->getSec()->getCRUD('dispatch_crud')['create'] || Auth::user()->getSec()->global_admin_value)
+                        <div class="dropdown open mb-2">
+                            <a class="btn btn-secondary dropdown-toggle" type="button" id="btnActions" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                        Actions
+                                    </a>
+                            <div class="dropdown-menu" aria-labelledby="btnActions">
+                                <a class="dropdown-item modal-basic" href="#addDispatch" >Weigh In</a> 
+                                <a class="dropdown-item modal-basic" href="#addDispatchAdditional">Dispatch</a>                                    
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     {{-- Collection / Dispatch --}}
                     <div id='addDispatchAdditional' class='modal-block modal-block-lg mfp-hide'>
@@ -38,21 +40,27 @@
                                         <div class='row'>
                                             <div class='col-md-12 text-right'>
                                                 <button type='submit' class='btn btn-primary'>Confirm</button>
-                                                <button class='btn btn-default modal-dismiss'>Cancel</button>
+                                                <button wire:click="refreshNewDispatchModal" class='btn btn-default modal-dismiss'>Cancel</button>
                                             </div>
                                         </div>
                                     </footer>                                    
                             </section>
                         </form>
                     </div>
+                    {{-- Refresh listeners on Modals --}}
+                    <script>
+                        setTimeout(function() {
+                            $.getScript('{{ url('js/examples/examples.modals.js') }}');
+                        }, 500);
+                    </script>
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" id="DispatchTabs" role="tablist">
                         <li class="nav-item {{($tab=='loading'?'active':'')}}" role="presentation">
-                            <button class="nav-link {{($tab=='loading'?'active':'')}}" id="loading-tab" data-bs-toggle="tab" data-bs-target="#loading" type="button" role="tab" aria-controls="loading" aria-selected="{{($tab=='loading'?'true':'false')}}">Loading Dispatches</button>
+                            <button class="nav-link {{($tab=='loading'?'active':'')}}" id="loading-tab" data-bs-toggle="tab" data-bs-target="#loading" type="button" role="tab" aria-controls="loading" wire:click="toggleTab('loading')" aria-selected="{{($tab=='loading'?'true':'false')}}">Loading Dispatches</button>
                         </li>
                         <li class="nav-item {{($tab=='archive'?'active':'')}}" role="presentation">
-                            <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
+                            <button class="nav-link {{($tab=='archive'?'active':'')}}" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" wire:click="toggleTab('archive')" aria-selected="{{($tab=='archive'?'true':'false')}}">Archive</button>
                         </li>
                     </ul>
                     
@@ -74,14 +82,16 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="15%">Dispatch Number</th>
-                                        <th width="15%">Job Card</th>
-                                        <th width="20%">Contractor / Customer</th>
+                                        <th width="5%">Dispatch</th>
+                                        <th width="10%">Ref</th>
+                                        <th width="10%">Job Card</th>
+                                        <th width="10%">Site Number</th>
+                                        <th width="25%">Contractor / Customer</th>
                                         <th width="15%">Vehicle</th>
                                         {{-- <th width="15%">Product</th>
                                         <th width="5%">Qty</th> --}} {{-- Moved into Lines 2023-11-10 --}}
                                         <th width="10%">Status</th>
-                                        <th width="15%">Action</th>
+                                        <th width="5%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches->count()>0)
@@ -117,14 +127,14 @@
                                 <thead>
                                     <tr>
                                         <th width="10%">Date</th>
-                                        <th width="15%">Dispatch Number</th>
-                                        <th width="15%">Job Card</th>
-                                        <th width="20%">Contractor / Customer</th>
-                                        <th width="15%">Vehicle</th>
-                                        {{-- <th width="15%">Product</th>
-                                        <th width="5%">Qty</th> --}} {{-- Moved into Lines 2023-11-10 --}}
+                                        <th width="5%">Dispatch</th>
+                                        <th width="10%">Ref</th>
+                                        <th width="10%">Job Card</th>
+                                        <th width="10%">Site Number</th>
+                                        <th width="25%">Contractor / Customer</th>
+                                        <th width="15%">Vehicle</th>                                        
                                         <th width="10%">Status</th>
-                                        <th width="15%">Action</th>
+                                        <th width="5%">Action</th>
                                     </tr>
                                 </thead>
                                     @if($dispatches_archived->count()>0)
@@ -149,14 +159,18 @@
                     </div>                                                
                         
 
-                    {{-- Print of Dispatch Note --}}
+                    {{-- Print of Dispatch Note --}}                    
                     @if(Session::get('print_dispatch'))
-                    <script>
-                        window.open('{{url("dispatches/print/".Session::get('print_dispatch'))}}','_blank');
-                    </script>
-
-                    @endif                    
-
+                        @if(Session::get('over_under_variance'))
+                            <script>
+                                window.open('{{url("dispatches/print_/".Session::get('print_dispatch')."/".Session::get('over_under_variance')."?type=dispatch")}}','_blank');
+                            </script>
+                        @else
+                            <script>
+                                window.open('{{url("dispatches/print/".Session::get('print_dispatch')."?type=dispatch")}}','_blank');
+                            </script>
+                        @endif
+                    @endif
                 </div> 
             </section>
         </div>
@@ -165,10 +179,10 @@
                 function (){
                         livewire.on('closeModal', function($dispatch_id, $newdispatch_id){
                         $('#closeModalBtn_'+$dispatch_id).click();
-                        window.open('{{url("dispatches/print")}}/'+$newdispatch_id, '_blank');                                    
+                        window.open('{{url("dispatches/print")}}/'+$newdispatch_id+'?type=dispatch', '_blank');                                    
                         });                
                 }
-            );            
-        </script>
+            );                        
+        </script>        
     </div>
     

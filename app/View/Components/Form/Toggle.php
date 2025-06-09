@@ -27,7 +27,7 @@ class Toggle extends Component
         $this->toggle = $toggle;
         $this->wire = $wire;
         $this->value = $value;
-        $this->class = $class;
+        $this->class = $class;        
     }
 
     /**

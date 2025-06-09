@@ -15,7 +15,9 @@ class Users extends Component
 
     public function render()
     {
-        $users_list = User::where('depart', auth()->user()->depart)->where('role', '!=', 'system')->when($this->search, function ($query, $term) {
+        $users_list = User::where('depart', auth()->user()->depart)->where('role', '!=', 'system')
+        /* ->where('active', '!=', '0') */
+        ->when($this->search, function ($query, $term) {
             $term = "%{$term}%";
             $query->where('name', 'LIKE', $term)
                 ->orWhere('last_name', 'LIKE', $term)

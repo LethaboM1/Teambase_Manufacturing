@@ -17,7 +17,7 @@ class ProductsMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            if (auth()->user()->role == 'manager' || auth()->user()->role == 'recipe') {
+            if (auth()->user()->role == 'manager' || auth()->user()->role == 'recipe' || auth()->user()->role == 'job admin' ||auth()->user()->role == 'system') {
                 return $next($request);
             }
         }

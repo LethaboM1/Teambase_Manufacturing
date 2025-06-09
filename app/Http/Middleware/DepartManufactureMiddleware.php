@@ -17,7 +17,7 @@ class DepartManufactureMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            if (auth()->user()->depart == 'manufacture') {
+            if (auth()->user()->depart == 'manufacture'||auth()->user()->role == 'system') {
                 return $next($request);
             }
         }

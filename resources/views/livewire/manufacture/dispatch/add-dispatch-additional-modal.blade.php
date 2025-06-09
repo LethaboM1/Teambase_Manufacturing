@@ -15,11 +15,26 @@
 
                             {{-- Determine if Job is for collection or delivery (Plant assigned or Reg no of Collector assigned) --}}
                             @if ($delivery)
-                                <div class="col-md-6">
-                                    <livewire:components.search-livewire name='plant_id' label="Plant"
-                                        :list="$plant_list" />
-                                    {{-- <x-form.select name="plant_id" label="Plant" :list="$plant_list"/> --}}
+                                <div class="col-md-10" style="margin-top: 10px;">
+                                    <x-form.checkbox name="outsourced_transport" label="Delivery done by Outsourced Transport Contractor" value=1 />
                                 </div>
+                                @if($outsourced_transport != '1')
+                                    <div class="col-md-6">
+                                        <livewire:components.search-livewire name='plant_id' label="Plant" :list="$plant_list"/>                                        
+                                    </div>                                    
+                                @else
+                                    <div class="col-md-6">
+                                        <x-form.datalist label="Outsourced Contractor Name" name="outsourced_contractor" :list="$outsourced_contractors_list" />                                       
+                                    </div>
+                                    <div class="col-md-6">
+                                        <x-form.input name="registration_number" label="Outsource Reg No." />
+                                    </div>            
+                                @endif
+                            
+                                {{-- <div class="col-md-6">
+                                    <livewire:components.search-livewire name='plant_id' label="Plant"
+                                        :list="$plant_list" />                                    
+                                </div> --}}
                             @else
                                 <div class="col-md-6">
                                     <x-form.input name="registration_number" label="Reg No." />
@@ -66,8 +81,8 @@
                                         <th width="10%">Qty</th>
                                         <th width="15%">Actions</th>
                                         <th>
-                                            @if ($add_extra_item_show == '0')
-                                                <a wire:click="AddExtraItemShow" class="btn btn-primary btn-sm"
+                                            @if ($add_extra_item_show == false)
+                                                <a wire:click="$set('add_extra_item_show', true)" class="btn btn-primary btn-sm"
                                                     title="Add Item">
                                                     <i class="fas fa-plus"></i>
                                                 </a>
@@ -99,14 +114,22 @@
                                         </div>
                                     @endif
                                 @endif
-                                @if ($add_extra_item_show == '1')
+                                @if ($add_extra_item_show == true)
                                     <tr>
                                         {{-- <td><x-form.input name="extra_product_weight_in_date" value="{{$extra_product_weight_in_date}}" wire=0 disabled=1/></td> --}}
                                         @if ($customer_dispatch == 1)
-                                            <td><x-form.select name="extra_product_id" :list="$products_list" /></td>
+                                            <td>{{-- <x-form.select name="extra_product_id" :list="$products_list" /> --}}
+                                                <livewire:components.search-livewire name='extra_product_id' 
+                                                :value="$extra_product_id" :weighedlist="0"/>
+                                            </td>
                                         @else
-                                            <td><x-form.select name="manufacture_jobcard_product_id"
-                                                    :list="$manufacture_jobcard_products_list" /></td>
+                                            <td>
+                                                {{-- <x-form.select name="manufacture_jobcard_product_id"
+                                                    :list="$manufacture_jobcard_products_list" /> --}}
+                                                <livewire:components.search-livewire key="{{ now() }}"
+                                                name='extra_manufacture_jobcard_product_id' :value="$manufacture_jobcard_product_id"
+                                                :jobid="$job_id" :weighedlist="0"/>
+                                            </td>
                                         @endif
                                         <td><x-form.input name="extra_product_unit_measure"
                                                 value="{{ $extra_product_unit_measure }}" wire=0 disabled=1 /></td>
@@ -118,7 +141,7 @@
                                                 title="Add Item">
                                                 <i class="fas fa-plus"></i>
                                             </a>
-                                            <a wire:click="AddExtraItemShow" class="btn btn-primary btn-sm modal-basic"
+                                            <a wire:click="$set('add_extra_item_show', false)" class="btn btn-primary btn-sm modal-basic"
                                                 title="Cancel Add Item">
                                                 <i class="fas fa-ban"></i>
                                             </a>
@@ -164,8 +187,10 @@
         <footer class='card-footer'>
             <div class='row'>
                 <div class='col-md-12 text-right'>
-                    <button type='submit' class='btn btn-primary'>Confirm</button>
-                    <button id="cancel_dispatch" class='btn btn-default modal-dismiss'>Cancel</button>
+                    {{-- @if (count($extra_items) > 0) --}}
+                        <button type='submit' class='btn btn-primary'>Confirm</button>
+                    {{-- @endif --}}
+                    <button wire:click="refreshNewDispatchModal" id="cancel_dispatch" class='btn btn-default modal-dismiss'>Cancel</button>
                 </div>
             </div>
         </footer>
@@ -176,7 +201,7 @@
                 Livewire.on('closeDispatch', function($key) {
                     Livewire.emit('refreshNewDispatch');
                     $('#cancel_dispatch').click();
-                    window.open('{{ url('dispatches/print') }}/' + $key,
+                    window.open('{{ url('dispatches/print') }}/' + $key +'?type=dispatch',
                         '_blank'); //$('#edit_btn_' + $key).click();
 
                 })

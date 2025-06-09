@@ -11,7 +11,9 @@
         <span>Products</span>
         </a>
         <ul class="nav nav-children">
-        <li><a class="nav-link" href="{{url('products')}}">Add / Edit Product & Recipes</a></li>
+          @if(Auth::user()->getSec()->getCRUD('products_crud')['read']=='true' || Auth::user()->getSec()->getCRUD('recipes_crud')['create']=='true' || Auth::user()->getSec()->global_admin_value)
+            <li><a class="nav-link" href="{{url('products')}}">Add / Edit Product & Recipes</a></li>
+          @endif
         </ul>
       </li>
 </ul>

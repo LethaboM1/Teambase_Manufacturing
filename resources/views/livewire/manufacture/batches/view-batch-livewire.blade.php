@@ -2,12 +2,13 @@
 <div class="row">
 	<div class="col-lg-12 mb-3">
 		<form method="post" >
+			<x-alert-messages />
 			@csrf
 			<section class="card">
 				<header class="card-header">
 					<h2 class="card-title">Edit Batch</h2>
-				</header>
-				<div class="card-body">
+				</header>								
+				<div class="card-body">					
 					<h3>Batch No. {{$batch->batch_number}}</h3>	
 					<div class="row">
 						<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">
@@ -31,15 +32,21 @@
 					<div class="row">						
 						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">						
 							<x-form.select wire:model="status" name="status" label="Status" :list="$status_list" />
-						</div>
-						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
-							@if($saved)
-								<h4 class="text-success"><i class="fa fa-check"></i>&nbsp;Saved!</h4>
-							@endif
-						</div>
+						</div>						
 						<div class="col-sm-12 col-md-12 pb-sm-3 pb-md-0">						
 							<x-form.textarea wire:model.debounce="notes" name="notes" label="Notes" />
 						</div>
+					</div>
+					<div class="row">						
+						<div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">							
+							@if (Auth::user()->getSec()->getCRUD('production_crud')['update'] || Auth::user()->getSec()->global_admin_value)
+								<button type="button"
+									class="btn btn-primary m-2"
+									wire:click="save_batch"
+									@if (($changed == 0) || $batch['status'] == 'Completed' || $batch['status'] == 'Ready for dispatch') disabled="disabled" @endif>Save Batch
+								</button>
+							@endif                                
+						</div>										
 					</div>
 					<hr>
 					<div class="row">

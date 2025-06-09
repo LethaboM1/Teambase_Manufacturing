@@ -54,6 +54,9 @@
 		<!-- Head Libs -->
 		<script src="{{url('vendor/modernizr/modernizr.js')}}"></script>
 		<script src="{{url('vendor/jquery/jquery.js')}}"></script>
+		{{-- <script src="{{url('vendor/jquery-inputmask/jquery.inputmask.js')}}"></script> --}}
+		{{-- <script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script> --}}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
 	</head>
 
@@ -73,20 +76,59 @@
 				<!-- start: user box -->
 				<div class="header-right">
 					<span class="separator"></span>
-					<ul class="notifications">
-						<li>
+					<livewire:components.notifications-livewire />
+					<script>
+						window.setInterval(function(){
+							Livewire.emit('refreshNotifications');
+						}, 60000);
+				 	</script>
+					 {{-- <ul class="notifications">
+						<li>							
 							<a href="#" class="dropdown-toggle notification-icon" data-bs-toggle="dropdown">
 								<i class="bx bx-list-ol"></i>
-								<span class="badge">3</span>
+								@if($total_notifications > 0)
+									<span class="badge">{{$total_notifications}}</span>
+								@endif
 							</a>
 							<div class="dropdown-menu notification-menu large">
 								<div class="notification-title">
-									<span class="float-end badge badge-default">3</span>
-									Tasks
+									@if($total_notifications > 0)
+										<span class="float-end badge badge-default">{{$total_notifications}}</span>
+										Requests
+									@endif
 								</div>
-								<div class="content">
-									<ul>
-										<li>
+								<div class="content"> --}}
+									 
+									{{-- <ul>
+										@if($total_notifications > 0)
+
+											@foreach ($transfer_requests as $transfer)
+												<li>
+													<p class="clearfix mb-1">
+														<span class="message float-start">Transfer Requested - {{$transfer['created_at']}} Dispatch No {{$transfer['dispatch_number']}}</span>													
+													</p>												
+												</li>											
+											@endforeach
+
+											@foreach ($adjustment_requests as $adjustments)
+												<li>
+													<p class="clearfix mb-1">
+														<span class="message float-start">Adjustment Requested - {{$adjustment['created_at']}} Product {{$adjustment['description']}}</span>													
+													</p>												
+												</li>											
+											@endforeach
+										
+										@else
+
+											<li>
+												<p class="clearfix mb-1">
+													<span class="message float-start">Nothing for now...</span>													
+												</p>												
+											</li>
+										
+										@endif --}}
+
+										{{--<li>
 											<p class="clearfix mb-1">
 												<span class="message float-start">Generating Sales Report</span>
 												<span class="message float-end text-dark">60%</span>
@@ -95,7 +137,7 @@
 												<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
 											</div>
 										</li>
-										<li>
+										 <li>
 											<p class="clearfix mb-1">
 												<span class="message float-start">Importing Contacts</span>
 												<span class="message float-end text-dark">98%</span>
@@ -112,12 +154,12 @@
 											<div class="progress progress-xs light mb-1">
 												<div class="progress-bar" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%;"></div>
 											</div>
-										</li>
+										</li> 
 									</ul>
 								</div>
 							</div>
 						</li>
-					</ul>
+					</ul>--}}
 					<span class="separator"></span>
 					<div id="userbox" class="userbox">
 						<a href="#" data-bs-toggle="dropdown">
@@ -131,12 +173,50 @@
 							<i class="fa custom-caret"></i>
 						</a>
 						<div class="dropdown-menu">
-							<ul class="list-unstyled mb-2">
-								@if (strtoupper(auth()->user()->role) == 'MANAGER')
+							<ul class="list-unstyled mb-2">								
+								@if(null != Auth::user()->getSec())
+									
+									@if(Auth::user()->getSec()->getCRUD('user_profile_crud')['read']=='true'  || Auth::user()->getSec()->global_admin_value)
+										<li><a role="menuitem" tabindex="-1" href="/user/view/{{Auth::user()->user_id}}"><i class="bx bx-user-circle"></i>&nbsp; My Profile</a></li>  
+									@endif
+
+									@if(Auth::user()->out_of_office == 0)
+										<li>
+											<form method="post" action="{{ url('user/ooo/'.Auth::user()->user_id) }}" id="frm_ooo">
+												@csrf
+												<input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->user_id}}" >
+												<input type="hidden" name="out_of_office" id="out_of_office" value=false >												
+												<a onclick="document.getElementById('frm_ooo').submit();" role="menuitem" ><i class="bx bx-lock"></i>&nbsp; Out of Office</a>
+											</form>
+										</li>                    
+									@else
+										<li>
+											<form method="post" action="{{ url('user/ooo/'.Auth::user()->user_id) }}" id="frm_ooo">
+												@csrf
+												<input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->user_id}}" >
+												<input type="hidden" name="out_of_office" id="out_of_office" value=true >												
+												<a onclick="document.getElementById('frm_ooo').submit();" role="menuitem" ><i class="bx bx-lock"></i>&nbsp; Back at Office</a>
+											</form>
+										</li>										
+									@endif
+
+									<li class="divider"></li>
+
+									@if(Auth::user()->getSec()->getCRUD('user_man_crud')['read'] == 'true' || Auth::user()->getSec()->global_admin_value)
+										<li><a role="menuitem" tabindex="-1" href="{{url('users')}}"><i class='bx bx-group'></i>&nbsp; User Management</a></li>                    
+									@endif 
+
+									@if(Auth::user()->getSec()->settings_admin_value || Auth::user()->getSec()->global_admin_value)
+										<li><a role="menuitem" tabindex="-1" href="/settings"><i class="fa-regular fa-compass"></i>&nbsp; Settings</a></li>                    
+									@endif									
+
+								@endif
+
+								{{-- @if (strtoupper(auth()->user()->role) == 'MANAGER')
 									<li>
 										<a role="menuitem" tabindex="-1" href="{{route('settings')}}"><i class="fa-regular fa-compass"></i> Settings</a>
 									</li>
-								@endif
+								@endif --}}
 								
 								<li class="divider"></li>
 								

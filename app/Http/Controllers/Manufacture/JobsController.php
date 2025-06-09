@@ -18,7 +18,7 @@ class JobsController extends Controller
     function create_job()
     {
         return view('manufacture.jobs.create-job');
-    }
+    }  
 
     function view_job($job)
     {
@@ -30,6 +30,7 @@ class JobsController extends Controller
     function add_job(Request $request)
     {
 
+        // dd($request);
         $form_fields = $request->validate([
             'internal_jobcard' => 'nullable',
             // 'customer_id' => 'nullable', Internal Jobs only 2023-10-19

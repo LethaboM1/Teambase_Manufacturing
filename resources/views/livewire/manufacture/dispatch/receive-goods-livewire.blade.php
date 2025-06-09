@@ -12,6 +12,6 @@
         <x-form.select wire=0 name="product_id" label="Products" :list="$products_list" />
     </div>
     <div class="col-md-6">
-        <x-form.number wire=0 name="weight_in" label="Weight" step="0.001" />
+        <x-form.number wire=0 name="weight_in" label="Weight In" step="0.001" />
     </div>
 </div>

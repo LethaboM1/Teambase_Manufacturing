@@ -22,7 +22,7 @@ class SelectLists extends Controller
         ['name' => 'Open', 'value' => 'Open'],
         ['name' => 'In Production', 'value' => 'In Production'],
         ['name' => 'on Hold', 'value' => 'on Hold'],
-        ['name' => 'Canceled', 'value' => 'Canceled'],
+        ['name' => 'Cancelled', 'value' => 'Cancelled'],
         ['name' => 'Ready for dispatch', 'value' => 'Ready for dispatch'],
     ];
 
@@ -35,8 +35,19 @@ class SelectLists extends Controller
 
     public const dispatch_report_categories = [
         ['name' => 'All', 'value' => 'all'],
-        ['name' => 'Contractors', 'value' => 'jobcard'],
-        ['name' => 'Cash Clients', 'value' => 'cash'],        
+        ['name' => 'Jobcards', 'value' => 'jobcard'],
+        ['name' => 'Customers', 'value' => 'cash'],        
+    ];
+
+    public const stock_report_categories = [
+        ['name' => 'All', 'value' => 'all'],
+        ['name' => 'Raw', 'value' => 'raw'],
+        ['name' => 'Manufactured', 'value' => 'manufactured'],        
+    ];
+
+    public const special_chars = [
+        ',', ' ', ';', "'", "`", "~", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", 
+        "{", "}", "[", "]", "-", "=", "?", ".", ':', '*', '/', '\\', '"', '>', '<'        
     ];
 }
 

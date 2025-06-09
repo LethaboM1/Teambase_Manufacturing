@@ -41,7 +41,7 @@ class BatchesController extends Controller
 
         $form_fields['status'] = 'Open';
         $form_fields['batch_number'] = Functions::get_doc_number('batch');
-        if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Coul dnot generate batch number.');
+        if (strlen($form_fields['batch_number']) == 0) return back()->with('alertError', 'Could not generate batch number.');
 
         $recipe = ManufactureProductRecipe::where('product_id', $form_fields['product_id'])->get();
 
@@ -56,6 +56,9 @@ class BatchesController extends Controller
                 'product_id' => $item->product_add_id,
                 'qty' => Functions::negate($qty),
                 'user_id' => auth()->user()->user_id,
+                'weight_out_user' => auth()->user()->user_id,
+                'weight_out_datetime' => date("Y-m-d\TH:i:s"),
+                'status' => 'Completed',
                 'type' => 'BAT',
                 'type_id' => $batch_id,
                 'comment' => "Used to manufacture {$product['code']} {$product['description']}"

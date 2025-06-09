@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UtilsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ManagersController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Manufacture\JobsController;
 use App\Http\Controllers\Manufacture\LabsController;
 use App\Http\Controllers\Manufacture\BatchesController;
@@ -33,6 +35,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'view'])->name('dashboard');
 
+    //Users
+    Route::get('user/view/{id}', [UserProfileController::class, 'profile']);
+    Route::post('user/ooo/{id}', [UserProfileController::class, 'outofoffice_user']);
 
     Route::middleware('is_manager')->group(function () {
         Route::get('users', [ManagersController::class, 'users']);
@@ -47,9 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('is_workshop')->group(function () {
         Route::middleware('is_manager')->group(function () {});
     });
-
+    
     Route::middleware('is_manufacture')->group(function () {
-        Route::middleware('is_manager')->group(function () {
+        // Route::middleware('is_manager')->group(function () {
             /* Suppliers */
             Route::get('suppliers', [SupplierController::class, 'suppliers']);
             Route::post('suppliers/add', [SupplierController::class, 'add_supplier']);
@@ -61,14 +66,30 @@ Route::middleware('auth')->group(function () {
             Route::post('customers/add', [CustomerController::class, 'add_customer']);
             Route::post('customers/save', [CustomerController::class, 'save_customer']);
             Route::post('customers/delete', [CustomerController::class, 'delete_customer']);
+        // });
+
+        Route::middleware('is_super')->group(function () {
+            /* Utils Route */
+            Route::get('system/utils', [UtilsController::class, 'view']);            
+            Route::post('system/headerproducts/transfer', [UtilsController::class, 'transfer_header_products_to_lines']);
+            Route::get('system/send-test-email', function () {
+                $test_to = 'connie@platinumlake.co.za';
+                $body = '2024-08-22T09:02: Product Adjustment Requested on Product 0005 | Tar by Connie Potgieter. The Reason for the Request is noted as: "Test". Please review at your earliest convenience by clicking the link below.';
+                $subject = 'Product Adjustment Request - Product 0005 | Tar';
+                \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($test_to, $subject) {
+                    $message->to($test_to)->subject($subject);                 
+                });
+                return 'Test email sent!';                 
+            }); 
+                
         });
 
-        Route::middleware('is_products')->group(function () {
+        // Route::middleware('is_products')->group(function () {
             /* */
             Route::get('products', [ProductsController::class, 'products']);
             Route::post('products/add', [ProductsController::class, 'add_product']);
             Route::post('products/save', [ProductsController::class, 'save_product']);
-            Route::post('products/adjust', [ProductsController::class, 'adjust_product']);
+            Route::post('products/adjust', [ProductsController::class, 'adjust_product']);            
             Route::post('products/delete', [ProductsController::class, 'delete_product']);
 
             /* Job Cards */
@@ -109,6 +130,9 @@ Route::middleware('auth')->group(function () {
             Route::post('dispatches/return/{dispatch}', [DispatchController::class, 'return_dispatch']);
             Route::post('dispatches/transfer/{dispatch}', [DispatchController::class, 'transfer_dispatch']);
             Route::get('dispatches/print/{dispatch}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_/{dispatch}/{overundervariance}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_return/{dispatch}', [DispatchController::class, 'print_dispatch']);
+            Route::get('dispatches/print_transfer/{dispatch}', [DispatchController::class, 'print_dispatch']);
             Route::post('dispatches/receiving-goods', [DispatchController::class, 'receiving_goods']);
             Route::post('dispatches/return-goods', [DispatchController::class, 'return_goods']);
             Route::get('dispatches/return-goods/{transaction}/print', [DispatchController::class, 'print_return']);
@@ -119,12 +143,13 @@ Route::middleware('auth')->group(function () {
             //Route::get('dispatches/archive', [DispatchController::class, 'archive']);
             // Route::get('dispatch/{batch}', [DispatchController::class, 'batch_dispatch']);
 
-            /* Reports */
-            Route::get('report/stock-reports', [ManufactureReportsController::class, 'report_stock']);
+            /* Reports */            
             Route::get('report/order-reports', [ManufactureReportsController::class, 'report_order']);
             Route::get('report/lab-reports', [ManufactureReportsController::class, 'report_lab']);
             Route::get('report/dispatch-reports', [ManufactureReportsController::class, 'report_dispatch']);
             Route::post('report/dispatch-reports/print', [ManufactureReportsController::class, 'dispatchByDateReport']);
-        });
-    });
+            Route::get('report/stock-reports', [ManufactureReportsController::class, 'report_stock']);
+            Route::post('report/stock-reports/print', [ManufactureReportsController::class, 'stockByDateReport']);
+        // });
+    });    
 });

@@ -43,7 +43,7 @@
                             <div class="col-sm-12 col-md-3 pb-sm-3 pb-md-0">
                                 <div>
                                     <br>
-                                    <button class="btn btn-primary">Add Product</button>
+                                    <button class="btn btn-primary my-3 py-1 mx-3">Add Product</button>
                                 </div>
                             </div>
                         </div>

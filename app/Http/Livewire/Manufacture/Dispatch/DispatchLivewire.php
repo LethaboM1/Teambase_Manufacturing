@@ -24,6 +24,7 @@ class DispatchLivewire extends Component
         $this->batch = $batch;
         $this->qty_left = $batch->qty_left;
         $this->jobcards = [];
+        // dd('Test the route');
     }
 
     function dispatch()
@@ -42,7 +43,7 @@ class DispatchLivewire extends Component
                     $job = ManufactureJobcardProducts::where('id', $key)->first();
                     if ($job->qty_due == 0) ManufactureProducts::where('id', $key)->update(['filled' => 1]);
                     $chk_job = ManufactureJobcards::where('id', $job->job_id)->first();
-                    if ($chk_job->unfilled_products == 0) ManufactureJobcards::where('id', $job->job_id)->update('status', 'Completed');
+                    if ($chk_job->unfilled_products == 0) ManufactureJobcards::where('id', $job->job_id)->update('status', 'Filled');
                 }
             }
         }

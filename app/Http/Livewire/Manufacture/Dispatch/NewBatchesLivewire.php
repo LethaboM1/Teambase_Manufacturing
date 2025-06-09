@@ -15,7 +15,7 @@ class NewBatchesLivewire extends Component
     public $tab, $search, $search_arc, $search_receive_goods;
 
     protected $listeners = [
-        'refreshNewDispatch', 'refreshArchiveDispatch'
+        'refreshNewDispatch', 'refreshArchiveDispatch', 'toggleTab'
     ], $paginationTheme = 'bootstrap';
 
     function mount()
@@ -29,8 +29,13 @@ class NewBatchesLivewire extends Component
         }
     }    
 
+    function refreshNewDispatchModal (){        
+        //Reload Modal        
+        return redirect(request()->header('Referer'));
+    }
+
     function refreshNewDispatch()
-    {
+    {        
         $this->resetPage();
     }
 
@@ -45,6 +50,10 @@ class NewBatchesLivewire extends Component
         $this->tab = 'archive';
     }
 
+    public function toggleTab($value)
+    {
+        $this->tab = $value;
+    }
 
     function updatedSearch()
     {
@@ -54,26 +63,42 @@ class NewBatchesLivewire extends Component
     public function render()
     {
 
-        $dispatches = ManufactureJobcardProductDispatches::where('status', 'Loading')
-            ->when($this->search, function ($query, $term) {
+        $dispatches = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+        ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')       
+        ->select('dispatches.*','jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+        ->where('dispatches.status','Loading')
+        ->when($this->search, function ($query, $term) {
+            $term = "%{$term}%";
+            $query
+                ->where('dispatches.dispatch_number', 'like', $term)                
+                ->orWhere('dispatches.reference', 'like', $term)
+                ->orWhere('dispatches.registration_number', 'like', $term)
+                // ->orWhere('dispatches.status', 'like', $term)                
+                ->orWhere('jobs.jobcard_number', 'like', $term)
+                ->orWhere('jobs.site_number', 'like', $term);
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(15, ['*'], 'loading');   
 
-                $term = "%{$term}%";
-                $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term);                
-            })->paginate(15, ['*'], 'loading');        
+        $dispatches_archived = ManufactureJobcardProductDispatches::from('manufacture_jobcard_product_dispatches as dispatches')
+        ->join('manufacture_jobcards as jobs', 'jobs.id', '=', 'dispatches.job_id', 'left outer')       
+        ->select('dispatches.*','jobs.jobcard_number as jobcard_number','jobs.site_number as site_number')
+        ->where('dispatches.status', '!=', 'Loading')
+        ->where('dispatches.status', '!=', 'Deleted')
+        ->when($this->search_arc, function ($query, $term) {
+            $term = "%{$term}%";
+            $query
+                ->where('dispatches.dispatch_number', 'like', $term)
+                ->orWhere('dispatches.reference', 'like', $term)
+                ->orWhere('dispatches.registration_number', 'like', $term)
+                // ->orWhere('status', 'like', $term)
+                ->orWhere('jobs.jobcard_number', 'like', $term)
+                ->orWhere('jobs.site_number', 'like', $term);
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(15, ['*'], 'archived');
 
-        $dispatches_archived = ManufactureJobcardProductDispatches::where('status', '!=', 'Loading')
-            ->when($this->search_arc, function ($query, $term) {
-
-                $term = "%{$term}%";
-                $query->where('dispatch_number', 'like', $term)
-                    ->orWhere('reference', 'like', $term);
-                // ->orWhere('haulier_code', 'like', $term);
-            })
-            ->orderBy('id', 'desc')
-            ->paginate(15, ['*'], 'archived');
-
-
+// dd($dispatches);
         return view('livewire.manufacture.dispatch.new-batches-livewire', [
             'dispatches' => $dispatches,
             'dispatches_archived' => $dispatches_archived,

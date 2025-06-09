@@ -5,7 +5,8 @@
         @endif
         <input onClick="this.select();" type="text" class="form-control" name="search" wire:model="search"
             placeholder="{{ $search_name }}" wire:focus="$set('hide',false)" wire:focusout="$set('hide',true)" />
-        <input type="hidden" name="{{ $name }}" value="{{ $value }}" autocomplete="off" />
+        <input type="hidden" name="{{ $name }}" value="{{ $value }}" autocomplete="off"         
+        />
     </div>
 
     <div style="position:absolute" class="@if ($hide) hide @endif">
